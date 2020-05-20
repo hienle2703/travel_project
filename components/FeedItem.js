@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 
   },
   title: {
-    width: "65%",
+    width: "64%",
   },
   btn: {
     backgroundColor: "gray",
