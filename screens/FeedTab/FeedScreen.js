@@ -2,8 +2,8 @@ import * as WebBrowser from 'expo-web-browser';
 import React, { Component } from 'react';
 import { Image, Platform, FlatList,ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import FeedItem from '../components/FeedItem';
-import { MonoText } from '../components/StyledText';
+import FeedItem from '../../components/FeedItem'
+import { MonoText } from '../../components/StyledText';
 
 export default class FeedScreen extends Component{
   state = {
@@ -58,9 +58,7 @@ export default class FeedScreen extends Component{
         <Text style={{fontSize:200}}>You have reached the end</Text>
 
       )
-
     }
-
 
   };
   renderItem = ({ item }) => {
@@ -102,7 +100,11 @@ export default class FeedScreen extends Component{
       );
     }
     return (
+      
       <View style={styles.container}>
+        <View style={styles.header}>
+        <TouchableOpacity></TouchableOpacity>
+      </View>
         <FlatList
           data={listArticles}
           renderItem={this.renderItem}
@@ -120,6 +122,12 @@ export default class FeedScreen extends Component{
 }
 
 const styles = StyleSheet.create({
+  header:{
+    flex:0.15,
+    marginTop:10,
+    justifyContent:"center",
+    alignItems:"center"
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -127,6 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   flatList: {
+    flex:0.85,
     margin: 20,
     marginTop: 5
   }

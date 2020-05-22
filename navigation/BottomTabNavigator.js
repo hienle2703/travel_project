@@ -9,12 +9,19 @@ import {
   View,
 } from "react-native";
 import TabBarIcon from "../components/TabBarIcon";
-import FeedScreen from "../screens/FeedScreen";
-import ScheduleScreen from "../screens/ScheduleScreen";
-import ManageScreen from "../screens/ManageScreen";
-import NotiScreen from "../screens/NotiScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import SignUp from "../screens/SignUp";
+
+import FeedScreen from "../screens/FeedTab/FeedScreen";
+
+import SignUp from "../screens/ProfileTab/SignUp";
+
+import ProfileScreen from "../screens/ProfileTab/ProfileScreen";
+
+import ScheduleScreen from "../screens/ScheduleTab/ScheduleScreen";
+
+import ManageScreen from "../screens/ManageTab/ManageScreen";
+
+import NotiScreen from "../screens/NotiTab/NotiScreen";
+
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Feed";
@@ -38,7 +45,7 @@ function ProfileStack() {
 }
 export default function BottomTabNavigator({ navigation, route }) {
   navigation.setOptions({
-    headerTitle: getHeaderTitle(route),
+    //headerTitle: getHeaderTitle(route),
   });
 
   return (
@@ -102,25 +109,25 @@ export default function BottomTabNavigator({ navigation, route }) {
   );
 }
 
-function getHeaderTitle(route) {
-  const routeName =
-    route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
+// function getHeaderTitle(route) {
+//   const routeName =
+//     route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
 
-  switch (routeName) {
-    case "Feed":
-      return "Your Feed";
-    case "Schedule":
-      return "Schedule";
-    case "Manage":
-      return "Group Managemnet";
-    case "Noti":
-      return "Your Notification";
-    case "Profile":
-      return "Your Profile";
-    case "SignUp":
-      return "Đăng ký";
-  }
-}
+//   switch (routeName) {
+//     case "Feed":
+//       return "Your Feed";
+//     case "Schedule":
+//       return "Schedule";
+//     case "Manage":
+//       return "Group Managemnet";
+//     case "Noti":
+//       return "Your Notification";
+//     case "Profile":
+//       return "Your Profile";
+//     case "SignUp":
+//       return "Đăng ký";
+//   }
+// }
 const styles = StyleSheet.create({
   bottomBtn: {
     flexDirection: "column",

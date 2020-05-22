@@ -14,7 +14,7 @@ export default class SignUp extends Component {
     //console.log(this.props.route.params);
     return (
       <View style={styles.container}>
-        <View style={styles.picBox}>
+        {/* <View style={styles.picBox}>
           <Swiper>
             <View style={[styles.slideContainer, styles.slide1]}>
               <Text>Slide 1</Text>
@@ -26,7 +26,7 @@ export default class SignUp extends Component {
               <Text>Slide 3</Text>
             </View>
           </Swiper>
-        </View>
+        </View> */}
 
         <View style={styles.card}>
           <Text style={styles.txtCard}>User Name</Text>

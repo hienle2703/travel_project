@@ -4,7 +4,7 @@ import { Image, FlatList,List,ListItem, Platform, StyleSheet, Text, TouchableOpa
 
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { MonoText } from '../components/StyledText';
+import { MonoText } from '../../components/StyledText';
 
 export default function NotiScreen() {
   return (
