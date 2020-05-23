@@ -13,6 +13,7 @@ import TabBarIcon from "../components/TabBarIcon";
 import FeedScreen from "../screens/FeedTab/FeedScreen";
 
 import SignUp from "../screens/ProfileTab/SignUp";
+import SignIn from "../screens/ProfileTab/SignIn";
 
 import ProfileScreen from "../screens/ProfileTab/ProfileScreen";
 
@@ -38,6 +39,11 @@ function ProfileStack() {
         name="SignUp"
         title="Đăng ký"
         component={SignUp}
+      />
+      <Stack.Screen
+        name="SignIn"
+        title="Đăng nhập"
+        component={SignIn}
       />
       
     </Stack.Navigator>
@@ -109,25 +115,6 @@ export default function BottomTabNavigator({ navigation, route }) {
   );
 }
 
-// function getHeaderTitle(route) {
-//   const routeName =
-//     route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
-
-//   switch (routeName) {
-//     case "Feed":
-//       return "Your Feed";
-//     case "Schedule":
-//       return "Schedule";
-//     case "Manage":
-//       return "Group Managemnet";
-//     case "Noti":
-//       return "Your Notification";
-//     case "Profile":
-//       return "Your Profile";
-//     case "SignUp":
-//       return "Đăng ký";
-//   }
-// }
 const styles = StyleSheet.create({
   bottomBtn: {
     flexDirection: "column",

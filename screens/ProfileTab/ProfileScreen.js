@@ -18,23 +18,41 @@ export default class ProfileScreen extends Component {
   onClickBtn() {
     this.props.navigation.navigate("SignUp");
     this.props.navigation.setOptions({
-      headerTitle: "Đăng ký"
-    })
-    
+      headerTitle: "Đăng ký",
+    });
+  }
+  onClickBtnSI() {
+    this.props.navigation.navigate("SignIn");
+    this.props.navigation.setOptions({
+      headerTitle: "Đăng nhập",
+    });
   }
   render() {
     return (
       <View style={styles.container}>
-        <Text>Quản lý hồ sơ</Text>
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 50,
+            marginBottom: 50,
+            marginLeft: 40,
+          }}
+        >
+          You haven't yet signed in !
+        </Text>
         <View style={styles.btnContainer}>
-          <TouchableOpacity style={styles.btn}>
-            <Text style={styles.txt}>Đăng nhập</Text>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => this.onClickBtnSI()}
+          >
+            <Text style={styles.txt}>Sign In</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity
             style={styles.btn}
             onPress={() => this.onClickBtn()}
           >
-            <Text style={styles.txt}>Đăng ký</Text>
+            <Text style={styles.txt}>Sign Up</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -72,7 +90,7 @@ const styles = StyleSheet.create({
   txt: {
     color: "white",
   },
-  btnContainer:{
-    flexDirection:"row"
-  }
+  btnContainer: {
+    flexDirection: "row",
+  },
 });
