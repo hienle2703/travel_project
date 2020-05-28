@@ -11,6 +11,7 @@ import {
 import TabBarIcon from "../components/TabBarIcon";
 
 import FeedScreen from "../screens/FeedTab/FeedScreen";
+import DetailFeed from "../screens/FeedTab/DetailFeed";
 
 import SignUp from "../screens/ProfileTab/SignUp";
 import SignIn from "../screens/ProfileTab/SignIn";
@@ -23,7 +24,6 @@ import ManageScreen from "../screens/ManageTab/ManageScreen";
 
 import NotiScreen from "../screens/NotiTab/NotiScreen";
 
-
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Feed";
 
@@ -35,24 +35,25 @@ function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="SignUp" title="Đăng ký" component={SignUp} />
+      <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} />
+    </Stack.Navigator>
+  );
+}
+function FeedStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="FeedScreen" component={FeedScreen} />
       <Stack.Screen
-        name="SignUp"
-        title="Đăng ký"
-        component={SignUp}
+        name="DetailFeed"
+        title="Trang chi tiết"
+        component={DetailFeed}
       />
-      <Stack.Screen
-        name="SignIn"
-        title="Đăng nhập"
-        component={SignIn}
-      />
-      
     </Stack.Navigator>
   );
 }
 export default function BottomTabNavigator({ navigation, route }) {
-  navigation.setOptions({
-    //headerTitle: getHeaderTitle(route),
-  });
+  navigation.setOptions({});
 
   return (
     <BottomTab.Navigator
@@ -61,7 +62,7 @@ export default function BottomTabNavigator({ navigation, route }) {
     >
       <BottomTab.Screen
         name="Feed"
-        component={FeedScreen}
+        component={FeedStack}
         options={{
           title: "Feed",
 
@@ -96,10 +97,18 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={NotiScreen}
         options={{
           title: "Notification",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="md-notifications" />
+          tabBarIcon: ({ focused, color ,size }) => (
+            <TabBarIcon
+              focused={focused}
+              name="md-notifications"
+            />
           ),
+          tabBarOptions: {
+            activeTintColor: '#DB5823',
+           inactiveTintColor: 'gray',
+          },
         }}
+        
       />
 
       <BottomTab.Screen

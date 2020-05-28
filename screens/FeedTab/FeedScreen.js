@@ -88,6 +88,12 @@ export default class FeedScreen extends Component{
     this.callApi(newPage);
 
   };
+  onClickDetail() {
+    this.props.navigation.navigate("DetailFeed");
+    this.props.navigation.setOptions({
+      headerTitle: "Trang chi tiết",
+    });
+  }
   render() {
     //console.log('render');
     const { isLoading, listArticles } = this.state;
@@ -102,6 +108,16 @@ export default class FeedScreen extends Component{
     return (
       
       <View style={styles.container}>
+        <View style={{justifyContent:"center", alignItems:"center"}}>
+        <TouchableOpacity
+            style={styles.btnDetail}
+            onPress={() => this.onClickDetail()}
+          >
+            <Text style={styles.txt}>Detail</Text>
+          </TouchableOpacity>
+        </View>
+        
+
         <View style={styles.header}>
         <TouchableOpacity></TouchableOpacity>
       </View>
@@ -138,5 +154,13 @@ const styles = StyleSheet.create({
     flex:0.85,
     margin: 20,
     marginTop: 5
+  },
+  btnDetail:{
+    backgroundColor:"gray",
+    width:50,
+    height:20,
+    alignItems:"center",
+    justifyContent: 'center',
+    marginTop:50,
   }
 })
