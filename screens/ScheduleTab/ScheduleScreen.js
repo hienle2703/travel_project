@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
-import * as React from "react";
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
 import { TabView, SceneMap } from "react-native-tab-view";
+import { TabBar } from "react-native-tab-view";
 import TabBarIcon from "../../components/TabBarIcon";
 import { Entypo } from "@expo/vector-icons";
 
@@ -66,241 +67,282 @@ const imgData = [
     view: "142 views",
   },
 ];
-const FirstRoute = () => (
-  <View style={[styles.scene]}>
-    <ScrollView>
-      <View>
-        {imgData.map((item) => {
-          return (
-            <TouchableOpacity>
-              <View style={styles.containerScene}>
-                <View style={styles.cardSchedule}>
-                  <Image
-                    style={{
-                      height: "50%",
-                      width: "90%",
-                      alignSelf: "center",
-                      borderRadius: 20,
-                    }}
-                    source={item.imgSource}
-                  />
-                  <View style={styles.txt}>
-                    <View style={styles.location}>
-                      <View>
-                        <Entypo name="location-pin" size={15} color="#DB5823" />
-                      </View>
-                      <Text style={{ color: "gray" }}>{item.location}</Text>
-                    </View>
-                    <View style={styles.titleCard}>
-                      <Text
-                        style={{
-                          fontSize: 15,
-                          fontWeight: "bold",
-                          color: "#DB5823",
-                        }}
-                      >
-                        {item.title}
-                      </Text>
-                    </View>
-                    <View style={styles.detailCard}>
-                      <View>
-                        <Text style={{ color: "gray" }}>Date: {item.date}</Text>
-                      </View>
-                      <View style={{ flexDirection: "row" }}>
-                        <Text style={{ color: "gray", bottom: 2 }}>
-                          {item.view}{" "}
-                        </Text>
-                        <Ionicons name="md-eye" size={15} color="gray" />
-                      </View>
-                    </View>
-                    <View style={styles.descriptionCard}>
-                      <Text>Status: {item.status}</Text>
-                      <Text>Member: {item.member}</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </ScrollView>
-  </View>
-);
-
-const SecondRoute = () => <View style={[styles.scene]}>
-<ScrollView>
-  <View>
-    {imgData.map((item) => {
-      return (
-        <TouchableOpacity>
-          <View style={styles.containerScene}>
-            <View style={styles.cardSchedule}>
-              <Image
-                style={{
-                  height: "50%",
-                  width: "90%",
-                  alignSelf: "center",
-                  borderRadius: 20,
-                }}
-                source={item.imgSource}
-              />
-              <View style={styles.txt}>
-                <View style={styles.location}>
-                  <View>
-                    <Entypo name="location-pin" size={15} color="#DB5823" />
-                  </View>
-                  <Text style={{ color: "gray" }}>{item.location}</Text>
-                </View>
-                <View style={styles.titleCard}>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: "bold",
-                      color: "#DB5823",
-                    }}
-                  >
-                    {item.title}
-                  </Text>
-                </View>
-                <View style={styles.detailCard}>
-                  <View>
-                    <Text style={{ color: "gray" }}>Date: {item.date}</Text>
-                  </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={{ color: "gray", bottom: 2 }}>
-                      {item.view}{" "}
-                    </Text>
-                    <Ionicons name="md-eye" size={15} color="gray" />
-                  </View>
-                </View>
-                <View style={styles.descriptionCard}>
-                  <Text>Status: {item.status}</Text>
-                  <Text>Member: {item.member}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    })}
-  </View>
-</ScrollView>
-</View>;
-
-const ThirdRoute = () => <View style={[styles.scene]}>
-<ScrollView>
-  <View>
-    {imgData.map((item) => {
-      return (
-        <TouchableOpacity>
-          <View style={styles.containerScene}>
-            <View style={styles.cardSchedule}>
-              <Image
-                style={{
-                  height: "50%",
-                  width: "90%",
-                  alignSelf: "center",
-                  borderRadius: 20,
-                }}
-                source={item.imgSource}
-              />
-              <View style={styles.txt}>
-                <View style={styles.location}>
-                  <View>
-                    <Entypo name="location-pin" size={15} color="#DB5823" />
-                  </View>
-                  <Text style={{ color: "gray" }}>{item.location}</Text>
-                </View>
-                <View style={styles.titleCard}>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: "bold",
-                      color: "#DB5823",
-                    }}
-                  >
-                    {item.title}
-                  </Text>
-                </View>
-                <View style={styles.detailCard}>
-                  <View>
-                    <Text style={{ color: "gray" }}>Date: {item.date}</Text>
-                  </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={{ color: "gray", bottom: 2 }}>
-                      {item.view}{" "}
-                    </Text>
-                    <Ionicons name="md-eye" size={15} color="gray" />
-                  </View>
-                </View>
-                <View style={styles.descriptionCard}>
-                  <Text>Status: {item.status}</Text>
-                  <Text>Member: {item.member}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    })}
-  </View>
-</ScrollView>
-</View>;
-
 const initialLayout = { width: Dimensions.get("window").width };
 
-export default function ScheduleScreen() {
-  const [index, setIndex] = React.useState(0);
-
-  const [routes] = React.useState([
-    { key: "first", title: "Your Plans" },
-    { key: "second", title: "ONGOING TRIP" },
-    { key: "third", title: "COMPLETED" },
-  ]);
-
-  const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-    third: ThirdRoute,
-  });
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={{ justifyContent: "center" }}>
-          <Text
-            style={{
-              top: 13,
-              fontSize: 20,
-              fontWeight: "bold",
-              alignSelf: "center",
-              left: 10,
-            }}
-          >
-            Your Schedule
-          </Text>
+export default class ScheduleScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      index: 0,
+      routes: [
+        { key: "first", title: "Your Plans" },
+        { key: "second", title: "ONGOING" },
+        { key: "third", title: "COMPLETED" },
+      ],
+    };
+  }
+  onClickDetail() {
+    this.props.navigation.navigate("ScheduleDetail");
+  }
+  setIndex = (index) => {
+    console.log(index);
+    this.setState({ index });
+  };
+  FirstRoute = () => (
+    <View style={[styles.scene]}>
+      <ScrollView>
+        <View>
+          {imgData.map((item) => {
+            return (
+              <TouchableOpacity onPress={() => this.onClickDetail()}>
+                <View style={styles.containerScene}>
+                  <View style={styles.cardSchedule}>
+                    <Image
+                      style={{
+                        height: "50%",
+                        width: "90%",
+                        alignSelf: "center",
+                        borderRadius: 20,
+                      }}
+                      source={item.imgSource}
+                    />
+                    <View style={styles.txt}>
+                      <View style={styles.location}>
+                        <View>
+                          <Entypo
+                            name="location-pin"
+                            size={15}
+                            color="#DB5823"
+                          />
+                        </View>
+                        <Text style={{ color: "gray" }}>{item.location}</Text>
+                      </View>
+                      <View style={styles.titleCard}>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "bold",
+                            color: "#DB5823",
+                          }}
+                        >
+                          {item.title}
+                        </Text>
+                      </View>
+                      <View style={styles.detailCard}>
+                        <View>
+                          <Text style={{ color: "gray" }}>
+                            Date: {item.date}
+                          </Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={{ color: "gray", bottom: 2 }}>
+                            {item.view}{" "}
+                          </Text>
+                          <Ionicons name="md-eye" size={15} color="gray" />
+                        </View>
+                      </View>
+                      <View style={styles.descriptionCard}>
+                        <Text>Status: {item.status}</Text>
+                        <Text>Member: {item.member}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
-
-        <View style={styles.addBtn}>
-          <TouchableOpacity style={{ color: "#DB5823" }}>
-            <TabBarIcon
-              style={{ color: "#DB5823", alignItems: "flex-end" }}
-              name="ios-add-circle"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={initialLayout}
-        style={{ backgroundColor: "white" }}
-        //indicatorStyle={{ backgroundColor: "white", color: "#DB5823" }}
-      />
+      </ScrollView>
     </View>
   );
+
+  SecondRoute = () => (
+    <View style={[styles.scene]}>
+      <ScrollView>
+        <View>
+          {imgData.map((item) => {
+            return (
+              <TouchableOpacity>
+                <View style={styles.containerScene}>
+                  <View style={styles.cardSchedule}>
+                    <Image
+                      style={{
+                        height: "50%",
+                        width: "90%",
+                        alignSelf: "center",
+                        borderRadius: 20,
+                      }}
+                      source={item.imgSource}
+                    />
+                    <View style={styles.txt}>
+                      <View style={styles.location}>
+                        <View>
+                          <Entypo
+                            name="location-pin"
+                            size={15}
+                            color="#DB5823"
+                          />
+                        </View>
+                        <Text style={{ color: "gray" }}>{item.location}</Text>
+                      </View>
+                      <View style={styles.titleCard}>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "bold",
+                            color: "#DB5823",
+                          }}
+                        >
+                          {item.title}
+                        </Text>
+                      </View>
+                      <View style={styles.detailCard}>
+                        <View>
+                          <Text style={{ color: "gray" }}>
+                            Date: {item.date}
+                          </Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={{ color: "gray", bottom: 2 }}>
+                            {item.view}{" "}
+                          </Text>
+                          <Ionicons name="md-eye" size={15} color="gray" />
+                        </View>
+                      </View>
+                      <View style={styles.descriptionCard}>
+                        <Text>Status: {item.status}</Text>
+                        <Text>Member: {item.member}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
+  );
+
+  ThirdRoute = () => (
+    <View style={[styles.scene]}>
+      <ScrollView>
+        <View>
+          {imgData.map((item) => {
+            return (
+              <TouchableOpacity>
+                <View style={styles.containerScene}>
+                  <View style={styles.cardSchedule}>
+                    <Image
+                      style={{
+                        height: "50%",
+                        width: "90%",
+                        alignSelf: "center",
+                        borderRadius: 20,
+                      }}
+                      source={item.imgSource}
+                    />
+                    <View style={styles.txt}>
+                      <View style={styles.location}>
+                        <View>
+                          <Entypo
+                            name="location-pin"
+                            size={15}
+                            color="#DB5823"
+                          />
+                        </View>
+                        <Text style={{ color: "gray" }}>{item.location}</Text>
+                      </View>
+                      <View style={styles.titleCard}>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "bold",
+                            color: "#DB5823",
+                          }}
+                        >
+                          {item.title}
+                        </Text>
+                      </View>
+                      <View style={styles.detailCard}>
+                        <View>
+                          <Text style={{ color: "gray" }}>
+                            Date: {item.date}
+                          </Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={{ color: "gray", bottom: 2 }}>
+                            {item.view}{" "}
+                          </Text>
+                          <Ionicons name="md-eye" size={15} color="gray" />
+                        </View>
+                      </View>
+                      <View style={styles.descriptionCard}>
+                        <Text>Status: {item.status}</Text>
+                        <Text>Member: {item.member}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
+  );
+
+  renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: "white" }}
+      style={{ backgroundColor: "#DB5823" }}
+    />
+  );
+  renderScene = SceneMap({
+    first: this.FirstRoute,
+    second: this.SecondRoute,
+    third: this.ThirdRoute,
+  });
+  render() {
+    const { index, routes } = this.state;
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={{ justifyContent: "center" }}>
+            <Text
+              style={{
+                top: 13,
+                fontSize: 20,
+                fontWeight: "bold",
+                alignSelf: "center",
+                left: 10,
+              }}
+            >
+              Your Schedule
+            </Text>
+          </View>
+
+          <View style={styles.addBtn}>
+            <TouchableOpacity style={{ color: "#DB5823" }}>
+              <TabBarIcon
+                style={{ color: "#DB5823", alignItems: "flex-end" }}
+                name="ios-add-circle"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={this.renderScene}
+          renderTabBar={this.renderTabBar}
+          onIndexChange={(index) => this.setIndex(index)}
+          initialLayout={initialLayout}
+          style={{ backgroundColor: "white" }}
+        />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -318,7 +360,7 @@ const styles = StyleSheet.create({
   },
   addBtn: {
     justifyContent: "flex-end",
-    left: 105,
+    left: 95,
     top: 13,
   },
   cardSchedule: {

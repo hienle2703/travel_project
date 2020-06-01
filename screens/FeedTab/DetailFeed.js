@@ -64,7 +64,7 @@ export default class DetailFeed extends Component {
   }
   render() {
     return (
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.containerHeader}>
             <TouchableOpacity
@@ -220,7 +220,7 @@ export default class DetailFeed extends Component {
                 </TouchableOpacity>
               </View>
 
-              <ScrollView horizontal={true} contentContainerStyle={{}}>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{}} >
                 <View style={styles.cardTodo}>
                   <Image
                     style={styles.imgTodo}

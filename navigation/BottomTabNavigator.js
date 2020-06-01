@@ -28,6 +28,7 @@ const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Feed";
 
 import { createStackNavigator } from "@react-navigation/stack";
+import ScheduleDetail from "../screens/ScheduleTab/ScheduleDetail";
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,15 @@ function ProfileStack() {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="SignUp" title="Đăng ký" component={SignUp} />
       <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} />
+    </Stack.Navigator>
+  );
+}
+function ScheduleStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Schedule" component={ScheduleScreen} />
+      <Stack.Screen name="ScheduleDetail" title="Chi tiết lịch trình" component={ScheduleDetail} />
+      {/* <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} /> */}
     </Stack.Navigator>
   );
 }
@@ -74,7 +84,7 @@ export default function BottomTabNavigator({ navigation, route }) {
 
       <BottomTab.Screen
         name="Schedule"
-        component={ScheduleScreen}
+        component={ScheduleStack}
         options={{
           title: "Schedule",
           tabBarIcon: ({ focused }) => (
