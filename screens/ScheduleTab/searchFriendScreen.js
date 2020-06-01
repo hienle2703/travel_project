@@ -1,11 +1,12 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { Component } from 'react';
-import { Image, Platform, FlatList,ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import GroupItem from '../../components/GroupItem';
+import { Image, Platform, FlatList,ActivityIndicator, StyleSheet, Text, TouchableOpacity, View,Button } from 'react-native';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import FriendItem from '../../components/FriendItem';
 import { MonoText } from '../../components/StyledText';
+import TabBarIcon from '../../components/TabBarIcon';
 
-export default class ManageScreen extends Component{
+export default class searchLocationScreen extends Component{
   state = {
     isLoading: true,
     listArticles: [],
@@ -64,7 +65,7 @@ export default class ManageScreen extends Component{
 
   };
   renderItem = ({ item }) => {
-    return <GroupItem item={item} />
+    return <FriendItem item={item} />
   };
 
   renderFooter = () => {

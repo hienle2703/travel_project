@@ -1,6 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { Component } from 'react';
 import { Image, Platform, FlatList,ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Constants from 'expo-constants';
 import { ScrollView } from 'react-native-gesture-handler';
 import FeedItem from '../../components/FeedItem'
 import { MonoText } from '../../components/StyledText';
@@ -14,8 +15,18 @@ export default class FeedScreen extends Component{
     isLoadMore: false,
   };
 
+  getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+    }
+  };
+
   componentDidMount = async () => {
     const { page } = this.state;
+    this.getPermissionAsync();
     this.setState({
       isLoading: true,
     });
