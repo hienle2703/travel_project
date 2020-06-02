@@ -7,26 +7,71 @@ import {
   TextInput,
   Image,
   ScrollView,
+  Alert
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
 import TabBarIcon from "../../components/TabBarIcon";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
 
 AppRegistry.registerComponent("myproject", () => SwiperComponent);
 
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      email: "",
+      password: "",
+    };
   }
   onClickBtn() {
     this.props.navigation.goBack();
+  }
+  dangKy() {
+    firebaseApp
+      .auth()
+      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then(() => {
+        Alert.alert(
+          "d e p r e s s i o n",
+          "Successfully Registered: "+this.state.email,
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+            { text: "OK", onPress: () => this.props.navigation.navigate("SignIn")},
+          ],
+          { cancelable: false }
+        )
+        this.setState({
+          email:'',
+          password:''
+        })
+      })
+      .catch(function (error) {
+        // Handle Errors here.
+        Alert.alert(
+          "Alert Title",
+          "Register Account Failed"+error.message,
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "OK", onPress: () => console.log(error.message) }
+          ],
+          { cancelable: false }
+        );
+      });
   }
   render() {
     // let name=  this.route.navigation.getParam("name");
     //console.log(this.props.route.params);
     return (
-      <ScrollView contentContainerStyle ={styles.scrollView}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity
@@ -39,7 +84,7 @@ export default class SignUp extends Component {
               />
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.swiper}>
             <Swiper
               activeDotColor={"white"}
@@ -70,24 +115,40 @@ export default class SignUp extends Component {
 
           <View style={styles.inputCard}>
             <View style={styles.card}>
-              <Text style={styles.txtCard}>User Name</Text>
-              <TextInput style={styles.inputBox}></TextInput>
+              <Text style={styles.txtCard}>Email</Text>
+              <TextInput
+                style={styles.inputBox}
+                onChangeText={(email) => this.setState({ email })}
+                value={this.state.email}
+              ></TextInput>
             </View>
             <View style={styles.card}>
               <Text style={styles.txtCard}>Password</Text>
-              <TextInput style={styles.inputBox}></TextInput>
+              <TextInput
+                style={styles.inputBox}
+                onChangeText={(password) => this.setState({ password })}
+                value={this.state.password}
+                secureTextEntry={true}
+              ></TextInput>
             </View>
-            <View style={styles.card}>
+            {/* <View style={styles.card}>
               <Text style={styles.txtCard}>Email</Text>
               <TextInput style={styles.inputBox}></TextInput>
-            </View>
-            <View style={styles.card}>
+            </View> */}
+            {/* <View style={styles.card}>
               <Text style={styles.txtCard}>Phone</Text>
               <TextInput style={styles.inputBox}></TextInput>
-            </View>
+            </View> */}
             <View style={styles.card}>
               <TouchableOpacity style={styles.btnBox}>
-                <Text style={styles.btnSubmit}>Join Now!</Text>
+                <Text
+                  style={styles.btnSubmit}
+                  onPress={() => {
+                    this.dangKy();
+                  }}
+                >
+                  Join Now!
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -97,11 +158,11 @@ export default class SignUp extends Component {
   }
 }
 const styles = StyleSheet.create({
-  scrollView:{
-    flex:1
+  scrollView: {
+    flex: 1,
   },
   container: {
-    flex:1,
+    flex: 1,
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
@@ -112,8 +173,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginLeft: -360,
   },
-  backBtn: {
-  },
+  backBtn: {},
   card: {
     marginTop: 15,
     paddingHorizontal: 2,
@@ -144,8 +204,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  wrapper: {
-  },
+  wrapper: {},
   slide1: {
     flex: 1,
     justifyContent: "center",
@@ -174,7 +233,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     borderRadius: 20,
-    marginTop:-50
+    marginTop: -50,
   },
   image: {
     borderRadius: 20,

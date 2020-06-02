@@ -6,18 +6,62 @@ import {
   ImageBackground,
   TouchableOpacity,
   TextInput,
+  Alert
 } from "react-native";
 import TabBarIcon from "../../components/TabBarIcon";
-
+import {firebaseApp} from "../../components/FirebaseConfig";
 const image = require("../../assets/images/signin.png");
 
 export default class SignIn extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      email: "",
+      password: "",
+    };
   }
   onClickBtn() {
     this.props.navigation.goBack();
+  }
+  DangNhap() {
+    firebaseApp
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(()=>{
+        Alert.alert(
+          "d e p r e s s i o n",
+          "You have logged in: "+this.state.email,
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+            { text: "OK", onPress: () => this.props.navigation.navigate("FeedScreen")},
+          ],
+          { cancelable: false }
+        )
+        this.setState({
+          email:'',
+          password:''
+        })
+ 
+      })
+      .catch(function (error) {
+        Alert.alert(
+          "d e p r e s s i o n",
+          "Login Failed",
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+            { text: "OK", onPress: () => console.log("Okay...")},
+          ],
+          { cancelable: false }
+        )
+      });
   }
   render() {
     return (
@@ -53,7 +97,11 @@ export default class SignIn extends Component {
                 name="ios-person"
               />
 
-              <TextInput style={styles.inputBox} />
+              <TextInput
+                style={styles.inputBox}
+                onChangeText={(email) => this.setState({ email })}
+                value={this.state.email}
+              />
             </View>
             {/* <Text>Password</Text> */}
             <View style={styles.card}>
@@ -65,21 +113,30 @@ export default class SignIn extends Component {
                 }}
                 name="ios-lock"
               />
-              <TextInput style={styles.inputBox} />
+              <TextInput
+                style={styles.inputBox}
+                onChangeText={(password) => this.setState({ password })}
+                value={this.state.password}
+                secureTextEntry={true}
+              />
             </View>
 
             <View style={styles.card1}>
-              <TouchableOpacity style={styles.btnBox}>
+              <TouchableOpacity
+                style={styles.btnBox}
+                onPress={() => this.DangNhap()}
+              >
                 <Text style={styles.btnSubmit}>Log In</Text>
               </TouchableOpacity>
             </View>
 
             <View>
-                <TouchableOpacity>
-                    <Text style={{color:"gray",marginTop:-10,}}>Forgot your password?</Text>
-                </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={{ color: "gray", marginTop: -10 }}>
+                  Forgot your password?
+                </Text>
+              </TouchableOpacity>
             </View>
-
           </View>
         </ImageBackground>
       </View>
@@ -137,7 +194,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 0.25,
     flexDirection: "row",
-    alignItems:"center",
+    alignItems: "center",
     justifyContent: "center",
     marginBottom: -20,
   },
