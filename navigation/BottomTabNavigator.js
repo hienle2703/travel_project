@@ -7,7 +7,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Button,
 } from "react-native";
+import { Ionicons } from '@expo/vector-icons'; 
 import TabBarIcon from "../components/TabBarIcon";
 
 import FeedScreen from "../screens/FeedTab/FeedScreen";
@@ -22,22 +24,95 @@ import ManageScreen from "../screens/ManageTab/ManageScreen";
 
 import NotiScreen from "../screens/NotiTab/NotiScreen";
 
+import ChoiceTravelScreen from "../screens/ManageTab/ChoiceTravelScreen"
+
+import { createStackNavigator } from "@react-navigation/stack";
+
+import { FontAwesome } from '@expo/vector-icons'; 
+import ChatScreen from "../screens/ManageTab/ChatScreen";
+import MemberListScreen from "../screens/ManageTab/MemberListScreen";
+import Account from "../screens/ProfileTab/Account";
+import EditAccount from "../screens/ProfileTab/EditAccount"
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Feed";
 
-import { createStackNavigator } from "@react-navigation/stack";
+
 
 const Stack = createStackNavigator();
 
 function ProfileStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen
         name="SignUp"
-        title="Đăng ký"
-        component={SignUp}
+        component={SignUp}   
+      />
+      <Stack.Screen name ="Account"
+      component={Account}
+      options={{
+        title :' Trang cá nhân',
+        headerTitleStyle:{fontWeight: 'bold'},
+        headerLeftContainerStyle: {marginLeft:20},
+        headerRightContainerStyle: {marginRight:20},
+        headerLeft : props => <Ionicons name="md-arrow-round-back" size={35} color="green" {...props} />,
+        
+      }}
+      />
+      <Stack.Screen name="EditAccount"
+      component={EditAccount}
+      options={{
+        title :' Thông tin cá nhân',
+        headerTitleStyle:{fontWeight: 'bold'},
+        headerLeftContainerStyle: {marginLeft:20},
+        headerRightContainerStyle: {marginRight:20},
+        headerLeft : props => <Ionicons name="md-arrow-round-back" size={35} color="green" {...props} />,
+        
+      }}
+      />
+    </Stack.Navigator>
+  );
+}
+function ManageStack() {
+  return (
+    <Stack.Navigator >
+      <Stack.Screen name="Manage" component={ManageScreen}  />
+      <Stack.Screen
+        name="ChoiceTravelScreen"
+        component={ChoiceTravelScreen}     
+        options={{
+          title :' Quản lí lịch trình',
+          headerTitleStyle:{fontWeight: 'bold'},
+          headerLeftContainerStyle: {marginLeft:20},
+          headerRightContainerStyle: {marginRight:20},
+          headerLeft : props => <Ionicons name="md-arrow-round-back" size={35} color="green" {...props} />,
+          headerRight: () => <TouchableOpacity onPress={()=>alert("Không tìm thấy !")}><FontAwesome  name="search" size={25}  color="green"  /></TouchableOpacity>,    
+        }}
+        
+      />
+      <Stack.Screen name ="ChatScreen"
+      component={ChatScreen}
+      options={{
+        title :' Trò chuyện',
+        headerTitleStyle:{fontWeight: 'bold'},
+        headerLeftContainerStyle: {marginLeft:20},
+        headerRightContainerStyle: {marginRight:20},
+        headerLeft : props => <Ionicons name="md-arrow-round-back" size={35} color="green" {...props} />,
+        
+      }}
+      />
+      <Stack.Screen 
+        name= "MemberListScreen"
+        component={MemberListScreen}
+        options={{
+          title:'Thành Viên', 
+          headerTitleStyle:{fontWeight: 'bold'},
+          headerLeftContainerStyle: {marginLeft:20},
+          headerRightContainerStyle: {marginRight:20},
+          headerLeft : props => <Ionicons name="md-arrow-round-back" size={35} color="green" {...props} />,
+          headerRight: () => <TouchableOpacity onPress={()=>alert("Không tìm thấy !")}><FontAwesome name="plus" size={25} color="green" /></TouchableOpacity>,    
+        }}
       />
       
     </Stack.Navigator>
@@ -58,7 +133,6 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={FeedScreen}
         options={{
           title: "Feed",
-
           tabBarIcon: ({ focused }) => (
             <TabBarIcon focused={focused} name="ios-home" />
           ),
@@ -77,7 +151,7 @@ export default function BottomTabNavigator({ navigation, route }) {
       />
       <BottomTab.Screen
         name="Manage"
-        component={ManageScreen}
+        component={ManageStack}
         options={{
           title: "Group Management",
           tabBarIcon: ({ focused }) => (
@@ -86,7 +160,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
       />
       <BottomTab.Screen
-        name="Noti"
+        name="NotiScreen"
         component={NotiScreen}
         options={{
           title: "Notification",
@@ -134,4 +208,8 @@ const styles = StyleSheet.create({
     color: "red",
     backgroundColor: "red",
   },
+  txtTitle:{
+    fontWeight: "bold"
+  }
+
 });

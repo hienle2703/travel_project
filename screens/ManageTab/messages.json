@@ -1,0 +1,32 @@
+{
+    "messages" :[    
+        {
+            "id": 1,
+            "text": "Hello Quan",
+            "user": {
+                "id": 2,
+                "name": "React Native",
+                "avata": "https://placeimg.com/140/140/any"
+            }
+          },
+          {
+            "id": 2,
+            "text": "Hello Luan",
+            "user": {
+                "id": 2,
+                "name": "React Native",
+                "avata": "https://placeimg.com/140/140/any"
+            }
+          },
+          {
+            "id": 3,
+            "text": "Hello Hien",
+            "user": {
+                "id": 2,
+                "name": "React Native",
+                "avata": "https://placeimg.com/140/140/any"
+            }
+          }
+   
+]
+}
