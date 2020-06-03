@@ -8,15 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 export default class ProfileScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  onClickBtn() {
-    this.props.navigation.navigate("SignUp");
+
+  onPressButton(screen) {
+    this.props.navigation.navigate(screen);
     this.props.navigation.setOptions({
       headerTitle: "Đăng ký",
     });
@@ -27,6 +28,7 @@ export default class ProfileScreen extends Component {
       headerTitle: "Đăng nhập",
     });
   }
+
   render() {
     return (
       <View style={styles.container}>
@@ -50,7 +52,7 @@ export default class ProfileScreen extends Component {
           
           <TouchableOpacity
             style={styles.btn}
-            onPress={() => this.onClickBtn()}
+            onPress={() => this.onPressButton("SignUp")}
           >
             <Text style={styles.txt}>Sign Up</Text>
           </TouchableOpacity>
