@@ -26,9 +26,9 @@ import createScheduleScreen from "../screens/ScheduleTab/createScheduleScreen";
 import searchLocationScreen from "../screens/ScheduleTab/searchLocationScreen";
 import searchFriendScreen from "../screens/ScheduleTab/searchFriendScreen";
 import ManageScreen from "../screens/ManageTab/ManageScreen";
+import DetailGroup from "../screens/ManageTab/DetailGroup";
 
 import NotiScreen from "../screens/NotiTab/NotiScreen";
-import { Ionicons } from "@expo/vector-icons";
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Feed";
@@ -38,88 +38,57 @@ import ScheduleDetail from "../screens/ScheduleTab/ScheduleDetail";
 
 import ChoiceTravelScreen from "../screens/ManageTab/ChoiceTravelScreen";
 
-import { createStackNavigator } from "@react-navigation/stack";
-
 import { FontAwesome } from "@expo/vector-icons";
 import ChatScreen from "../screens/ManageTab/ChatScreen";
 import MemberListScreen from "../screens/ManageTab/MemberListScreen";
 import Account from "../screens/ProfileTab/Account";
 import EditAccount from "../screens/ProfileTab/EditAccount";
 
-const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = "Feed";
 import createFeedScreen from "../screens/FeedTab/createFeedScreen";
 import createGroupScreen from "../screens/ManageTab/createGroup";
 
-const FeedStack = createStackNavigator();
-function feedStack({ navigation }) {
-  return (
-    <FeedStack.Navigator
-      screenOptions={{ headerShown: true }}
-      initialRouteName="Feed"
-    >
-      <FeedStack.Screen
-        name="Feed"
-        title="Feed"
-        component={FeedScreen}
-        options={{
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("createFeed")}>
-              <Text>Add</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <FeedStack.Screen
-        name="createFeed"
-        title="Creating Your new Feed"
-        component={createFeedScreen}
-        options={{
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Feed")}>
-              <Text>Add</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-    </FeedStack.Navigator>
-  );
-}
+//Phần của Luân
+// function feedStack({ navigation }) {
+//   return (
+//     <FeedStack.Navigator
+//       screenOptions={{ headerShown: false }}
+//       initialRouteName="Feed"
+//     >
+//       {/* <FeedStack.Screen
+//         name="Feed"
+//         title="Feed"
+//         component={FeedScreen}
+//         options={{
+//           headerRight: () => (
+//             <TouchableOpacity onPress={() => navigation.navigate("createFeed")}>
+//               <Text>Add</Text>
+//             </TouchableOpacity>
+//           ),
+//         }}
+//       /> */}
+//       <FeedStack.Screen
+//         name="createFeed"
+//         title="Creating Your new Feed"
+//         component={createFeedScreen}
+//         options={{
+//           headerRight: () => (
+//             <TouchableOpacity onPress={() => navigation.navigate("Feed")}>
+//               <Text>Add</Text>
+//             </TouchableOpacity>
+//           ),
+//         }}
+//       />
+//     </FeedStack.Navigator>
+//   );
+// }
 const Stack = createStackNavigator();
 
 function ProfileStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="SignUp" title="Đăng ký" component={SignUp} />
       <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} />
-    </Stack.Navigator>
-  );
-}
-function ScheduleStack() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Schedule" component={ScheduleScreen} />
-      <Stack.Screen
-        name="ScheduleDetail"
-        title="Chi tiết lịch trình"
-        component={ScheduleDetail}
-      />
-      {/* <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} /> */}
-    </Stack.Navigator>
-  );
-}
-function FeedStack() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="FeedScreen" component={FeedScreen} />
-      <Stack.Screen
-        name="DetailFeed"
-        title="Trang chi tiết"
-        component={DetailFeed}
-        name="SignUp"
-        component={SignUp}
-      />
       <Stack.Screen
         name="Account"
         component={Account}
@@ -159,11 +128,125 @@ function FeedStack() {
     </Stack.Navigator>
   );
 }
+function ScheduleStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Schedule" component={ScheduleScreen} />
+      <Stack.Screen
+        name="createScheduleScreen"
+        title="Tạo lịch trình mới"
+        component={createScheduleScreen}
+        // options={{
+        //   headerRight: () => (
+        //     <TouchableOpacity onPress={() => navigation.navigate("Schedule")}>
+        //       <Text>Add</Text>
+        //     </TouchableOpacity>
+        //   ),
+        //}}
+      />
+      <Stack.Screen
+        name="ScheduleDetail"
+        title="Chi tiết lịch trình"
+        component={ScheduleDetail}
+      />
+      {/* <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} /> */}
+
+      <Stack.Screen
+        name="createSchedule"
+        title="Tạo lịch trình mới"
+        component={createScheduleScreen}
+        options={{
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("Schedule")}>
+              <Text>Add</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="searchLocation"
+        title="ABC"
+        component={searchLocationScreen}
+        options={{
+          headerLeft: (props) => (
+            <Ionicons
+              name="ios-arrow-back"
+              size={24}
+              color="orange"
+              onPress={() => navigation.navigate("createSchedule")}
+            />
+          ),
+          headerTitle: (props) => (
+            <SearchBar placeholder="Type here to search location" />
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("createSchedule");
+              }}
+            >
+              <Text>Add</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SearchFriend"
+        title="ABC"
+        component={searchFriendScreen}
+        options={{
+          headerLeft: (props) => (
+            <Ionicons
+              name="ios-arrow-back"
+              size={24}
+              color="orange"
+              onPress={() => navigation.navigate("createSchedule")}
+            />
+          ),
+          headerTitle: (props) => <SearchBar placeholder="Find friend..." />,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("createSchedule");
+              }}
+            >
+              <Text>Done</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+function FeedStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="FeedScreen" component={FeedScreen} />
+      <Stack.Screen
+        name="DetailFeed"
+        title="Trang chi tiết"
+        component={DetailFeed}
+      />
+      <Stack.Screen
+        name="createFeedScreen"
+        title="Creating Your new Feed"
+        component={createFeedScreen}
+        // options={{
+        //   headerRight: () => (
+        //     <TouchableOpacity onPress={() => navigation.navigate("Feed")}>
+        //       <Text>Add</Text>
+        //     </TouchableOpacity>
+        //   ),
+        // }}
+      />
+    </Stack.Navigator>
+  );
+}
 function ManageStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Manage" component={ManageScreen} />
-
+      <Stack.Screen name="DetailGroup" component={DetailGroup} />
       <Stack.Screen
         name="createGroup"
         title="Creating a new Group"
@@ -238,96 +321,6 @@ function ManageStack() {
 }
 
 const ScheStack = createStackNavigator();
-
-function ScheduleStack({ navigation }) {
-  return (
-    <ScheStack.Navigator
-      screenOptions={{ headerShown: true, headerTitleAlign: "center" }}
-      initialRouteName="Schedule"
-    >
-      <ScheStack.Screen
-        name="Schedule"
-        title="Lịch trình"
-        component={ScheduleScreen}
-        options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("createSchedule");
-              }}
-            >
-              <Text>+</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <ScheStack.Screen
-        name="createSchedule"
-        title="Tạo lịch trình mới"
-        component={createScheduleScreen}
-        options={{
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Schedule")}>
-              <Text>Add</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <ScheStack.Screen
-        name="searchLocation"
-        title="ABC"
-        component={searchLocationScreen}
-        options={{
-          headerLeft: (props) => (
-            <Ionicons
-              name="ios-arrow-back"
-              size={24}
-              color="orange"
-              onPress={() => navigation.navigate("createSchedule")}
-            />
-          ),
-          headerTitle: (props) => (
-            <SearchBar placeholder="Type here to search location" />
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("createSchedule");
-              }}
-            >
-              <Text>Add</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <ScheStack.Screen
-        name="SearchFriend"
-        title="ABC"
-        component={searchFriendScreen}
-        options={{
-          headerLeft: (props) => (
-            <Ionicons
-              name="ios-arrow-back"
-              size={24}
-              color="orange"
-              onPress={() => navigation.navigate("createSchedule")}
-            />
-          ),
-          headerTitle: (props) => <SearchBar placeholder="Find friend..." />,
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("createSchedule");
-              }}
-            >
-              <Text>Done</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-    </ScheStack.Navigator>
-  );
-}
 
 const GrStack = createStackNavigator();
 function GroupStack({ navigation }) {

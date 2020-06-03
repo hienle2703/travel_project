@@ -84,6 +84,9 @@ export default class ScheduleScreen extends Component {
   onClickDetail() {
     this.props.navigation.navigate("ScheduleDetail");
   }
+  onClickAdd(){
+    this.props.navigation.navigate("createScheduleScreen");
+  }
   setIndex = (index) => {
     console.log(index);
     this.setState({ index });
@@ -324,7 +327,7 @@ export default class ScheduleScreen extends Component {
           </View>
 
           <View style={styles.addBtn}>
-            <TouchableOpacity style={{ color: "#DB5823" }}>
+            <TouchableOpacity style={{ color: "#DB5823" }} onPress={() => this.onClickAdd()}>
               <TabBarIcon
                 style={{ color: "#DB5823", alignItems: "flex-end" }}
                 name="ios-add-circle"

@@ -57,6 +57,11 @@ export default class ProfileScreen extends Component {
             <Text style={styles.txt}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+        <View>
+          <TouchableOpacity style={styles.btn} onPress={() => this.onPressButton("Account")}>
+            <Text style={{color:"white"}}>Manage Profile</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }

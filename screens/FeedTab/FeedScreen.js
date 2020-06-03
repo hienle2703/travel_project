@@ -19,9 +19,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { ScrollView } from "react-native-gesture-handler";
-import FeedItem from "../../components/FeedItem";
-import { MonoText } from "../../components/StyledText";
 
 export default class FeedScreen extends Component {
   state = {
@@ -36,6 +33,12 @@ export default class FeedScreen extends Component {
     this.props.navigation.navigate("DetailFeed");
     this.props.navigation.setOptions({
       headerTitle: "Trang chi tiết",
+    });
+  }
+  onClickWritePost(){
+    this.props.navigation.navigate("createFeedScreen");
+    this.props.navigation.setOptions({
+      headerTitle: "Viết bài",
     });
   }
   getPermissionAsync = async () => {
@@ -107,6 +110,21 @@ export default class FeedScreen extends Component {
                 >
                   <Text style={{ alignSelf: "center", top: 6, color: "white" }}>
                     Plan Your Own Vacation
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#DB5823",
+                    width: "90%",
+                    height: 35,
+                    top: 40,
+                    alignSelf: "center",
+                    borderRadius: 10,
+                  }}
+                  onPress={() => this.onClickWritePost()}
+                >
+                  <Text style={{ alignSelf: "center", top: 6, color: "white" }}>
+                    Write A Post About Your Trip
                   </Text>
                 </TouchableOpacity>
               </View>
