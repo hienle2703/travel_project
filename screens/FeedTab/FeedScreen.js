@@ -18,6 +18,10 @@ import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import { ScrollView } from "react-native-gesture-handler";
+import FeedItem from "../../components/FeedItem";
+import { MonoText } from "../../components/StyledText";
 
 export default class FeedScreen extends Component {
   state = {
@@ -34,6 +38,22 @@ export default class FeedScreen extends Component {
       headerTitle: "Trang chi tiết",
     });
   }
+  getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+      }
+    }
+  };
+
+  componentDidMount = async () => {
+    const { page } = this.state;
+    this.getPermissionAsync();
+    this.setState({
+      isLoading: true,
+    });
+  };
   render() {
     return (
       <ScrollView>
@@ -253,7 +273,7 @@ const styles = StyleSheet.create({
   headerDes: {
     left: 20,
     top: 25,
-    marginTop:30,
+    marginTop: 30,
     flexDirection: "row",
     width: "75%",
   },
