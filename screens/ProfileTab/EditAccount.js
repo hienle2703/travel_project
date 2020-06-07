@@ -65,7 +65,19 @@ export default class EditAccount extends Component {
       ava: null,
     };
   }
-
+  componentDidMount = async () => {
+    const itemRef = firebaseApp.database().ref("user").child("user1");
+    const snapshot = await itemRef.child("name").once("value");
+    const snapshot1 = await itemRef.child("email").once("value");
+    const snapshot2 = await itemRef.child("phone").once("value");
+    const snapshot3 = await itemRef.child("ava").once("value");
+    let name = snapshot.val();
+    let email = snapshot1.val();
+    let phone = snapshot2.val();
+    let image = snapshot3.val();
+    let ava = snapshot3.val();
+    this.setState({ name, email, phone, image,ava });
+  };
   //nếu dùng push thì nó sẽ sinh thêm id bên ngoài
   //set là nó làm lại cái class
   //update là để update =))
@@ -150,6 +162,7 @@ export default class EditAccount extends Component {
   render() {
     //const [image, setImage] = useState(null);
     //uri:"https://cdn.iconscout.com/icon/free/png-256/avatar-380-456332.png",
+     const {image} = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -164,8 +177,8 @@ export default class EditAccount extends Component {
                     <Image
                       style={styles.avata}
                       source={{
-                        uri:
-                          "https://cdn.iconscout.com/icon/free/png-256/avatar-380-456332.png",
+                        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                          
                       }}
                     />
                   );
@@ -174,6 +187,7 @@ export default class EditAccount extends Component {
                   return <ActivityIndicator />;
 
                 default:
+                  console.log(this.state.ava)
                   return (
                     <Image
                       style={styles.avata}

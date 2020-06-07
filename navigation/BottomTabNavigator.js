@@ -86,7 +86,7 @@ const Stack = createStackNavigator();
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="SignUp" title="Đăng ký" component={SignUp} />
       <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} />
       <Stack.Screen

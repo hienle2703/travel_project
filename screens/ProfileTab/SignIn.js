@@ -6,10 +6,10 @@ import {
   ImageBackground,
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
 } from "react-native";
 import TabBarIcon from "../../components/TabBarIcon";
-import {firebaseApp} from "../../components/FirebaseConfig";
+import { firebaseApp } from "../../components/FirebaseConfig";
 const image = require("../../assets/images/signin.png");
 
 export default class SignIn extends Component {
@@ -21,31 +21,42 @@ export default class SignIn extends Component {
     };
   }
   onClickBtn() {
-    this.props.navigation.goBack();
+    this.props.navigation.navigate("ProfileScreen");
+  }
+  GetUser(){
+    var takeKey = firebaseApp.auth().currentUser;
+    console.log(takeKey)
   }
   DangNhap() {
     firebaseApp
       .auth()
+      // .onAuthStateChanged((user) => {
+      //   console.log(user);
+      // })
       .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(()=>{
+      .then(() => {
+        
+        console.log("hihi")
         Alert.alert(
-          "d e p r e s s i o n",
-          "You have logged in: "+this.state.email,
+          "",
+          "You have logged in: " + this.state.email,
           [
             {
               text: "Cancel",
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel",
             },
-            { text: "OK", onPress: () => this.props.navigation.navigate("FeedScreen")},
+            {
+              text: "OK",
+              onPress: () => this.props.navigation.navigate("FeedScreen"),
+            },
           ],
           { cancelable: false }
-        )
+        );
         this.setState({
-          email:'',
-          password:''
-        })
- 
+          email: "",
+          password: "",
+        });
       })
       .catch(function (error) {
         Alert.alert(
@@ -57,10 +68,10 @@ export default class SignIn extends Component {
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel",
             },
-            { text: "OK", onPress: () => console.log("Okay...")},
+            { text: "OK", onPress: () => console.log("Okay...") },
           ],
           { cancelable: false }
-        )
+        );
       });
   }
   render() {
@@ -127,6 +138,15 @@ export default class SignIn extends Component {
                 onPress={() => this.DangNhap()}
               >
                 <Text style={styles.btnSubmit}>Log In</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.card1}>
+              <TouchableOpacity
+                style={styles.btnBox}
+                onPress={() => this.GetUser()}
+              >
+                <Text style={styles.btnSubmit}>GetUser</Text>
               </TouchableOpacity>
             </View>
 

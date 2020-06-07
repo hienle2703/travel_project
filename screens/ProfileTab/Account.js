@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -17,45 +18,82 @@ import * as firebase from "firebase";
 export default class Account extends Component {
   constructor(props) {
     super(props);
-
+    this.itemRef = firebaseApp.database();
     this.state = {
       text: "",
       name: "",
-      email:"",
-      phone:"",
-      ava:"",
+      email: "",
+      phone: "",
+      ava: null,
+      logged: "true",
     };
   }
-
+  logOut() {
+    firebaseApp
+      .auth()
+      .signOut()
+      .then(function () {
+        Alert.alert(
+          "",
+          "You have signed out ",
+          [
+            {
+              text: "OK",
+              onPress: () => this.props.navigation.navigate("SignIn"),
+            },
+          ]
+        );
+        this.setState({
+          logged: "false",
+        });
+      })
+      .catch(function (error) {
+        // An error happened.
+      });
+  }
   onClickBtn() {
     this.props.navigation.navigate("EditAccount");
     this.props.navigation.setOptions({});
   }
   componentDidMount = async () => {
-    const itemRef = firebaseApp.database().ref('user').child('user1');
-    const snapshot = await itemRef.child('name').once('value');
-    const snapshot1 = await itemRef.child('email').once('value');
-    const snapshot2 = await itemRef.child('phone').once('value');
-    const snapshot3 = await itemRef.child('ava').once('value');
-    let name= snapshot.val();
-    let email= snapshot1.val();
+    const itemRef = firebaseApp.database().ref("user").child("user1");
+    const snapshot = await itemRef.child("name").once("value");
+    const snapshot1 = await itemRef.child("email").once("value");
+    const snapshot2 = await itemRef.child("phone").once("value");
+    const snapshot3 = await itemRef.child("ava").once("value");
+    let name = snapshot.val();
+    let email = snapshot1.val();
     let phone = snapshot2.val();
     let ava = snapshot3.val();
-    this.setState({name,email,phone,ava})
-
+    this.setState({ name, email, phone, ava });
   };
   //"https://cdn.iconscout.com/icon/free/png-256/avatar-380-456332.png",
   render() {
-      const {name,email,phone,ava} = this.state;
+    const { name, email, phone, ava } = this.state;
+    console.log(ava);
     return (
       <View style={styles.container}>
-        
         <View style={styles.avataArea}>
           <View style={styles.avataEdit}>
-            <Image
-              style={styles.tinyLogo}
-              source={{uri: ava}}
-            />
+            {(() => {
+              switch (this.state.ava) {
+                case null:
+                  return (
+                    <Image
+                      style={styles.tinyLogo}
+                      source={{
+                        uri:
+                          "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                      }}
+                    />
+                  );
+
+                default:
+                  return (
+                    <Image style={styles.tinyLogo} source={{ uri: ava }} />
+                  );
+              }
+            })()}
           </View>
         </View>
         <View style={styles.infArea}>
@@ -85,10 +123,14 @@ export default class Account extends Component {
               </View>
             </TouchableOpacity>
           </View>
+
+          <View style={styles.bntEdit}>
+            <TouchableOpacity style={styles.btn} onPress={() => this.logOut()}>
+              <Text style={styles.txtEdit}>Log Out</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.feedArea}>
-          
-        </View>
+        <View style={styles.feedArea}></View>
         <View style={styles.footter}>
           <ScrollView style={styles.imgArea}>
             <Text></Text>
@@ -103,6 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fafafa",
   },
+  //Done
   header: {
     flex: 0.3,
   },
@@ -111,10 +154,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
   },
   infArea: {
-    flex: 0.2,
+    flex: 0.27,
     backgroundColor: "#fafafa",
     alignItems: "center",
-    
   },
   tinyLogo: {
     height: 100,
@@ -209,15 +251,15 @@ const styles = StyleSheet.create({
     elevation: 24,
   },
   titleInf: {
-    color:"orange",
+    color: "orange",
     flex: 0.87,
   },
-  name:{
-      fontSize:30
+  name: {
+    fontSize: 30,
   },
-  bntEdit:{
-      width:"80%",
-      justifyContent:"center",
-      alignItems:"center"
-  }
+  bntEdit: {
+    width: "80%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

@@ -19,21 +19,34 @@ AppRegistry.registerComponent("myproject", () => SwiperComponent);
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
+    this.itemRef = firebaseApp.database();
     this.state = {
       email: "",
       password: "",
+      name: "",
+      apiKey:"",
     };
   }
   onClickBtn() {
     this.props.navigation.goBack();
   }
   dangKy() {
+    const itemRef = firebaseApp.database().ref("user");
     firebaseApp
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
+        
+        this.setState({
+          apiKey: '',
+        })
+        this.itemRef.ref('user').push({
+          email: this.state.email,
+          name: this.state.name,
+          password: this.state.password
+        })
         Alert.alert(
-          "d e p r e s s i o n",
+          "",
           "Successfully Registered: "+this.state.email,
           [
             {
@@ -47,14 +60,16 @@ export default class SignUp extends Component {
         )
         this.setState({
           email:'',
+          name:'',
           password:''
         })
+        
       })
       .catch(function (error) {
         // Handle Errors here.
         Alert.alert(
-          "Alert Title",
-          "Register Account Failed"+error.message,
+          "",
+          "Register Account Failed. "+error.message,
           [
             {
               text: "Cancel",
@@ -120,6 +135,14 @@ export default class SignUp extends Component {
                 style={styles.inputBox}
                 onChangeText={(email) => this.setState({ email })}
                 value={this.state.email}
+              ></TextInput>
+            </View>
+            <View style={styles.card}>
+              <Text style={styles.txtCard}>User Name</Text>
+              <TextInput
+                style={styles.inputBox}
+                onChangeText={(name) => this.setState({ name })}
+                value={this.state.name}
               ></TextInput>
             </View>
             <View style={styles.card}>
