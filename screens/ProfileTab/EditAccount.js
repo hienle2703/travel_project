@@ -63,10 +63,19 @@ export default class EditAccount extends Component {
       email: "",
       phone: "",
       ava: null,
+      user:"",
     };
   }
   componentDidMount = async () => {
-    const itemRef = firebaseApp.database().ref("user").child("user1");
+    this.itemRef1 = await firebaseApp.auth().currentUser;
+    //await console.log(this.itemRef1);
+    const userGet = await this.itemRef1;
+    let user = userGet;
+    //console.log(user.uid, "user.uid nè nha")
+    //console.log(this.itemRef1);
+    const itemRef = await firebaseApp.database().ref("user").child(user.uid);
+
+    //console.log(itemRef, "itemRef nè");
     const snapshot = await itemRef.child("name").once("value");
     const snapshot1 = await itemRef.child("email").once("value");
     const snapshot2 = await itemRef.child("phone").once("value");
@@ -74,16 +83,18 @@ export default class EditAccount extends Component {
     let name = snapshot.val();
     let email = snapshot1.val();
     let phone = snapshot2.val();
-    let image = snapshot3.val();
     let ava = snapshot3.val();
-    this.setState({ name, email, phone, image,ava });
+
+    
+    await this.setState({ name, email, phone, ava, user });
   };
   //nếu dùng push thì nó sẽ sinh thêm id bên ngoài
   //set là nó làm lại cái class
   //update là để update =))
   setDB() {
-    this.itemRef
-      .ref("user/user1")
+    const {user} = this.state;
+    this.itemRef.ref("user").child(user.uid)
+    
       .update({
         email: this.state.email,
         name: this.state.name,
@@ -110,7 +121,7 @@ export default class EditAccount extends Component {
 
   selectPicture = async () => {
     this.setState({ ava: "" });
-
+    const {user} = this.state;
     await Permissions.askAsync(Permissions.CAMERA_ROLL);
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -121,7 +132,7 @@ export default class EditAccount extends Component {
         .then(() => {
           Alert.alert("Success");
           this.setState({ ava: result.uri });
-          this.itemRef.ref("user/user1").update({
+          this.itemRef.ref("user/" + user.uid).update({
             ava: result.uri,
           });
         })
@@ -132,6 +143,7 @@ export default class EditAccount extends Component {
   };
   takePicture = async () => {
     this.setState({ ava: "" });
+    const {user} = this.state;
     await Permissions.askAsync(Permissions.CAMERA);
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: false,
@@ -141,7 +153,7 @@ export default class EditAccount extends Component {
         .then(() => {
           Alert.alert("Success");
           this.setState({ ava: result.uri });
-          this.itemRef.ref("user/user1").update({
+          this.itemRef.ref("user").child(user.uid).update({
             ava: result.uri,
           });
         })
@@ -162,7 +174,7 @@ export default class EditAccount extends Component {
   render() {
     //const [image, setImage] = useState(null);
     //uri:"https://cdn.iconscout.com/icon/free/png-256/avatar-380-456332.png",
-     const {image} = this.state;
+    const { image } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -173,12 +185,13 @@ export default class EditAccount extends Component {
             {(() => {
               switch (this.state.ava) {
                 case null:
+                  //console.log(this.state.ava, "Ava coi có chưa nè")
                   return (
                     <Image
                       style={styles.avata}
                       source={{
-                        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
-                          
+                        uri:
+                          "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
                       }}
                     />
                   );
@@ -187,7 +200,7 @@ export default class EditAccount extends Component {
                   return <ActivityIndicator />;
 
                 default:
-                  console.log(this.state.ava)
+                  console.log(this.state.ava, "Địa chỉ hình ảnh nè nha");
                   return (
                     <Image
                       style={styles.avata}

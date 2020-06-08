@@ -7,7 +7,7 @@ import {
   TextInput,
   Image,
   ScrollView,
-  Alert
+  Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
@@ -24,64 +24,128 @@ export default class SignUp extends Component {
       email: "",
       password: "",
       name: "",
-      apiKey:"",
+      apiKey: "",
+      countAcc: null,
+      addAcc: null,
     };
   }
   onClickBtn() {
     this.props.navigation.goBack();
   }
-  dangKy() {
-    const itemRef = firebaseApp.database().ref("user");
-    firebaseApp
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(() => {
-        
-        this.setState({
-          apiKey: '',
-        })
-        this.itemRef.ref('user').push({
-          email: this.state.email,
-          name: this.state.name,
-          password: this.state.password
-        })
-        Alert.alert(
-          "",
-          "Successfully Registered: "+this.state.email,
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-            { text: "OK", onPress: () => this.props.navigation.navigate("SignIn")},
-          ],
-          { cancelable: false }
-        )
-        this.setState({
-          email:'',
-          name:'',
-          password:''
-        })
-        
-      })
-      .catch(function (error) {
-        // Handle Errors here.
-        Alert.alert(
-          "",
-          "Register Account Failed. "+error.message,
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "OK", onPress: () => console.log(error.message) }
-          ],
-          { cancelable: false }
-        );
+  componentDidMount = async () => {
+    const Count = await firebaseApp.database().ref("user").once("value");
+    //Alert.alert("Count: " + snapshot.numChildren());
+    // this.setState({countAcc: this.snapshot.numChildren() })
+    // console.log(countAcc, "COUNTACC NÈ NHA")
+    let countAcc = Count.numChildren();
+    this.setState({ countAcc });
+
+    let addAcc = countAcc + 1;
+    this.setState({ addAcc });
+    console.log(addAcc, "TĂNG ACC NÈ");
+  };
+
+  dangKy = async () => {
+    try {
+      const a = await firebaseApp
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password);
+      //console.log(a);
+      //console.log(a.user.uid, "UID NÈ MÀY ƠIIIII");
+      this.itemRef.ref("user/" + a.user.uid).set({
+        email: this.state.email,
+        name: this.state.name,
+        password: this.state.password,
       });
-  }
+      Alert.alert(
+        "",
+        "Successfully Registered: " + this.state.email,
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: () =>{ this.props.navigation.navigate("SignIn"), console.log("Tạo tài khoản thành công")}
+          },
+        ],
+        { cancelable: false }
+      );
+      this.setState({
+        email: "",
+        name: "",
+        password: "",
+      });
+    } catch (error) {
+      // Handle Errors here.
+      Alert.alert(
+        "",
+        "Register Account Failed. " + error.message,
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log(error.message) },
+        ],
+        { cancelable: false }
+      );
+    }
+    // const a = await firebaseApp.auth().createUserWithEmailAndPassword("ongnoimay@gmail.com","123456")
+    // console.log(a)
+    // firebaseApp
+    //   .auth()
+    //   .createUserWithEmailAndPassword(this.state.email, this.state.password)
+    //   .then(function (response) {
+    //     console.log(response.uid);
+
+    //     this.itemRef.ref("user/" + response.uid).set({
+    //       email: this.state.email,
+    //       name: this.state.name,
+    //       password: this.state.password,
+    //     });
+    //     Alert.alert(
+    //       "",
+    //       "Successfully Registered: " + this.state.email,
+    //       [
+    //         {
+    //           text: "Cancel",
+    //           onPress: () => console.log("Cancel Pressed"),
+    //           style: "cancel",
+    //         },
+    //         {
+    //           text: "OK",
+    //           onPress: () => this.props.navigation.navigate("SignIn"),
+    //         },
+    //       ],
+    //       { cancelable: false }
+    //     );
+    //     this.setState({
+    //       email: "",
+    //       name: "",
+    //       password: "",
+    //     });
+    //   })
+    //   .catch(function (error) {
+    //     // Handle Errors here.
+    //     Alert.alert(
+    //       "",
+    //       "Register Account Failed. " + error.message,
+    //       [
+    //         {
+    //           text: "Cancel",
+    //           onPress: () => console.log("Cancel Pressed"),
+    //           style: "cancel",
+    //         },
+    //         { text: "OK", onPress: () => console.log(error.message) },
+    //       ],
+    //       { cancelable: false }
+    //     );
+    //   });
+  };
   render() {
     // let name=  this.route.navigation.getParam("name");
     //console.log(this.props.route.params);

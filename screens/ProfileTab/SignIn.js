@@ -10,6 +10,16 @@ import {
 } from "react-native";
 import TabBarIcon from "../../components/TabBarIcon";
 import { firebaseApp } from "../../components/FirebaseConfig";
+import { YellowBox } from "react-native";
+import _ from "lodash";
+
+YellowBox.ignoreWarnings(["Setting a timer"]);
+const _console = _.clone(console);
+console.warn = (message) => {
+  if (message.indexOf("Setting a timer") <= -1) {
+    _console.warn(message);
+  }
+};
 const image = require("../../assets/images/signin.png");
 
 export default class SignIn extends Component {
@@ -20,13 +30,22 @@ export default class SignIn extends Component {
       password: "",
     };
   }
+  // UNSAFE_componentWillMount= async () => {
+  //   let  takeKey = await this.GetUser();
+  //   console.log("DITMEMAY",takeKey);
+  //   if(takeKey !== null){
+  //     console.log("HELLOOOOOO")
+  //     this.props.navigation.navigate("ProfileScreen")
+  //   }
+  // }
   onClickBtn() {
     this.props.navigation.navigate("ProfileScreen");
   }
-  GetUser(){
-    var takeKey = firebaseApp.auth().currentUser;
-    console.log(takeKey)
-  }
+  GetUser = async () => {
+    var takeKey = await firebaseApp.auth().currentUser;
+    console.log(takeKey);
+    return takeKey;
+  };
   DangNhap() {
     firebaseApp
       .auth()
@@ -35,8 +54,7 @@ export default class SignIn extends Component {
       // })
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
-        
-        console.log("hihi")
+        console.log("hihi");
         Alert.alert(
           "",
           "You have logged in: " + this.state.email,
@@ -48,7 +66,11 @@ export default class SignIn extends Component {
             },
             {
               text: "OK",
-              onPress: () => this.props.navigation.navigate("FeedScreen"),
+              onPress: () => {
+                //this.forceUpdate();
+                this.props.navigation.replace("ProfileScreen");
+                this.props.navigation.navigate("FeedScreen");
+              },
             },
           ],
           { cancelable: false }
@@ -77,9 +99,9 @@ export default class SignIn extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ImageBackground style={styles.imageBackground} source={image}>
-          <View style={styles.header}>
-            <TouchableOpacity
+        <View style={styles.header}>
+          {/* BACK BUTTON */}
+          {/* <TouchableOpacity
               style={styles.backBtn}
               onPress={() => this.onClickBtn()}
             >
@@ -87,61 +109,76 @@ export default class SignIn extends Component {
                 style={{ color: "#DB5823", alignItems: "flex-start" }}
                 name="ios-arrow-back"
               />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.signInTxt}>
+            </TouchableOpacity> */}
+        </View>
+        {/* <View style={styles.signInTxt}>
             <Text style={{ fontSize: 20 }}>Sign In</Text>
-          </View>
+          </View> */}
 
-          <View style={styles.signInCard}>
-            {/* <View style={styles.txtWrap}>
+        <View style={styles.signInCard}>
+          {/* <View style={styles.txtWrap}>
               <Text style={{fontSize:12, color:"gray", marginBottom:-30, marginLeft:-70, backgroundColor:"white"}}>User Name</Text>
               </View> */}
 
-            <View style={styles.card}>
-              <TabBarIcon
+          <View style={styles.card}>
+            {/* <TabBarIcon
                 style={{
                   color: "#DB5823",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
                 name="ios-person"
-              />
-
-              <TextInput
-                style={styles.inputBox}
-                onChangeText={(email) => this.setState({ email })}
-                value={this.state.email}
-              />
-            </View>
-            {/* <Text>Password</Text> */}
-            <View style={styles.card}>
-              <TabBarIcon
+              /> */}
+            <Text
+              style={{
+                color: "#DB5823",
+                alignSelf: "flex-start",
+              }}
+            >
+              Email
+            </Text>
+            <TextInput
+              style={styles.inputBox}
+              onChangeText={(email) => this.setState({ email })}
+              value={this.state.email}
+            />
+          </View>
+          {/* <Text>Password</Text> */}
+          <View style={(styles.card, { top: 30 })}>
+            {/* <TabBarIcon
                 style={{
                   color: "#DB5823",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
                 name="ios-lock"
-              />
-              <TextInput
-                style={styles.inputBox}
-                onChangeText={(password) => this.setState({ password })}
-                value={this.state.password}
-                secureTextEntry={true}
-              />
-            </View>
+              /> */}
+            <Text
+              style={{
+                color: "#DB5823",
+                alignSelf: "flex-start",
+              }}
+            >
+              Password
+            </Text>
+            <TextInput
+              style={styles.inputBox}
+              onChangeText={(password) => this.setState({ password })}
+              value={this.state.password}
+              secureTextEntry={true}
+            />
+          </View>
 
-            <View style={styles.card1}>
-              <TouchableOpacity
-                style={styles.btnBox}
-                onPress={() => this.DangNhap()}
-              >
-                <Text style={styles.btnSubmit}>Log In</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.card1}>
+            <TouchableOpacity
+              style={styles.btnBox}
+              onPress={() => this.DangNhap()}
+            >
+              <Text style={styles.btnSubmit}>Log In</Text>
+            </TouchableOpacity>
+          </View>
 
-            <View style={styles.card1}>
+          <View style={styles.card1}>
               <TouchableOpacity
                 style={styles.btnBox}
                 onPress={() => this.GetUser()}
@@ -150,15 +187,14 @@ export default class SignIn extends Component {
               </TouchableOpacity>
             </View>
 
-            <View>
-              <TouchableOpacity>
-                <Text style={{ color: "gray", marginTop: -10 }}>
-                  Forgot your password?
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <View>
+            <TouchableOpacity>
+              <Text style={{ color: "gray", marginTop: -10 }}>
+                Forgot your password?
+              </Text>
+            </TouchableOpacity>
           </View>
-        </ImageBackground>
+        </View>
       </View>
     );
   }
@@ -180,10 +216,10 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   signInCard: {
-    flex: 0.4,
+    height: 300,
     backgroundColor: "white",
     borderRadius: 20,
-    width: 350,
+    width: 320,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
@@ -203,7 +239,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputBox: {
-    marginLeft: 15,
+    // marginLeft: 15,
     width: 250,
     borderColor: "gray",
     height: 40,
@@ -213,7 +249,7 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 0.25,
-    flexDirection: "row",
+    //flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: -20,
@@ -224,6 +260,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginBottom: 10,
+    marginTop: 20,
   },
   txtWrap: {
     backgroundColor: "white",

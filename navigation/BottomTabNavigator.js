@@ -83,13 +83,24 @@ import createGroupScreen from "../screens/ManageTab/createGroup";
 // }
 const Stack = createStackNavigator();
 
+
 function ProfileStack() {
+  
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName={ProfileScreen}
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="SignUp" title="Đăng ký" component={SignUp} />
-      <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} />
       <Stack.Screen
+        name="SignIn"
+        title="Đăng nhập"
+        tabBarOptions={{ keyboardHidesTabBar: true }}
+        component={SignIn}
+      />
+      <Stack.Screen name="Account" title="Tài khoản" component={Account} />
+      {/* <Stack.Screen
         name="Account"
         component={Account}
         options={{
@@ -106,7 +117,7 @@ function ProfileStack() {
             />
           ),
         }}
-      />
+      /> */}
       <Stack.Screen
         name="EditAccount"
         component={EditAccount}
@@ -360,15 +371,31 @@ export default function BottomTabNavigator({ navigation, route }) {
     <BottomTab.Navigator
       style={styles.bottomBtn}
       initialRouteName={INITIAL_ROUTE_NAME}
+      tabBarOptions={{
+        keyboardHidesTabBar: true,
+        activeTintColor: "tomato",
+        inactiveTintColor: "gray",
+      }}
     >
       <BottomTab.Screen
         name="Feed"
         component={FeedStack}
         options={{
           title: "Feed",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="ios-home" />
-          ),
+          tabBarIcon: ({ focused, activeTintColor }) =>
+            focused ? (
+              <TabBarIcon
+                focused={focused}
+                style={{ color: "tomato" }}
+                name="ios-home"
+              />
+            ) : (
+              <TabBarIcon
+                focused={focused}
+                style={{ color: "gray" }}
+                name="ios-home"
+              />
+            ),
         }}
       />
 
@@ -410,7 +437,9 @@ export default function BottomTabNavigator({ navigation, route }) {
       <BottomTab.Screen
         name="Profile"
         component={ProfileStack}
+        tabBarOptions={{ keyboardHidesTabBar: true }}
         options={{
+          keyboardHidesTabBar: true,
           tabBarIcon: ({ focused }) => (
             <TabBarIcon focused={focused} name="md-person" />
           ),

@@ -28,29 +28,33 @@ export default class Account extends Component {
       logged: "true",
     };
   }
-  logOut() {
-    firebaseApp
-      .auth()
-      .signOut()
-      .then(function () {
-        Alert.alert(
-          "",
-          "You have signed out ",
-          [
-            {
-              text: "OK",
-              onPress: () => this.props.navigation.navigate("SignIn"),
-            },
-          ]
-        );
-        this.setState({
-          logged: "false",
-        });
-      })
-      .catch(function (error) {
-        // An error happened.
-      });
-  }
+  logOut = async () => {
+    try {
+      await firebaseApp.auth().signOut();
+      Alert.alert("", "You have signed out ", [
+        {
+          text: "OK",
+          onPress: () => {
+            console.log("log out")
+            this.props.navigation.navigate("SignIn")
+          },
+        },
+      ]);
+      // .then(function () {
+      //   Alert.alert("", "You have signed out ", [
+      //     {
+      //       text: "OK",
+      //       onPress: () => {
+      //         //this.props.navigation.navigate("SignIn")
+
+      //       },
+      //     },
+      //   ]);
+      //})
+    } catch (error) {
+      console.log(error);
+    }
+  };
   onClickBtn() {
     this.props.navigation.navigate("EditAccount");
     this.props.navigation.setOptions({});

@@ -7,6 +7,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -18,55 +20,65 @@ import * as firebase from "firebase";
 export default class ProfileScreen extends Component {
   constructor(props) {
     super(props);
-
+    this.itemRef = firebaseApp.database();
     this.state = {
-      user: null,
+      user: "",
       text: "",
       name: "",
       email: "",
       phone: "",
       ava: null,
-      logged: "true",
+      logged: true,
+      flexin: false,
     };
   }
-  logOut() {
-    firebaseApp
-      .auth()
-      .signOut()
-      .then(function () {
-        Alert.alert("", "You have signed out ", [
-          {
-            text: "OK",
-            onPress: () => this.props.navigation.navigate("SignIn"),
+  logOut = async () => {
+    try {
+      await firebaseApp.auth().signOut();
+      Alert.alert("", "You have signed out ", [
+        {
+          text: "OK",
+          onPress: () => {
+            //console.log("log out");
+            this.props.navigation.replace("ProfileScreen");
+            this.props.navigation.navigate("SignIn");
           },
-        ]);
-        this.setState({
-          logged: "false",
-        });
-      })
-      .catch(function (error) {
-        // An error happened.
-      });
-  }
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   onClickBtn() {
     this.props.navigation.navigate("EditAccount");
     this.props.navigation.setOptions({});
   }
   onPressButton(screen) {
     this.props.navigation.navigate(screen);
-    this.props.navigation.setOptions({
-      headerTitle: "Đăng ký",
-    });
+    this.props.navigation.setOptions({});
   }
   onClickBtnSI() {
     this.props.navigation.navigate("SignIn");
-    this.props.navigation.setOptions({
-      headerTitle: "Đăng nhập",
-    });
+    this.props.navigation.setOptions({});
   }
+
+  //USELESS - Không ảnh hưởng render
+
+  // componentWillMount = async () => {
+  //   this.itemRef1 = await firebaseApp.auth().currentUser;
+  //   let user = await this.itemRef1;
+  //   await this.setState({ name, email, phone, ava, user });
+  //   await console.log(user, "haha chưa lấy được");
+  // };
+
   componentDidMount = async () => {
-    const itemRef = firebaseApp.database().ref("user").child("user1");
-    this.itemRef1 = firebaseApp.auth().currentUser;
+    this.itemRef1 = await firebaseApp.auth().currentUser;
+    await console.log(this.itemRef1);
+    const userGet = await this.itemRef1;
+    let user = userGet;
+
+    //console.log(this.itemRef1);
+    const itemRef = await firebaseApp.database().ref("user").child(user.uid);
 
     const snapshot = await itemRef.child("name").once("value");
     const snapshot1 = await itemRef.child("email").once("value");
@@ -76,160 +88,198 @@ export default class ProfileScreen extends Component {
     let email = snapshot1.val();
     let phone = snapshot2.val();
     let ava = snapshot3.val();
-    let user = this.itemRef1;
-    this.setState({ name, email, phone, ava, user });
+
+    await this.setState({ name, email, phone, ava, user });
+    //await console.log(user, "USER LOG NÈ");
+
+    if (user === null) {
+      //console.log("NULL NULL NULL NULL NULL");
+      this.setState({ logged: false });
+    }
   };
   render() {
-    const { name, email, phone, ava, user } = this.state;
+    const { name, email, phone, ava, user, logged } = this.state;
     return (
       <View style={styles.container}>
-        {/*SWITCH CASE DỰA VÀO CURRENT USER */}
         {(() => {
-          console.log(user);
-          switch (user) {
-            case null:
+          switch (this.state.flexin) {
+            case false:
+              setTimeout(
+                function () {
+                  this.setState({ flexin: "true" });
+                }.bind(this),
+                2000
+              );
+              return <ActivityIndicator size="large" color="#0000ff" />;
+
+            default:
               return (
-                // {/* NẾU CHƯA ĐĂNG NHẬP */}
-                <View style={styles.container}>
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 50,
-                      marginBottom: 50,
-                      marginLeft: 40,
-                    }}
-                  >
-                    You haven't yet signed in !
-                  </Text>
-                  <View style={styles.btnContainer}>
-                    {/* <TouchableOpacity
+                <View>
+                  {/*SWITCH CASE DỰA VÀO CURRENT USER */}
+                  {(() => {
+                    //console.log(user);
+                    switch (logged) {
+                      case false:
+                        //console.log(logged);
+                        //console.log("Chưa đăng nhập nha");
+                        return (
+                          // {/* NẾU CHƯA ĐĂNG NHẬP */}
+                          <View style={styles.container}>
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: 50,
+                                marginBottom: 50,
+                                marginLeft: 40,
+                              }}
+                            >
+                              You haven't yet signed in !
+                            </Text>
+                            <View style={styles.btnContainer}>
+                              {/* <TouchableOpacity
           style={styles.btn}
           onPress={() => this.onClickBtnSI()}
         >
           <Text style={styles.txt}>Sign In</Text>
         </TouchableOpacity> */}
 
-                    <TouchableOpacity
-                      style={styles.btn}
-                      onPress={() => this.onPressButton("SignUp")}
-                    >
-                      <Text style={styles.txt}>Sign Up</Text>
-                    </TouchableOpacity>
+                              <TouchableOpacity
+                                style={styles.btn}
+                                onPress={() => this.onPressButton("SignUp")}
+                              >
+                                <Text style={styles.txt}>Sign Up</Text>
+                              </TouchableOpacity>
 
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        top: 10,
-                        alignSelf: "center",
-                      }}
-                    >
-                      <Text style={{ color: "gray", fontSize: 12 }}>
-                        Already have an account?{" "}
-                      </Text>
-                      <TouchableOpacity
-                        style={{}}
-                        onPress={() => this.onClickBtnSI()}
-                      >
-                        <Text style={{ color: "#DB5823", fontSize: 12 }}>
-                          Sign In
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                  <View style={{ top: 40 }}>
-                    <TouchableOpacity
-                      style={styles.btn}
-                      onPress={() => this.onPressButton("Account")}
-                    >
-                      <Text style={{ color: "white" }}>Manage Profile</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                // {/*-----END-----*/}
-              );
-
-            default:
-              return (
-                //NẾU ĐÃ ĐĂNG NHẬP RỒI
-                <View style={styles.container2}>
-                  <View style={styles.avataArea}>
-                    <View style={styles.avataEdit}>
-                      {(() => {
-                        switch (ava) {
-                          case null:
-                            return (
-                              <Image
-                                style={styles.tinyLogo}
-                                source={{
-                                  uri:
-                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  top: 10,
+                                  alignSelf: "center",
                                 }}
-                              />
-                            );
-
-                          default:
-                            return (
-                              <Image
-                                style={styles.tinyLogo}
-                                source={{ uri: ava }}
-                              />
-                            );
-                        }
-                      })()}
-                    </View>
-                  </View>
-                  <View style={styles.infArea}>
-                    <View style={styles.titleInf}>
-                      <Text style={styles.textName}>{name}</Text>
-                    </View>
-
-                    <View style={styles.infEdit}>
-                      <View style={styles.txtInf}>
-                        {/* <Ionicons name="ios-mail" size={15} color="black" /> */}
-                        <Text style={(styles.txt1, { color: "black" })}>
-                          Email: {email}
-                        </Text>
-                      </View>
-
-                      <View style={styles.txtInf}>
-                        {/* <Feather name="phone" size={15} color="black" /> */}
-                        <Text style={styles.txt1}>Phone number : {phone}</Text>
-                      </View>
-                    </View>
-
-                    <View style={{marginTop:50,}}>
-                      <View style={styles.bntEdit}>
-                        <TouchableOpacity
-                          style={styles.btnEditPro}
-                          onPress={() => this.onClickBtn()}
-                        >
-                          <Text style={styles.txtEdit}>Edit you profile</Text>
-                          <View>
-                            <FontAwesome
-                              name="pencil"
-                              size={12}
-                              color="white"
-                            />
+                              >
+                                <Text style={{ color: "gray", fontSize: 12 }}>
+                                  Already have an account?{" "}
+                                </Text>
+                                <TouchableOpacity
+                                  style={{}}
+                                  onPress={() => this.onClickBtnSI()}
+                                >
+                                  <Text
+                                    style={{ color: "#DB5823", fontSize: 12 }}
+                                  >
+                                    Sign In
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                            <View style={{ top: 40 }}>
+                              <TouchableOpacity
+                                style={styles.btn}
+                                onPress={() => this.onPressButton("Account")}
+                              >
+                                <Text style={{ color: "white" }}>
+                                  Manage Profile
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
                           </View>
-                        </TouchableOpacity>
-                      </View>
 
-                      <View style={styles.bntEdit}>
-                        <TouchableOpacity
-                          style={styles.btnEditPro}
-                          onPress={() => this.logOut()}
-                        >
-                          <Text style={styles.txtEdit}>Log Out</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.footter}>
-                    <ScrollView style={styles.imgArea}>
-                      <Text></Text>
-                    </ScrollView>
-                  </View>
+                          // {/*-----END-----*/}
+                        );
+
+                      default:
+                        //console.log("HẾT NULL RỒI");
+                        return (
+                          //NẾU ĐÃ ĐĂNG NHẬP RỒI
+                          <View style={styles.container2}>
+                            <View></View>
+                            <View style={styles.avataArea}>
+                              <View style={styles.avataEdit}>
+                                {(() => {
+                                  switch (ava) {
+                                    case null:
+                                      return (
+                                        <Image
+                                          style={styles.tinyLogo}
+                                          source={{
+                                            uri:
+                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                                          }}
+                                        />
+                                      );
+
+                                    default:
+                                      return (
+                                        <Image
+                                          style={styles.tinyLogo}
+                                          source={{ uri: ava }}
+                                        />
+                                      );
+                                  }
+                                })()}
+                              </View>
+                            </View>
+                            <View style={styles.infArea}>
+                              <View style={styles.titleInf}>
+                                <Text style={styles.textName}>{name}</Text>
+                              </View>
+
+                              <View style={styles.infEdit}>
+                                <View style={styles.txtInf}>
+                                  {/* <Ionicons name="ios-mail" size={15} color="black" /> */}
+                                  <Text
+                                    style={(styles.txt1, { color: "black" })}
+                                  >
+                                    Email: {email}
+                                  </Text>
+                                </View>
+
+                                <View style={styles.txtInf}>
+                                  {/* <Feather name="phone" size={15} color="black" /> */}
+                                  <Text style={styles.txt1}>
+                                    Phone number : {phone}
+                                  </Text>
+                                </View>
+                              </View>
+
+                              <View style={{ marginTop: 0 }}>
+                                <View style={styles.bntEdit}>
+                                  <TouchableOpacity
+                                    style={styles.btnEditPro}
+                                    onPress={() => this.onClickBtn()}
+                                  >
+                                    <Text style={styles.txtEdit}>
+                                      Edit you profile
+                                    </Text>
+                                    <View>
+                                      <FontAwesome
+                                        name="pencil"
+                                        size={12}
+                                        color="white"
+                                      />
+                                    </View>
+                                  </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.bntEdit}>
+                                  <TouchableOpacity
+                                    style={styles.btnEditPro}
+                                    onPress={() => this.logOut()}
+                                  >
+                                    <Text style={styles.txtEdit}>Log Out</Text>
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                            </View>
+                            {/* <View style={styles.footter}>
+                             <ScrollView style={styles.imgArea}>
+                                <Text></Text>
+                              </ScrollView> 
+                            </View> */}
+                          </View>
+                        );
+                    }
+                  })()}
                 </View>
               );
           }
@@ -267,10 +317,10 @@ const styles = StyleSheet.create({
   },
   infEdit: {
     alignSelf: "flex-start",
-    marginTop: 10,
-    flex: 0.4,
+    marginTop: 70,
   },
   btnEditPro: {
+    marginBottom: -5,
     backgroundColor: "#DB5823",
     justifyContent: "center",
     alignItems: "center",
@@ -308,26 +358,26 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   avataArea: {
-    flex:0.5,
+    height: 100,
+    marginTop: 50,
+    marginBottom: -100,
   },
   infArea: {
-    top: 200,
-    backgroundColor: "#fafafa",
     alignItems: "center",
-
   },
   avataEdit: {
-    height: 102,
-    width: 102,
-    borderRadius: 51,
+    //flex:0.3,
+    //borderRadius: 51,
     justifyContent: "center",
     alignSelf: "center",
+    position: "absolute",
   },
 
   tinyLogo: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
+    position: "absolute",
+    height: 120,
+    width: 120,
+    borderRadius: 70,
     alignSelf: "center",
   },
   txt: {
@@ -337,17 +387,21 @@ const styles = StyleSheet.create({
     color: "black",
   },
   bntEdit: {
+    //flex:0.3,
     width: "80%",
-    marginTop: 50,
+    marginTop: 5,
     justifyContent: "center",
     alignItems: "center",
   },
   titleInf: {
     color: "orange",
-    flex: 0.5,
+    // flex: 0.2,
+    top: 70,
   },
-  container2:{
-    justifyContent:"center",
-    alignItems:"center"
-  }
+  container2: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    marginTop: -220,
+  },
 });
