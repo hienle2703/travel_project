@@ -178,7 +178,7 @@ export default class SignIn extends Component {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.card1}>
+          {/* <View style={styles.card1}>
               <TouchableOpacity
                 style={styles.btnBox}
                 onPress={() => this.GetUser()}
@@ -193,7 +193,7 @@ export default class SignIn extends Component {
                 Forgot your password?
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
     );

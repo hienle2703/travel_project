@@ -16,19 +16,38 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import * as firebase from "firebase";
+import { NavigationContainer } from "@react-navigation/native";
+import FriendMainScreen from "../../screens/ContactTab/FriendMainScreen";
+import { createStackNavigator } from "@react-navigation/stack";
 
+const item = firebase.auth().currentUser;
+
+const b = function onClickFriends(){
+  const ref = React.useRef(null);
+ 
+  console.log(ref)
+  return ref;
+  
+}
+
+// const a = onClickFriends() => {
+//   const ref = React.useRef(null);
+//   return ref;
+// }
 export default class ProfileScreen extends Component {
   constructor(props) {
     super(props);
     this.itemRef = firebaseApp.database();
+    this.itemRef1 = firebaseApp.auth().currentUser;
     this.state = {
-      user: "",
+      user: this.itemRef1,
+      //user: null,
       text: "",
       name: "",
       email: "",
       phone: "",
       ava: null,
-      logged: true,
+      logged: null,
       flexin: false,
     };
   }
@@ -62,24 +81,42 @@ export default class ProfileScreen extends Component {
     this.props.navigation.setOptions({});
   }
 
+  onClickFriends(){
+    this.props.navigation.navigate("FriendMainScreen");
+  }
+
   //USELESS - Không ảnh hưởng render
 
-  // componentWillMount = async () => {
-  //   this.itemRef1 = await firebaseApp.auth().currentUser;
-  //   let user = await this.itemRef1;
-  //   await this.setState({ name, email, phone, ava, user });
-  //   await console.log(user, "haha chưa lấy được");
-  // };
+  //   componentWillMount = async () => {
+  //     // await console.log("LIỆU THẰNG NÀY CÓ LOG ĐẦU TIÊN?")
+
+  //     this.itemRef1 = await firebaseApp.auth().currentUser;
+  //     // await console.log(itemRef1, "itemRef1 từ WilMount");
+  //     // let user = await this.itemRef1;
+  //     // this.setState({user})
+  //     // await console.log(user, "User từ WilMount");
+  // console.log(this.itemRef1, "itemRef1 từ WillMount")
+  //     if (this.itemRef1 !== null) {
+  //       //console.log("NULL NULL NULL NULL NULL");
+  //       await this.setState({ logged: true, flexin: true });
+
+  //       await console.log(this.state.logged, "logged từ WillMount nha mày ơi");
+  //     }
+  //   };
 
   componentDidMount = async () => {
-    this.itemRef1 = await firebaseApp.auth().currentUser;
-    await console.log(this.itemRef1);
-    const userGet = await this.itemRef1;
-    let user = userGet;
-
+    //this.itemRef1 = await firebaseApp.auth().currentUser;
+    //console.log(this.itemRef1, "itemRef1 lấy trên constructor")
+    // await console.log(this.itemRef1, "itemRef1 ĐÂY NÈ");
+    // const userGet = await this.itemRef1;
+    // let user = userGet;
+    // await console.log(user, "USER NÈ");
     //console.log(this.itemRef1);
-    const itemRef = await firebaseApp.database().ref("user").child(user.uid);
 
+    const itemRef = await firebaseApp
+      .database()
+      .ref("user")
+      .child(this.state.user.uid);
     const snapshot = await itemRef.child("name").once("value");
     const snapshot1 = await itemRef.child("email").once("value");
     const snapshot2 = await itemRef.child("phone").once("value");
@@ -89,15 +126,19 @@ export default class ProfileScreen extends Component {
     let phone = snapshot2.val();
     let ava = snapshot3.val();
 
-    await this.setState({ name, email, phone, ava, user });
-    //await console.log(user, "USER LOG NÈ");
-
-    if (user === null) {
+    if (itemRef !== null) {
       //console.log("NULL NULL NULL NULL NULL");
-      this.setState({ logged: false });
+      await this.setState({ logged: true, flexin: true });
+      //await console.log(this.itemRef1, "itemRef1 đây, lấy ra currentUser");
+      //await console.log(this.state.logged, "logged nè nha mày ơi");
     }
+
+    // await console.log(itemRef, "itemRef đây");
+    await this.setState({ name, email, phone, ava });
+    //await console.log(this.itemRef1, "itemRef1 đây, lấy ra currentUser");
   };
   render() {
+    const Stack = createStackNavigator();
     const { name, email, phone, ava, user, logged } = this.state;
     return (
       <View style={styles.container}>
@@ -108,9 +149,9 @@ export default class ProfileScreen extends Component {
                 function () {
                   this.setState({ flexin: "true" });
                 }.bind(this),
-                2000
+                3000
               );
-              return <ActivityIndicator size="large" color="#0000ff" />;
+              return <ActivityIndicator size="large" color="#DB5823" />;
 
             default:
               return (
@@ -119,9 +160,7 @@ export default class ProfileScreen extends Component {
                   {(() => {
                     //console.log(user);
                     switch (logged) {
-                      case false:
-                        //console.log(logged);
-                        //console.log("Chưa đăng nhập nha");
+                      case null:
                         return (
                           // {/* NẾU CHƯA ĐĂNG NHẬP */}
                           <View style={styles.container}>
@@ -172,7 +211,7 @@ export default class ProfileScreen extends Component {
                                 </TouchableOpacity>
                               </View>
                             </View>
-                            <View style={{ top: 40 }}>
+                            {/* <View style={{ top: 40 }}>
                               <TouchableOpacity
                                 style={styles.btn}
                                 onPress={() => this.onPressButton("Account")}
@@ -181,7 +220,7 @@ export default class ProfileScreen extends Component {
                                   Manage Profile
                                 </Text>
                               </TouchableOpacity>
-                            </View>
+                            </View> */}
                           </View>
 
                           // {/*-----END-----*/}
@@ -192,90 +231,306 @@ export default class ProfileScreen extends Component {
                         return (
                           //NẾU ĐÃ ĐĂNG NHẬP RỒI
                           <View style={styles.container2}>
-                            <View></View>
-                            <View style={styles.avataArea}>
-                              <View style={styles.avataEdit}>
-                                {(() => {
-                                  switch (ava) {
-                                    case null:
-                                      return (
+                            <ScrollView
+                              style={{ flexGrow: 1 }}
+                              showsVerticalScrollIndicator={false}
+                            >
+                              <View style={styles.avataArea}>
+                                <View style={styles.avataEdit}>
+                                  {(() => {
+                                    switch (ava) {
+                                      case null:
+                                        return (
+                                          <Image
+                                            style={styles.tinyLogo}
+                                            source={{
+                                              uri:
+                                                "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                                            }}
+                                          />
+                                        );
+
+                                      default:
+                                        return (
+                                          <Image
+                                            style={styles.tinyLogo}
+                                            source={{ uri: ava }}
+                                          />
+                                        );
+                                    }
+                                  })()}
+                                </View>
+                              </View>
+                              <View style={styles.infArea}>
+                                <View style={styles.titleInf}>
+                                  <Text style={styles.textName}>{name}</Text>
+                                </View>
+
+                                {/* <View style={styles.infEdit}>
+                                  <View style={styles.txtInf}>
+                                    <Ionicons name="ios-mail" size={15} color="black" />
+                                    <Text
+                                      style={(styles.txt1, { color: "black" })}
+                                    >
+                                      Email: {email}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.txtInf}>
+                                    <Feather name="phone" size={15} color="black" />
+                                    <Text style={styles.txt1}>
+                                      Phone number : {phone}
+                                    </Text>
+                                  </View>
+                                </View> */}
+
+                                <View
+                                  style={{ marginTop: 10, marginBottom: 10 }}
+                                >
+                                  <View style={styles.bntEdit}>
+                                    <TouchableOpacity
+                                      style={styles.btnEditPro}
+                                      onPress={() => this.onClickBtn()}
+                                    >
+                                      <Text style={styles.txtEdit}>
+                                        Edit you profile
+                                      </Text>
+                                      <View>
+                                        <FontAwesome
+                                          name="pencil"
+                                          size={12}
+                                          color="white"
+                                        />
+                                      </View>
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
+                                <View
+                                  style={{ marginTop: 0, marginBottom: 20 }}
+                                >
+                                  <View style={styles.bntEdit}>
+                                    <TouchableOpacity
+                                      style={styles.btnLogOut}
+                                      onPress={() => this.logOut()}
+                                    >
+                                      <Text style={styles.txtEdit}>
+                                        Log Out
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
+
+                                <View style={styles.contentBtn}>
+                                  <View>
+                                    <TouchableOpacity
+                                      style={styles.contentBox1}
+                                    >
+                                      <View
+                                        style={{
+                                          height: 30,
+                                          width: 30,
+                                          borderRadius: 30,
+                                          top: 10,
+                                          left: 15,
+                                        }}
+                                      >
                                         <Image
-                                          style={styles.tinyLogo}
+                                          style={{
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 30,
+                                          }}
                                           source={{
                                             uri:
-                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                                              "https://www.kindpng.com/picc/m/382-3825510_flat-people-icon-png-transparent-png.png",
                                           }}
                                         />
-                                      );
+                                      </View>
+                                      <View style={{ left: 15, top: 12 }}>
+                                        <Text style={{ fontWeight: "bold" }}>
+                                          Group
+                                        </Text>
+                                        <Text
+                                          style={{
+                                            fontWeight: "bold",
+                                            color: "#DB5823",
+                                          }}
+                                        >
+                                          9 news
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
 
-                                    default:
-                                      return (
+                                    <TouchableOpacity style={styles.contentBox}>
+                                      <View
+                                        style={{
+                                          height: 30,
+                                          width: 30,
+                                          borderRadius: 30,
+                                          top: 10,
+                                          left: 15,
+                                        }}
+                                      >
                                         <Image
-                                          style={styles.tinyLogo}
-                                          source={{ uri: ava }}
+                                          style={{
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 30,
+                                          }}
+                                          source={{
+                                            uri:
+                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQSYlqJMwYKhgozsoE3e9fMaRfSLl3DzcEAm3Tgbwl8-_aoGcBw&usqp=CAU",
+                                          }}
                                         />
-                                      );
-                                  }
-                                })()}
-                              </View>
-                            </View>
-                            <View style={styles.infArea}>
-                              <View style={styles.titleInf}>
-                                <Text style={styles.textName}>{name}</Text>
-                              </View>
+                                      </View>
+                                      <View style={{ left: 15, top: 12 }}>
+                                        <Text style={{ fontWeight: "bold" }}>
+                                          My Trips
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
 
-                              <View style={styles.infEdit}>
-                                <View style={styles.txtInf}>
-                                  {/* <Ionicons name="ios-mail" size={15} color="black" /> */}
-                                  <Text
-                                    style={(styles.txt1, { color: "black" })}
-                                  >
-                                    Email: {email}
-                                  </Text>
-                                </View>
+                                    <TouchableOpacity style={styles.contentBox}>
+                                      <View
+                                        style={{
+                                          height: 30,
+                                          width: 30,
+                                          borderRadius: 30,
+                                          top: 10,
+                                          left: 15,
+                                        }}
+                                      >
+                                        <Image
+                                          style={{
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 30,
+                                          }}
+                                          source={{
+                                            uri:
+                                              "https://www.freepngimg.com/thumb/map/66960-maps-google-computer-icons-free-png-hq.png",
+                                          }}
+                                        />
+                                      </View>
+                                      <View style={{ left: 15, top: 12 }}>
+                                        <Text style={{ fontWeight: "bold" }}>
+                                          Near Trips
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  </View>
 
-                                <View style={styles.txtInf}>
-                                  {/* <Feather name="phone" size={15} color="black" /> */}
-                                  <Text style={styles.txt1}>
-                                    Phone number : {phone}
-                                  </Text>
-                                </View>
-                              </View>
-
-                              <View style={{ marginTop: 0 }}>
-                                <View style={styles.bntEdit}>
-                                  <TouchableOpacity
-                                    style={styles.btnEditPro}
-                                    onPress={() => this.onClickBtn()}
-                                  >
-                                    <Text style={styles.txtEdit}>
-                                      Edit you profile
-                                    </Text>
-                                    <View>
-                                      <FontAwesome
-                                        name="pencil"
-                                        size={12}
-                                        color="white"
+                                  {/* TEST NAVIGATION CONTAINER */}
+                                  {/* <NavigationContainer ref={b.ref} independent={true}>
+                                    
+                                    <Stack.Navigator initialRouteName="Empty">
+                                      <Stack.Screen
+                                        name="FriendMainScreen"
+                                        component={FriendMainScreen}
                                       />
-                                    </View>
-                                  </TouchableOpacity>
-                                </View>
+                                    </Stack.Navigator>
+                                  </NavigationContainer> */}
+                                  <View>
+                                    {/* Button quản lý bạn bè */}
+                                    <TouchableOpacity
+                                      style={styles.contentBox}
+                                     onPress={() => this.onClickFriends()} 
+                                      //onPress={()=> console.log(b)}
+                                    >
+                                      <View
+                                        style={{
+                                          height: 30,
+                                          width: 30,
+                                          borderRadius: 30,
+                                          top: 10,
+                                          left: 15,
+                                        }}
+                                      >
+                                        <Image
+                                          style={{
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 30,
+                                          }}
+                                          source={{
+                                            uri:
+                                              "https://cdn3.iconfinder.com/data/icons/internet-flat-icons-vol-1/256/42-512.png",
+                                          }}
+                                        />
+                                      </View>
+                                      <View style={{ left: 15, top: 12 }}>
+                                        <Text style={{ fontWeight: "bold" }}>
+                                          Friends
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
 
-                                <View style={styles.bntEdit}>
-                                  <TouchableOpacity
-                                    style={styles.btnEditPro}
-                                    onPress={() => this.logOut()}
-                                  >
-                                    <Text style={styles.txtEdit}>Log Out</Text>
-                                  </TouchableOpacity>
+                                    {/* Button Bài viết của tôi */}
+                                    <TouchableOpacity style={styles.contentBox}>
+                                      <View
+                                        style={{
+                                          height: 30,
+                                          width: 30,
+                                          borderRadius: 30,
+                                          top: 10,
+                                          left: 15,
+                                        }}
+                                      >
+                                        <Image
+                                          style={{
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 30,
+                                          }}
+                                          source={{
+                                            uri:
+                                              "https://i.ya-webdesign.com/images/transparent-clipboard-flat-1.png",
+                                          }}
+                                        />
+                                      </View>
+                                      <View style={{ left: 15, top: 12 }}>
+                                        <Text style={{ fontWeight: "bold" }}>
+                                          My Posts
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.contentBox}>
+                                      <View
+                                        style={{
+                                          height: 30,
+                                          width: 30,
+                                          borderRadius: 30,
+                                          top: 10,
+                                          left: 15,
+                                        }}
+                                      >
+                                        <Image
+                                          style={{
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 30,
+                                          }}
+                                          source={{
+                                            uri:
+                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRUqDrJd2bbDnjchbWE581SAtjvm3Bfs0_6mYs41-7G2mzrDNeX&usqp=CAU",
+                                          }}
+                                        />
+                                      </View>
+                                      <View style={{ left: 15, top: 12 }}>
+                                        <Text style={{ fontWeight: "bold" }}>
+                                          Feeling Lucky
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  </View>
                                 </View>
                               </View>
-                            </View>
-                            {/* <View style={styles.footter}>
+                              {/* <View style={styles.footter}>
                              <ScrollView style={styles.imgArea}>
                                 <Text></Text>
                               </ScrollView> 
                             </View> */}
+                            </ScrollView>
                           </View>
                         );
                     }
@@ -337,6 +592,24 @@ const styles = StyleSheet.create({
     },
     elevation: 1,
   },
+  btnLogOut: {
+    marginBottom: -5,
+    backgroundColor: "#DB5823",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    width: 300,
+    height: 30,
+    flexDirection: "row",
+    marginTop: 10,
+    shadowColor: "gray",
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    elevation: 1,
+  },
   btn: {
     backgroundColor: "#DB5823",
     color: "white",
@@ -359,7 +632,7 @@ const styles = StyleSheet.create({
   },
   avataArea: {
     height: 100,
-    marginTop: 50,
+    margin: 80,
     marginBottom: -100,
   },
   infArea: {
@@ -397,11 +670,56 @@ const styles = StyleSheet.create({
     color: "orange",
     // flex: 0.2,
     top: 70,
+    height: 100,
+    bottom: 30,
   },
   container2: {
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
-    marginTop: -220,
+    marginTop: 10,
+  },
+  //màu facebook: #177DEE
+  contentBtn: {
+    height: 310,
+    marginTop: 7,
+    borderRadius: 20,
+    width: "100%",
+    flexDirection: "row",
+    backgroundColor: "#DB5823",
+  },
+  contentBox: {
+    height: 80,
+    width: 135,
+    backgroundColor: "#EEEEEE",
+    borderRadius: 20,
+    marginTop: 10,
+    marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  contentBox1: {
+    height: 110,
+    width: 135,
+    backgroundColor: "#EEEEEE",
+    borderRadius: 20,
+    marginTop: 10,
+    marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
 });

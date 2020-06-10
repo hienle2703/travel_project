@@ -47,6 +47,7 @@ import EditAccount from "../screens/ProfileTab/EditAccount";
 import createFeedScreen from "../screens/FeedTab/createFeedScreen";
 import createGroupScreen from "../screens/ManageTab/createGroup";
 
+import FriendMainScreen from "../screens/ContactTab/FriendMainScreen";
 //Phần của Luân
 // function feedStack({ navigation }) {
 //   return (
@@ -83,9 +84,16 @@ import createGroupScreen from "../screens/ManageTab/createGroup";
 // }
 const Stack = createStackNavigator();
 
-
+function FriendStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="FriendMainScreen" component={FriendMainScreen} />
+    </Stack.Navigator>
+  );
+}
 function ProfileStack() {
-  
   return (
     <Stack.Navigator
       initialRouteName={ProfileScreen}

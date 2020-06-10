@@ -63,7 +63,8 @@ export default class EditAccount extends Component {
       email: "",
       phone: "",
       ava: null,
-      user:"",
+      user: "",
+      flexin: false,
     };
   }
   componentDidMount = async () => {
@@ -85,16 +86,17 @@ export default class EditAccount extends Component {
     let phone = snapshot2.val();
     let ava = snapshot3.val();
 
-    
     await this.setState({ name, email, phone, ava, user });
   };
   //nếu dùng push thì nó sẽ sinh thêm id bên ngoài
   //set là nó làm lại cái class
   //update là để update =))
   setDB() {
-    const {user} = this.state;
-    this.itemRef.ref("user").child(user.uid)
-    
+    const { user } = this.state;
+    this.itemRef
+      .ref("user")
+      .child(user.uid)
+
       .update({
         email: this.state.email,
         name: this.state.name,
@@ -121,7 +123,7 @@ export default class EditAccount extends Component {
 
   selectPicture = async () => {
     this.setState({ ava: "" });
-    const {user} = this.state;
+    const { user } = this.state;
     await Permissions.askAsync(Permissions.CAMERA_ROLL);
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -143,7 +145,7 @@ export default class EditAccount extends Component {
   };
   takePicture = async () => {
     this.setState({ ava: "" });
-    const {user} = this.state;
+    const { user } = this.state;
     await Permissions.askAsync(Permissions.CAMERA);
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: false,
@@ -177,42 +179,65 @@ export default class EditAccount extends Component {
     const { image } = this.state;
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          {/* <Image style={styles.bgImage} source={{uri: 'https://placeimg.com/140/140/any',}}/> */}
-        </View>
-        <View style={styles.avataArea}>
-          <View style={styles.avataEdit}>
-            {(() => {
-              switch (this.state.ava) {
-                case null:
-                  //console.log(this.state.ava, "Ava coi có chưa nè")
-                  return (
-                    <Image
-                      style={styles.avata}
-                      source={{
-                        uri:
-                          "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
-                      }}
-                    />
-                  );
+        {(() => {
+          switch (this.state.flexin) {
+            case false:
+              setTimeout(
+                function () {
+                  this.setState({ flexin: "true" });
+                }.bind(this),
+                1000
+              );
+              return (
+                <View style={{justifyContent:"center",alignItems:'center',top:300,}}>
+                  <ActivityIndicator size="large" color="#DB5823" />
+                </View>
+              );
 
-                case "":
-                  return <ActivityIndicator />;
+            default:
+              return (
+                <View style={styles.container}>
+                  <View style={styles.header}>
+                    {/* <Image style={styles.bgImage} source={{uri: 'https://placeimg.com/140/140/any',}}/> */}
+                  </View>
+                  <View style={styles.avataArea}>
+                    <View style={styles.avataEdit}>
+                      {(() => {
+                        switch (this.state.ava) {
+                          case null:
+                            //console.log(this.state.ava, "Ava coi có chưa nè")
+                            return (
+                              <Image
+                                style={styles.avata}
+                                source={{
+                                  uri:
+                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                                }}
+                              />
+                            );
 
-                default:
-                  console.log(this.state.ava, "Địa chỉ hình ảnh nè nha");
-                  return (
-                    <Image
-                      style={styles.avata}
-                      source={{ uri: this.state.ava }}
-                    />
-                  );
-              }
-            })()}
-          </View>
-        </View>
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {/* {(() => {
+                          case "":
+                            return <ActivityIndicator />;
+
+                          default:
+                            console.log(
+                              this.state.ava,
+                              "Địa chỉ hình ảnh nè nha"
+                            );
+                            return (
+                              <Image
+                                style={styles.avata}
+                                source={{ uri: this.state.ava }}
+                              />
+                            );
+                        }
+                      })()}
+                    </View>
+                  </View>
+                  <View
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                  >
+                    {/* {(() => {
             switch (this.state.image) {
               case null:
                 return null;
@@ -227,49 +252,53 @@ export default class EditAccount extends Component {
             }
           }) ()
           } */}
-          <TouchableOpacity onPress={this.selectPicture}>
-            <Text style={{ color: "gray" }}>Change your avatar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.takePicture}>
-            <Text style={{ color: "gray" }}>Take a picture</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.infArea}>
-          <View style={styles.card}>
-            <Text style={styles.txtCard}>User Name</Text>
-            <TextInput
-              value={this.state.name}
-              onChangeText={(name) => this.setState({ name })}
-              style={styles.inputBox}
-            ></TextInput>
-          </View>
-          <View style={styles.card}>
-            <Text style={styles.txtCard}>Email</Text>
-            <TextInput
-              value={this.state.email}
-              onChangeText={(email) => this.setState({ email })}
-              style={styles.inputBox}
-            ></TextInput>
-          </View>
-          <View style={styles.card}>
-            <Text style={styles.txtCard}>Phone</Text>
-            <TextInput
-              value={this.state.phone}
-              onChangeText={(phone) => this.setState({ phone })}
-              style={styles.inputBox}
-            ></TextInput>
-          </View>
-          <View style={styles.card}>
-            <TouchableOpacity
-              style={styles.btnBox}
-              onPress={() => {
-                this.setDB();
-              }}
-            >
-              <Text style={styles.btnSubmit}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+                    <TouchableOpacity onPress={this.selectPicture}>
+                      <Text style={{ color: "gray" }}>Change your avatar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.takePicture}>
+                      <Text style={{ color: "gray" }}>Take a picture</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.infArea}>
+                    <View style={styles.card}>
+                      <Text style={styles.txtCard}>User Name</Text>
+                      <TextInput
+                        value={this.state.name}
+                        onChangeText={(name) => this.setState({ name })}
+                        style={styles.inputBox}
+                      ></TextInput>
+                    </View>
+                    <View style={styles.card}>
+                      <Text style={styles.txtCard}>Email</Text>
+                      <TextInput
+                        value={this.state.email}
+                        onChangeText={(email) => this.setState({ email })}
+                        style={styles.inputBox}
+                      ></TextInput>
+                    </View>
+                    <View style={styles.card}>
+                      <Text style={styles.txtCard}>Phone</Text>
+                      <TextInput
+                        value={this.state.phone}
+                        onChangeText={(phone) => this.setState({ phone })}
+                        style={styles.inputBox}
+                      ></TextInput>
+                    </View>
+                    <View style={styles.card}>
+                      <TouchableOpacity
+                        style={styles.btnBox}
+                        onPress={() => {
+                          this.setDB();
+                        }}
+                      >
+                        <Text style={styles.btnSubmit}>Save</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              );
+          }
+        })()}
       </View>
     );
   }
@@ -343,6 +372,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
 });
