@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
-    marginTop: 10,
+    marginTop: 30,
   },
   //màu facebook: #177DEE
   contentBtn: {
