@@ -84,7 +84,12 @@ export default class ProfileScreen extends Component {
   onClickFriends(){
     this.props.navigation.navigate("FriendMainScreen");
   }
-
+  onClickSchedule(){
+    this.props.navigation.navigate("Schedule");
+  }
+  onClickPost(){
+    this.props.navigation.navigate("PostAll")
+  }
   //USELESS - Không ảnh hưởng render
 
   //   componentWillMount = async () => {
@@ -361,7 +366,7 @@ export default class ProfileScreen extends Component {
                                       </View>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity style={styles.contentBox}>
+                                    <TouchableOpacity style={styles.contentBox} onPress={()=>this.onClickSchedule()}>
                                       <View
                                         style={{
                                           height: 30,
@@ -466,7 +471,7 @@ export default class ProfileScreen extends Component {
                                     </TouchableOpacity>
 
                                     {/* Button Bài viết của tôi */}
-                                    <TouchableOpacity style={styles.contentBox}>
+                                    <TouchableOpacity style={styles.contentBox} onPress={()=> this.onClickPost()}>
                                       <View
                                         style={{
                                           height: 30,

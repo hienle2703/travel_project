@@ -12,6 +12,7 @@ import {
   TextInput,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
 import FeedItem from "../../components/FeedItem";
 import { MonoText } from "../../components/StyledText";
 import { Entypo } from "@expo/vector-icons";
@@ -20,6 +21,64 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import Constants from "expo-constants";
 
+const postData = [
+  {
+    id: 1,
+    name: "Đà Lạt Trips",
+    author: "Hien Le",
+    day: "3",
+    points: "HCM - Da Lat, Lam Dong",
+    imgSource:
+      "https://wikidulich.org/wp-content/uploads/2018/08/Ngu%E1%BB%93n-g%E1%BB%91c-c%C3%A1i-t%C3%AAn-%C4%90%C3%A0-L%E1%BA%A1t.jpg",
+    view: "102",
+    comment: "10",
+  },
+  {
+    id: 2,
+    name: "Đi Vũng Tàu nào",
+    author: "Ngoc Thien",
+    day: "3",
+    points: "HCM - Ba Ria, Vung Tau",
+    imgSource:
+      "https://media.baodautu.vn/Images/phongvien/2018/08/25/festival-bien-ba-ria---vung-tau-se-duoc-to-chuc-tu-ngay-288-den-3920181535178310.jpg",
+    view: "12",
+    comment: "1",
+  },
+  {
+    id: 3,
+    name: "Hít Hà",
+    author: "Nam Tran",
+    day: "3",
+    points: "Vinh Long - HCM",
+    imgSource:
+      "https://d3jyiu4jpn0ihr.cloudfront.net/wp-content/uploads/sites/6/20190918160006/ve-may-bay-di-sai-gon1.jpg",
+    view: "23",
+    comment: "2",
+  },
+  {
+    id: 4,
+    name: "Chiếc du lịch nhỏ xinh",
+    author: "Huy Le",
+    day: "3",
+    points: "HCM - Da Nang",
+    imgSource:
+      "https://travel.com.vn/Images/destination/tf_190311041030_727050.jpg",
+    view: "300",
+    comment: "21",
+  },
+  {
+    id: 5,
+    name: "Abacaxibala",
+    author: "Anh Tuyet",
+    day: "3",
+    points: "HCM - Bao Loc",
+    imgSource:
+      "https://lh3.googleusercontent.com/proxy/icLRnyEaQgnCk7PPoTVB2PhjkAHUeqeKXZZ8mX6JqmmqH1Mdrykx4SIzSfRYZ-dZMjpz8q8Ec-XHcqG_yp08CFKzqi6RCUy2Kh1wZaSPTRg54e1fnlYUKMQbqtQOwPxB2y-l_n2I4advtMuU0WrVR78CkUlA7zDxqVPFjr4w4uVAGPj85jVoPFe6ytsEWVi5Rfd4JacMD4GhcOPakA8AcMf3o_FXRlvymfChl0D35cidwvN5shVgvYg",
+    view: "63",
+    comment: "22",
+  },
+  
+];
 export default class FeedScreen extends Component {
   state = {
     isLoading: true,
@@ -35,7 +94,7 @@ export default class FeedScreen extends Component {
       headerTitle: "Trang chi tiết",
     });
   }
-  onClickWritePost(){
+  onClickWritePost() {
     this.props.navigation.navigate("createFeedScreen");
     this.props.navigation.setOptions({
       headerTitle: "Viết bài",
@@ -220,51 +279,80 @@ export default class FeedScreen extends Component {
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                     Feed of interesting trips
                   </Text>
-
-                  <TouchableOpacity onPress={() => this.onClickDetail()}>
-                    <View style={styles.feedCard}>
-                      <View>
-                        <Image
-                          style={{
-                            height: "100%",
-                            width: 160,
-                            borderRadius: 20,
-                          }}
-                          source={require("../../assets/images/imgHero.jpg")}
-                        />
-                      </View>
-                      <View style={styles.feedTxt}>
-                        <Text style={{ color: "#DB5823", fontWeight: "bold" }}>
-                          ĐÀ LẠT TRIP
-                        </Text>
-                        <Text style={{ fontSize: 12, color: "gray" }}>
-                          Author: Hien Le
-                        </Text>
-
-                        <View
-                          style={{ flexDirection: "row", right: 10, top: 10 }}
-                        >
-                          <View style={{ flexDirection: "row" }}>
-                            <Text style={{ fontSize: 12, color: "gray" }}>
-                              102{" "}
-                            </Text>
-                            <Ionicons name="md-eye" size={15} color="gray" />
-                          </View>
-
-                          <View style={{ flexDirection: "row", left: 10 }}>
-                            <Text style={{ fontSize: 12, color: "gray" }}>
-                              5{" "}
-                            </Text>
-                            <FontAwesome
-                              name="comment-o"
-                              size={15}
-                              color="gray"
+                  {postData.map((item) => {
+                    return (
+                      <TouchableOpacity onPress={() => this.onClickDetail()} style={{marginBottom:20,}}>
+                        <View style={styles.feedCard}>
+                          <View>
+                            <Image
+                              style={{
+                                height: "100%",
+                                width: 160,
+                                borderRadius: 20,
+                              }}
+                              source={{uri: item.imgSource}}
                             />
                           </View>
+                          <View style={styles.feedTxt}>
+                            <Text
+                              style={{ color: "#DB5823", fontWeight: "bold",}}
+                            >
+                              {item.name}
+                            </Text>
+                            <Text style={{ fontSize: 12, color: "gray" }}>
+                              {item.author}
+                            </Text>
+                            <Text style={{ fontSize: 12, color: "gray" }}>
+                              {item.points}
+                            </Text>
+                            <Text style={{ fontSize: 12, color: "gray" }}>
+                              {item.day} Days
+                            </Text>
+                            {/* Rating */}
+                            <View
+                              style={{ marginTop: 35, flexDirection: "row" }}
+                            >
+                              <AntDesign name="staro" size={15} color="black" />
+                              <AntDesign name="staro" size={15} color="black" />
+                              <AntDesign name="staro" size={15} color="black" />
+                              <AntDesign name="staro" size={15} color="black" />
+                              <AntDesign name="staro" size={15} color="black" />
+                            </View>
+
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                right: 10,
+                                left: 2,
+                              }}
+                            >
+                              <View style={{ flexDirection: "row", marginBottom:10,}}>
+                                <Text style={{ fontSize: 12, color: "gray" }}>
+                                  {item.view} {" "}
+                                </Text>
+                                <Ionicons
+                                  name="md-eye"
+                                  size={15}
+                                  color="gray"
+                                />
+                              </View>
+
+                              <View style={{ flexDirection: "row", left: 10 }}>
+                                <Text style={{ fontSize: 12, color: "gray" }}>
+                                  {item.comment} {" "}
+                                </Text>
+                                <FontAwesome
+                                  name="comment-o"
+                                  size={15}
+                                  color="gray"
+                                />
+                              </View>
+                            </View>
+                          </View>
                         </View>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
               </View>
             </View>
@@ -314,7 +402,7 @@ const styles = StyleSheet.create({
     top: 10,
   },
   body: {
-    height: 1000,
+    //height: 1000,
   },
   ads: {
     alignItems: "center",
@@ -342,8 +430,9 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   feedList: {
-    height: 600,
+    //height: 600,
     width: "90%",
+    marginBottom:90,
   },
   feedCard: {
     height: 150,
@@ -362,8 +451,11 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   feedTxt: {
-    justifyContent: "center",
-    alignItems: "flex-end",
-    left: 40,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    left: 10,
+    top: 10,
+    width:150,
+    height:100,
   },
 });

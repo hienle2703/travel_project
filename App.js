@@ -7,6 +7,8 @@ import useCachedResources from "./hooks/useCachedResources";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import LinkingConfiguration from "./navigation/LinkingConfiguration";
 import FriendMainScreen from "./screens/ContactTab/FriendMainScreen";
+import FriendAll from "./screens/ContactTab/FriendAll"
+import PostAll from "./screens/PostTab/PostAll"
 
 function isLoadingComplete() {
   const { isLoadingComplete } = useCachedResources();
@@ -35,6 +37,9 @@ export default class App extends Component {
                 component={BottomTabNavigator}
               />
               <Stack.Screen name="FriendMainScreen" options={{ headerShown: false }} component={FriendMainScreen} />
+              <Stack.Screen name="FriendAll" options={{ headerShown: false }} component={FriendAll} />
+
+              <Stack.Screen name="PostAll" options={{ headerShown: false }} component={PostAll} />
             </Stack.Navigator>
           </NavigationContainer>
           {/* <Text>App.js</Text> */}

@@ -100,7 +100,7 @@ export default class FriendMainScreen extends Component {
               </View>
             </View>
             <View style={styles.btnFriendList}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>this.props.navigation.navigate("FriendAll")}>
                 <Text>Friend List</Text>
               </TouchableOpacity>
             </View>

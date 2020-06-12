@@ -105,7 +105,7 @@ export default class EditAccount extends Component {
       })
       .then(() => {
         Alert.alert("Success");
-        this.props.navigation.navigate("ProfileScreen");
+        this.props.navigation.replace("ProfileScreen");
       });
   }
   // selectPicture = async () => {
