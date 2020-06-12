@@ -9,48 +9,60 @@ import { ScrollView } from 'react-native-gesture-handler';
 const data = [
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
   {
     title: 'https://placeimg.com/140/140/any',
-    content: "A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll."
+    content: "A React component for displaying different types of images",
+    timeline: "1 giờ trước",
   },
+  
 ]
 
 export default function NotiScreen() {
@@ -70,7 +82,8 @@ export default function NotiScreen() {
                        <Image style={styles.avata} source={{uri:item.title }}/>
                     </View>
                     <View>
-                      <Text style={styles.contentArea}>  {item.content} </Text>
+                      <Text style={styles.contentArea}> {item.content} </Text>
+                      <Text style={styles.txtTimeline}> {item.timeline}</Text>
                     </View>
                     <View>
                       <Entypo style={styles.editArea} name="dots-three-horizontal" size={24} color="black" />
@@ -108,6 +121,7 @@ const styles = StyleSheet.create({
   },
   contentArea:{
     width:250,
+
   },
   editArea:{
     width:40,
@@ -141,6 +155,9 @@ const styles = StyleSheet.create({
    
     
   },
-
+  txtTimeline:{
+    fontSize:12,
+    fontWeight:"200"
+  },
   
 });
