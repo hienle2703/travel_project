@@ -114,7 +114,7 @@ export default class PostAll extends Component {
             />
             <TextInput
               style={styles.searchBar}
-              placeholder="Search for friends"
+              placeholder="Search for posts"
             ></TextInput>
           </View>
         </View>

@@ -240,6 +240,7 @@ function ScheduleStack() {
 function FeedStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      
       <Stack.Screen name="FeedScreen" component={FeedScreen} />
       <Stack.Screen
         name="DetailFeed"
@@ -258,6 +259,7 @@ function FeedStack() {
         //   ),
         // }}
       />
+      <Stack.Screen name="ProfileStack" component={ProfileStack} />
     </Stack.Navigator>
   );
 }

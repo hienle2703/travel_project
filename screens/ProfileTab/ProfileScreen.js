@@ -30,10 +30,6 @@ const b = function onClickFriends(){
   
 }
 
-// const a = onClickFriends() => {
-//   const ref = React.useRef(null);
-//   return ref;
-// }
 export default class ProfileScreen extends Component {
   constructor(props) {
     super(props);
@@ -60,7 +56,7 @@ export default class ProfileScreen extends Component {
           onPress: () => {
             //console.log("log out");
             this.props.navigation.replace("ProfileScreen");
-            this.props.navigation.navigate("SignIn");
+            //this.props.navigation.navigate("SignIn");
           },
         },
       ]);

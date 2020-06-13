@@ -51,6 +51,9 @@ export default class FriendAll extends Component {
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  onClickFriendProfile(){
+    this.props.navigation.navigate("FriendProfile");
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -104,7 +107,7 @@ export default class FriendAll extends Component {
               {imgData.map((item) => {
                 return (
                   <View style={styles.friendCard}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=> this.onClickFriendProfile()}>
                       <View
                         style={{
                           flexDirection: "row",

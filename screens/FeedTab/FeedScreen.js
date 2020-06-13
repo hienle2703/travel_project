@@ -2,9 +2,6 @@ import * as WebBrowser from "expo-web-browser";
 import React, { Component } from "react";
 import {
   Image,
-  Platform,
-  FlatList,
-  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,14 +10,20 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
-import FeedItem from "../../components/FeedItem";
-import { MonoText } from "../../components/StyledText";
-import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import Constants from "expo-constants";
+import Dialog, { DialogContent } from "react-native-popup-dialog";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
+import * as firebase from "firebase";
 
+const item = firebase.auth().currentUser;
+const b = function onClickFriends() {
+  const ref = React.useRef(null);
+
+  console.log(ref);
+  return ref;
+};
 const postData = [
   {
     id: 1,
@@ -77,16 +80,23 @@ const postData = [
     view: "63",
     comment: "22",
   },
-  
 ];
 export default class FeedScreen extends Component {
-  state = {
-    isLoading: true,
-    listArticles: [],
-    totalResults: 0,
-    page: 1,
-    isLoadMore: false,
-  };
+  constructor(props) {
+    super(props);
+    this.itemRef = firebaseApp.database();
+    this.itemRef1 = firebaseApp.auth().currentUser;
+    this.state = {
+      user: this.itemRef1,
+      isLoading: true,
+      listArticles: [],
+      totalResults: 0,
+      page: 1,
+      isLoadMore: false,
+      visible: false,
+      itemRef: null,
+    };
+  }
 
   onClickDetail() {
     this.props.navigation.navigate("DetailFeed");
@@ -94,31 +104,128 @@ export default class FeedScreen extends Component {
       headerTitle: "Trang chi tiết",
     });
   }
-  onClickWritePost() {
-    this.props.navigation.navigate("createFeedScreen");
-    this.props.navigation.setOptions({
-      headerTitle: "Viết bài",
-    });
+  onCancelWarn() {
+    this.setState({ visible: false });
   }
-  getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
-      }
+  onSignInWarn() {
+    this.setState({ visible: false });
+    this.props.navigation.navigate("ProfileStack", {screen: "ProfileScreen"});
+  }
+  onClickWritePost = async () => {
+    //console.log("User đang đăng nhập", this.itemRef1);
+    //console.log("this.state.user DAYYYYYYYY", this.state.user);
+    // const userRef = firebaseApp
+    //   .database()
+    //   .ref("user")
+    //   .child(this.state.user.uid);
+
+    // console.log("userRef", userRef);
+    // const itemRef = await firebaseApp
+    //   .database()
+    //   .ref("user")
+    //   .child(this.state.user.uid);
+    const itemRef = await firebaseApp.auth().currentUser;
+    if (itemRef !== null) {
+      //await this.setState({ logged: true, flexin: true });
+      await this.setState({ visible: false });
+      await console.log("Đã lấy được");
+      await this.props.navigation.navigate("createFeedScreen");
+    } else {
+      await this.setState({ visible: true });
     }
   };
 
+  onClickFriendProfile() {
+    this.props.navigation.navigate("FriendProfile");
+  }
+
+  // UNSAFE_componentWillMount = async () => {
+  //   const item = await firebaseApp.auth().currentUser;
+  //   console.log("HELLO");
+  //   console.log("user ddang dang nhap", item);
+  //   // if (itemRef !== null) {
+  //   //console.log("itemRef trong ComponentMount", itemRef);
+  //   // }
+  //   this.setState({
+  //     isLoading: true,
+  //   });
+  // };
   componentDidMount = async () => {
-    const { page } = this.state;
-    this.getPermissionAsync();
-    this.setState({
-      isLoading: true,
-    });
+    const itemRef = await firebaseApp
+      .database()
+      .ref("user")
+      .child(this.state.user.uid);
+
+    if (itemRef !== null) {
+      //await this.setState({ logged: true, flexin: true });
+      //await console.log("Đã lấy được");
+      await this.setState({ visible: false });
+    } else {
+      //await console.log("Chưa lấy được");
+    }
+
+    //await this.setState({ name, email, phone, ava });
   };
+  // componentDidMount = async () => {
+  //   const item = firebaseApp.auth().currentUser;
+
+  //   console.log("user ddang dang nhap", item);
+  //   // if (itemRef !== null) {
+  //   //console.log("itemRef trong ComponentMount", itemRef);
+  //   // }
+  //   this.setState({
+  //     isLoading: true,
+  //   });
+  // };
   render() {
     return (
       <ScrollView>
+        <Dialog
+          visible={this.state.visible}
+          onTouchOutside={() => {
+            this.setState({ visible: false });
+          }}
+        >
+          <DialogContent>
+            <View style={styles.dialogContainer}>
+              <View style={styles.warnImage}>
+                <Image
+                  style={styles.warnImageSource}
+                  source={{
+                    uri:
+                      "https://images.vexels.com/media/users/3/128332/isolated/preview/13bcbc98044bbd2bd1d614b83db76de7-oops-bubble-svg-by-vexels.png",
+                  }}
+                />
+              </View>
+
+              <View style={styles.warnTextContainer}>
+                <Text style={styles.wanText}>
+                  You must sign in to use this feature
+                </Text>
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <View>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.onCancelWarn()}
+                  >
+                    <Text style={{ fontSize: 15 }}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.onSignInWarn()}
+                  >
+                    <Text style={{ fontSize: 15 }}>Sign In</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </DialogContent>
+        </Dialog>
+
         <View style={styles.container}>
           {/* <View style={styles.header}>
             <TouchableOpacity
@@ -166,6 +273,7 @@ export default class FeedScreen extends Component {
                     alignSelf: "center",
                     borderRadius: 10,
                   }}
+                  onPress={() => this.onClickFriendProfile()}
                 >
                   <Text style={{ alignSelf: "center", top: 6, color: "white" }}>
                     Plan Your Own Vacation
@@ -281,7 +389,10 @@ export default class FeedScreen extends Component {
                   </Text>
                   {postData.map((item) => {
                     return (
-                      <TouchableOpacity onPress={() => this.onClickDetail()} style={{marginBottom:20,}}>
+                      <TouchableOpacity
+                        onPress={() => this.onClickDetail()}
+                        style={{ marginBottom: 20 }}
+                      >
                         <View style={styles.feedCard}>
                           <View>
                             <Image
@@ -290,12 +401,12 @@ export default class FeedScreen extends Component {
                                 width: 160,
                                 borderRadius: 20,
                               }}
-                              source={{uri: item.imgSource}}
+                              source={{ uri: item.imgSource }}
                             />
                           </View>
                           <View style={styles.feedTxt}>
                             <Text
-                              style={{ color: "#DB5823", fontWeight: "bold",}}
+                              style={{ color: "#DB5823", fontWeight: "bold" }}
                             >
                               {item.name}
                             </Text>
@@ -326,9 +437,14 @@ export default class FeedScreen extends Component {
                                 left: 2,
                               }}
                             >
-                              <View style={{ flexDirection: "row", marginBottom:10,}}>
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  marginBottom: 10,
+                                }}
+                              >
                                 <Text style={{ fontSize: 12, color: "gray" }}>
-                                  {item.view} {" "}
+                                  {item.view}{" "}
                                 </Text>
                                 <Ionicons
                                   name="md-eye"
@@ -339,7 +455,7 @@ export default class FeedScreen extends Component {
 
                               <View style={{ flexDirection: "row", left: 10 }}>
                                 <Text style={{ fontSize: 12, color: "gray" }}>
-                                  {item.comment} {" "}
+                                  {item.comment}{" "}
                                 </Text>
                                 <FontAwesome
                                   name="comment-o"
@@ -432,7 +548,7 @@ const styles = StyleSheet.create({
   feedList: {
     //height: 600,
     width: "90%",
-    marginBottom:90,
+    marginBottom: 90,
   },
   feedCard: {
     height: 150,
@@ -455,7 +571,46 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     left: 10,
     top: 10,
-    width:150,
-    height:100,
+    width: 150,
+    height: 100,
   },
+
+  dialogContainer: {
+    height: 230,
+    width: 200,
+  },
+
+  warnImage: {
+    height: 150,
+    alignSelf: "center",
+    width: "90%",
+    //backgroundColor:"red"
+  },
+  warnTextContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    //backgroundColor:"red"
+  },
+  wanText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#DB5823",
+    textAlign: "center",
+  },
+  warnImageSource: {
+    height: "100%",
+    width: "100%",
+    right: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    height: 30,
+    width: 150,
+    //backgroundColor:"red",
+    top: 20,
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  button: {},
 });
