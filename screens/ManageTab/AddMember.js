@@ -43,7 +43,7 @@ const imgData = [
       name: "Anh Tuyet",
     },
   ];
-export default class MemberListScreen extends Component {
+export default class AddMember extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -135,7 +135,7 @@ export default class MemberListScreen extends Component {
     
                         <View style={styles.buttonContainer}>
                           <TouchableOpacity onPress={()=>this.setState({added: true})}>
-                          <Ionicons name="ios-more" size={24} color="black" />
+                          <Ionicons name="ios-add" size={24} color="black" />
                           </TouchableOpacity>
                         </View>
                       </View>

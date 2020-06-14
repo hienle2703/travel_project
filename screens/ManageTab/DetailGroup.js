@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
+import TabBarIcon from "../../components/TabBarIcon";
 import {
   Image,
   Platform,
@@ -23,65 +24,108 @@ export default class ManageScreen extends Component {
     this.props.navigation.navigate(screen);
     this.props.navigation.setOptions({});
   }
+  onClickAddMember(){
+    this.props.navigation.navigate("AddMember")
+  }
+  onClickBtn() {
+    this.props.navigation.goBack();
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image
-            source={{
-              uri: "https://reactnative.dev/img/tiny_logo.png",
-            }}
-          />
+          <View styles={styles.backBtn}>
+            <TouchableOpacity
+              style={{ left: 30, top: 15, flexDirection: "row" }}
+              onPress={() => this.onClickBtn()}
+            >
+              <TabBarIcon
+                style={{ color: "gray", alignItems: "flex-start" }}
+                name="ios-arrow-back"
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "gray",
+                  left: 10,
+                }}
+              >
+                Back
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
+
         <View style={styles.content}>
-          <View style={styles.areaView}>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={() => alert(" Chua lam nghen")}
-              >
-                <View style={styles.iconEdit}>
-                  <MaterialIcons name="person-add" size={35} color="black" />
-                </View>
-                <Text style={styles.txt}>Add Member</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={() => this.onPressButton("MemberListScreen")}
-              >
-                <View style={styles.iconEdit}>
-                  <Ionicons name="ios-people" size={35} color="black" />
-                </View>
-                <Text style={styles.txt}>MemberList </Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.groupName}>
+            <Text style={styles.groupNameText}>Infamous Team</Text>
           </View>
-          <View style={styles.areaView1}>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={() => this.onPressButton("ChoiceTravelScreen")}
-              >
-                <View style={styles.iconEdit}>
-                  <AntDesign name="find" size={35} color="black" />
-                </View>
-                <Text style={styles.txt}>Travel Information</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={() => this.onPressButton(ChatScreen)}
-              >
-                <View style={styles.iconEdit}>
-                  <MaterialIcons name="chat" size={35} color="black" />
-                </View>
-                <Text style={styles.txt}>MessageGroup</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => this.onClickAddMember()}
+            >
+              <View style={styles.iconEdit}>
+                {/* <MaterialIcons name="person-add" size={25} color="black" /> */}
+                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://plus24h.com/upload/images/add-person-2646097_960_720.png"}}/>
+              </View>
+              <Text style={styles.txt}>Add Member</Text>
+            </TouchableOpacity>
           </View>
+
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => this.onPressButton("MemberListScreen")}
+            >
+              <View style={styles.iconEdit}>
+                {/* <Ionicons name="ios-people" size={25} color="black" /> */}
+                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://thumbs.dreamstime.com/b/people-flat-icon-group-round-colorful-button-team-circular-vector-sign-shadow-effect-style-design-92997577.jpg"}}/>
+              </View>
+              <Text style={styles.txt}>Manage members </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => this.onPressButton("ManageSchedule")}
+            >
+              <View style={styles.iconEdit}>
+                {/* <AntDesign name="find" size={25} color="black" /> */}
+                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://img.freepik.com/free-vector/hand-with-pen-mark-calendar_1325-126.jpg?size=338&ext=jpg"}}/>
+              </View>
+              <Text style={styles.txt}>Your Schedule</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => this.onPressButton(ChatScreen)}
+            >
+              <View style={styles.iconEdit}>
+                {/* <MaterialIcons name="chat" size={25} color="black" /> */}
+                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://image.freepik.com/free-vector/chat-bubble_53876-25540.jpg"}}/>
+              </View>
+              <Text style={styles.txt}>Group Chat</Text>
+            </TouchableOpacity>
+          </View>
+        
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => this.onPressButton("ChoiceTravelScreen")}
+            >
+              <View style={styles.iconEdit}>
+              {/* <AntDesign name="search1" size={25} color="black" /> */}
+              <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://img.freepik.com/free-vector/street-map_23-2147510569.jpg?size=338&ext=jpg"}}/>
+              </View>
+              <Text style={styles.txt}>Tracking Members</Text>
+            </TouchableOpacity>
+          </View>
+         
         </View>
       </View>
     );
@@ -93,52 +137,51 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: "white",
-    flex: 0.2,
+    //backgroundColor: "yellow",
+    height: 100,
+    justifyContent: "center",
   },
   content: {
-    flex: 0.8,
-  },
-  areaView: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  areaView1: {
-    flexDirection: "row",
-
-    marginTop: 10,
-    justifyContent: "center",
+    height: 600,
+    //backgroundColor:"green",
+    alignItems: "center",
   },
   btn: {
-    backgroundColor: "#68a0cf",
+    backgroundColor: "#DB5823",
     color: "white",
-    marginRight: 10,
-    justifyContent: "center",
     alignItems: "center",
-
-    width: 150,
-    height: 150,
+    flexDirection:"row",
+    width: 300,
+    height: 70,
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
   txt: {
     color: "white",
+    left:10,
+    fontWeight:"bold",
   },
   btnContainer: {
-    flexDirection: "row",
+    marginBottom:10,
+    //backgroundColor:"white",
   },
   iconEdit: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     backgroundColor: "white",
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
+    marginLeft:60,
+  },
+  groupName: {
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom:20,
+  },
+  groupNameText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#DB5823",
   },
 });

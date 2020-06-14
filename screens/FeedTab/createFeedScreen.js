@@ -25,29 +25,32 @@ export default class createFeedScreen extends Component {
     super(props);
 
     //ref('lớp cha').child( 'lớp con')
-    this.itemRef = firebaseApp.database();
+    //this.itemRef = firebaseApp.database();
+    //this.itemRef1 = firebaseApp.auth().currentUser;
     this.state = {
+      user: firebaseApp.auth().currentUser,
       image: "",
+      ava: null,
     };
   }
-  // _pickImage = async () => {
-  //   try {
-  //     let result = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //       allowsEditing: true,
-  //       aspect: [4, 3],
-  //       quality: 1,
-  //     });
-  //     if (!result.cancelled) {
-  //       this.setState({ image: result.uri });
-  //     }
+  componentDidMount = async () => {
+    //this.itemRef1 = await firebaseApp.auth().currentUser;
+    //console.log(this.itemRef1, "itemRef1 lấy trên constructor")
+    // await console.log(this.itemRef1, "itemRef1 ĐÂY NÈ");
+    // const userGet = await this.itemRef1;
+    // let user = userGet;
+    // await console.log(user, "USER NÈ");
+    //console.log(this.itemRef1);
 
-  //     console.log(result);
-  //   } catch (E) {
-  //     console.log(E);
-  //   }
-  // };
-
+    const itemRef = await firebaseApp
+      .database()
+      .ref("user")
+      .child(this.state.user.uid);
+    const snapshot3 = await itemRef.child("ava").once("value");
+    let ava = snapshot3.val();
+    await this.setState({ava});
+    console.log("Dia chi avatar",ava);
+  };
   render() {
     //let { image } = this.state;
     return (
@@ -59,8 +62,10 @@ export default class createFeedScreen extends Component {
             </TouchableOpacity>
           </View>
           <View style={styles.addBtn}>
-            <TouchableOpacity style={{alignSelf:"flex-end"}}>
-              <Text style={{alignSelf:"flex-end", color:"#DB5823"}}>Upload</Text>
+            <TouchableOpacity style={{ alignSelf: "flex-end" }}>
+              <Text style={{ alignSelf: "flex-end", color: "#DB5823" }}>
+                Upload
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -71,7 +76,7 @@ export default class createFeedScreen extends Component {
               style={styles.avata}
               source={{
                 uri:
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&usqp=CAU",
+                  this.state.ava
               }}
             />
           </View>
@@ -130,8 +135,8 @@ const styles = StyleSheet.create({
   header: {
     height: 80,
     flexDirection: "row",
-    borderWidth:0.2,
-    borderBottomColor:"gray"
+    borderWidth: 0.2,
+    borderBottomColor: "gray",
   },
   inputBox: {
     backgroundColor: "#E0E0E0",
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: "85%",
     alignSelf: "flex-start",
-    marginTop:30,
+    marginTop: 30,
   },
   avata: {
     height: 40,

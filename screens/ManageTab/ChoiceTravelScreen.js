@@ -93,7 +93,8 @@ const styles = StyleSheet.create({
 
   },
   header:{
-    
+    height:100,
+    backgroundColor:"yellow"
   },
   travelStart:{
       flex:0.5,

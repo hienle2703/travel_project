@@ -27,7 +27,6 @@ import searchLocationScreen from "../screens/ScheduleTab/searchLocationScreen";
 import searchFriendScreen from "../screens/ScheduleTab/searchFriendScreen";
 import ManageScreen from "../screens/ManageTab/ManageScreen";
 import DetailGroup from "../screens/ManageTab/DetailGroup";
-
 import NotiScreen from "../screens/NotiTab/NotiScreen";
 
 const BottomTab = createBottomTabNavigator();
@@ -46,6 +45,8 @@ import EditAccount from "../screens/ProfileTab/EditAccount";
 
 import createFeedScreen from "../screens/FeedTab/createFeedScreen";
 import createGroupScreen from "../screens/ManageTab/createGroup";
+import AddMember from "../screens/ManageTab/AddMember";
+import ManageSchedule from "../screens/ManageTab/ManageSchedule";
 
 import FriendMainScreen from "../screens/ContactTab/FriendMainScreen";
 //Phần của Luân
@@ -314,6 +315,8 @@ function ManageStack() {
           ),
         }}
       />
+      <Stack.Screen name="ManageSchedule" component={ManageSchedule} />
+      <Stack.Screen name="AddMember" component={AddMember} />
       <Stack.Screen
         name="MemberListScreen"
         component={MemberListScreen}
