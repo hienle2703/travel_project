@@ -22,13 +22,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 const item = firebase.auth().currentUser;
 
-const b = function onClickFriends(){
+const b = function onClickFriends() {
   const ref = React.useRef(null);
- 
-  console.log(ref)
+
+  console.log(ref);
   return ref;
-  
-}
+};
 
 export default class ProfileScreen extends Component {
   constructor(props) {
@@ -77,14 +76,14 @@ export default class ProfileScreen extends Component {
     this.props.navigation.setOptions({});
   }
 
-  onClickFriends(){
+  onClickFriends() {
     this.props.navigation.navigate("FriendMainScreen");
   }
-  onClickSchedule(){
+  onClickSchedule() {
     this.props.navigation.navigate("Schedule");
   }
-  onClickPost(){
-    this.props.navigation.navigate("PostAll")
+  onClickPost() {
+    this.props.navigation.navigate("PostAll");
   }
   //USELESS - Không ảnh hưởng render
 
@@ -106,18 +105,16 @@ export default class ProfileScreen extends Component {
   //   };
 
   componentDidMount = async () => {
-    //this.itemRef1 = await firebaseApp.auth().currentUser;
-    //console.log(this.itemRef1, "itemRef1 lấy trên constructor")
-    // await console.log(this.itemRef1, "itemRef1 ĐÂY NÈ");
-    // const userGet = await this.itemRef1;
-    // let user = userGet;
-    // await console.log(user, "USER NÈ");
-    //console.log(this.itemRef1);
-
+    
+    const split = this.state.user.email;
+    console.log("Lấy biến split", split);
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted = await split.substring(0, split.lastIndexOf("@"));
+    console.log("Lấy name sau khi cắt split", splitted);
     const itemRef = await firebaseApp
       .database()
       .ref("user")
-      .child(this.state.user.uid);
+      .child(splitted);
     const snapshot = await itemRef.child("name").once("value");
     const snapshot1 = await itemRef.child("email").once("value");
     const snapshot2 = await itemRef.child("phone").once("value");
@@ -159,7 +156,6 @@ export default class ProfileScreen extends Component {
                 <View>
                   {/*SWITCH CASE DỰA VÀO CURRENT USER */}
                   {(() => {
-                    //console.log(user);
                     switch (logged) {
                       case null:
                         return (
@@ -362,7 +358,10 @@ export default class ProfileScreen extends Component {
                                       </View>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity style={styles.contentBox} onPress={()=>this.onClickSchedule()}>
+                                    <TouchableOpacity
+                                      style={styles.contentBox}
+                                      onPress={() => this.onClickSchedule()}
+                                    >
                                       <View
                                         style={{
                                           height: 30,
@@ -435,7 +434,7 @@ export default class ProfileScreen extends Component {
                                     {/* Button quản lý bạn bè */}
                                     <TouchableOpacity
                                       style={styles.contentBox}
-                                     onPress={() => this.onClickFriends()} 
+                                      onPress={() => this.onClickFriends()}
                                       //onPress={()=> console.log(b)}
                                     >
                                       <View
@@ -467,7 +466,10 @@ export default class ProfileScreen extends Component {
                                     </TouchableOpacity>
 
                                     {/* Button Bài viết của tôi */}
-                                    <TouchableOpacity style={styles.contentBox} onPress={()=> this.onClickPost()}>
+                                    <TouchableOpacity
+                                      style={styles.contentBox}
+                                      onPress={() => this.onClickPost()}
+                                    >
                                       <View
                                         style={{
                                           height: 30,

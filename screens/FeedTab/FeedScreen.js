@@ -24,6 +24,57 @@ const b = function onClickFriends() {
   console.log(ref);
   return ref;
 };
+const scheduleData = [
+  {
+    id: 1,
+    imgSource:
+      "https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2018/01/kinh-nghiem-du-lich-da-lat-ban-can-luu-lai-1.png",
+    name: "Da Lat For Life",
+    start: "HCM",
+    end: "Da Lat",
+    member: "4",
+    date: "14/6 to 17/6",
+  },
+  {
+    id: 2,
+    imgSource:
+      "https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2017/08/hoi-an-quang-nam-vntrip-1.jpg",
+    name: "Hoi An Vintage Town",
+    start: "HCM",
+    end: "Hoi An",
+    member: "4",
+    date: "14/6 to 18/6",
+  },
+  {
+    id: 3,
+    imgSource:
+      "https://lh3.googleusercontent.com/proxy/8wJJaBE6AkYJCPcMxKivHS8o5Md_fktIS8TSUjVpARw1hrWD_pBjnlM9zhmJ9Vn5a3bXxImXzBnHgHhk1qLSxA78RbVpucp0UJez2f3vjyTWwkjZhdl04ecnQagTFbEk",
+    name: "Viet Nam Capital",
+    start: "HCM",
+    end: "Ha Noi",
+    member: "4",
+    date: "14/6 to 17/6",
+  },
+  {
+    id: 4,
+    imgSource:
+      "https://tour.dulichvietnam.com.vn/uploads/tour/1553224096_sapa-5.jpg",
+    name: "The City In The Fog",
+    start: "HCM",
+    end: "Sapa",
+    member: "4",
+    date: "14/6 to 17/6",
+  },
+  {
+    id: 5,
+    imgSource:"https://saigonstartravel.com/wp-content/uploads/2019/03/26-2.jpg",
+    name: "Get Some Vitamin Sea",
+    start: "HCM",
+    end: "Vung Tau",
+    member: "4",
+    date: "14/6 to 17/6",
+  },
+];
 const postData = [
   {
     id: 1,
@@ -109,7 +160,7 @@ export default class FeedScreen extends Component {
   }
   onSignInWarn() {
     this.setState({ visible: false });
-    this.props.navigation.navigate("ProfileStack", {screen: "ProfileScreen"});
+    this.props.navigation.navigate("ProfileStack", { screen: "ProfileScreen" });
   }
   onClickWritePost = async () => {
     //console.log("User đang đăng nhập", this.itemRef1);
@@ -134,11 +185,22 @@ export default class FeedScreen extends Component {
       await this.setState({ visible: true });
     }
   };
-
+  onClickMakeSchedule = async () => {
+    const itemRef = await firebaseApp.auth().currentUser;
+    if (itemRef !== null) {
+      //await this.setState({ logged: true, flexin: true });
+      await this.setState({ visible: false });
+      await console.log("Đã lấy được");
+      await this.props.navigation.navigate("ScheduleStack", {
+        screen: "createScheduleScreen",
+      });
+    } else {
+      await this.setState({ visible: true });
+    }
+  };
   onClickFriendProfile() {
     this.props.navigation.navigate("FriendProfile");
   }
-
   // UNSAFE_componentWillMount = async () => {
   //   const item = await firebaseApp.auth().currentUser;
   //   console.log("HELLO");
@@ -273,7 +335,7 @@ export default class FeedScreen extends Component {
                     alignSelf: "center",
                     borderRadius: 10,
                   }}
-                  onPress={() => this.onClickFriendProfile()}
+                  onPress={() => this.onClickMakeSchedule()}
                 >
                   <Text style={{ alignSelf: "center", top: 6, color: "white" }}>
                     Plan Your Own Vacation
@@ -303,7 +365,7 @@ export default class FeedScreen extends Component {
                 />
               </View>
 
-              <View style={{ width: "90%", left: 20, top: 70 }}>
+              <View style={styles.locationContainer}>
                 <Text style={{ fontWeight: "bold", color: "gray" }}>
                   Your Location:{" "}
                 </Text>
@@ -319,9 +381,9 @@ export default class FeedScreen extends Component {
                 </View>
               </View>
 
-              <View style={styles.scheduleList}>
+              <View style={styles.scheduleListContainer}>
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                  Trips that start at your local location:
+                  Schedules start at your local location:
                 </Text>
 
                 <View style={styles.tripsList}>
@@ -330,59 +392,42 @@ export default class FeedScreen extends Component {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{}}
                   >
-                    <View style={styles.cardTodo}>
-                      <Image
-                        style={styles.imgTodo}
-                        source={require("../../assets/images/lichtrinh.jpg")}
-                      />
-                      <Text>Day 1</Text>
-                      <Text style={{ color: "gray", fontSize: 12 }}>
-                        Thung Lũng Vàng
-                      </Text>
-                    </View>
-                    <View style={styles.cardTodo}>
-                      <Image
-                        style={styles.imgTodo}
-                        source={require("../../assets/images/lichtrinh2.jpg")}
-                      />
-                      <Text>Day 2</Text>
-                      <Text style={{ color: "gray", fontSize: 12 }}>
-                        Cáp Treo
-                      </Text>
-                    </View>
-                    <View style={styles.cardTodo}>
-                      <Image
-                        style={styles.imgTodo}
-                        source={require("../../assets/images/lichtrinh3.jpg")}
-                      />
-                      <Text>Day 3</Text>
-                      <Text style={{ color: "gray", fontSize: 12 }}>
-                        Nhà Thờ Con Gà
-                      </Text>
-                    </View>
-                    <View style={styles.cardTodo}>
-                      <Image
-                        style={styles.imgTodo}
-                        source={require("../../assets/images/lichtrinh4.jpg")}
-                      />
-                      <Text>Day 4</Text>
-                      <Text style={{ color: "gray", fontSize: 12 }}>
-                        Hồ Xuân Hương
-                      </Text>
-                    </View>
-                    <View style={styles.cardTodo}>
-                      <Image
-                        style={styles.imgTodo}
-                        source={require("../../assets/images/lichtrinh.jpg")}
-                      />
-                      <Text>Day 5</Text>
-                      <Text style={{ color: "gray", fontSize: 12 }}>
-                        Hồ Than Thở
-                      </Text>
-                    </View>
+                    {scheduleData.map((item) => {
+                      return (
+                        <View style={styles.cardTodo}>
+                          <Image
+                            style={styles.imgTodo}
+                            source={{ uri: item.imgSource }}
+                          />
+                          {/* <Text>Day: {item.id}</Text> */}
+                          <View style={{height:30, left: 5}}>
+                            <Text style={{ color: "tomato", fontSize: 12 }}>
+                              {item.name}
+                            </Text>
+                          </View>
+
+                          <View style={{left:5}}>
+                            <Text style={{ color: "gray", fontSize: 10 }}>
+                              From: {item.start}
+                            </Text>
+                            <Text style={{ color: "gray", fontSize: 10 }}>
+                              To: {item.end}
+                            </Text>
+                            <Text style={{ color: "gray", fontSize: 10 }}>
+                              Members: {item.member}
+                            </Text>
+                            <Text style={{ color: "gray", fontSize: 10 }}>
+                              Time: {item.date}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
+                    
                   </ScrollView>
                 </View>
-
+              </View>
+              <View style={styles.feedListContainer}>
                 <View style={styles.feedList}>
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                     Feed of interesting trips
@@ -526,24 +571,32 @@ const styles = StyleSheet.create({
     top: 60,
   },
   content: {},
-  scheduleList: {
+  scheduleListContainer: {
     top: 80,
     left: 20,
   },
+  feedListContainer: {
+    top: 80,
+    alignSelf: "center",
+  },
   cardTodo: {
     width: 100,
-    height: 100,
-    marginTop: 10,
+    height: 200,
+    top: 10,
     marginRight: 15,
+    backgroundColor: "#E6E6E6",
+    borderRadius:10,
   },
   imgTodo: {
-    width: "100%",
-    height: 130,
+    width: "95%",
+    height: 100,
     borderRadius: 10,
+    alignSelf:"center"
   },
   tripsList: {
-    height: 200,
+    height: 220,
     width: "90%",
+    marginBottom:20,
   },
   feedList: {
     //height: 600,
@@ -613,4 +666,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   button: {},
+  locationContainer: {
+    width: "90%",
+    left: 20,
+    top: 70,
+  },
 });

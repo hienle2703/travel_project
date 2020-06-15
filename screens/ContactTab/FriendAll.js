@@ -10,7 +10,10 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import TabBarIcon from "../../components/TabBarIcon";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
+import * as firebase from "firebase";
+
 const imgData = [
   {
     id: 1,
@@ -46,15 +49,48 @@ const imgData = [
 export default class FriendAll extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      arrayFriend: null,
+    };
   }
+  componentDidMount = async () => {
+    const userAuth = firebaseApp.auth().currentUser;
+    //console.log(userAuth);
+
+    const split = userAuth.email;
+    const splitted = await split.substring(0, split.lastIndexOf("@"));
+
+    const takeArray = await firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friend");
+    console.log("Đường link của list friend nè mày", takeArray);
+    //Lấy ra object list friend của User sở tại
+    
+    const snapshot = await takeArray.once("value");
+    //const snap = await JSON.stringify(snapshot)
+    console.log("Snapshot", snapshot);
+    
+    // Giờ cần render View với mỗi value-key trong Object trả về từ JSON
+    
+    
+    //const snapshotArray = Object.values(snapshot)
+    //const arrayFriend = JSON.stringify(snapshot);
+    //console.log("LIST FRIEND", typeof arrayFriend)
+    //console.log("LIST FRIEND", JSON.stringify(snapshot));
+    //console.log(typeof snapshot)
+    //const itemRef = await firebaseApp.database().ref("user").child(splitted);
+
+    //this.setState({arrayFriend: snapshot});
+  };
   onClickBtn() {
     this.props.navigation.goBack();
   }
-  onClickFriendProfile(){
+  onClickFriendProfile() {
     this.props.navigation.navigate("FriendProfile");
   }
   render() {
+    let { arrayFriend } = this.state;
     return (
       <View style={styles.container}>
         <ScrollView
@@ -104,10 +140,13 @@ export default class FriendAll extends Component {
             </View>
 
             <View style={styles.listFriends}>
-              {imgData.map((item) => {
+              {/* FAKE DATA */}
+              {/* {imgData.map((item) => {
                 return (
                   <View style={styles.friendCard}>
-                    <TouchableOpacity onPress={()=> this.onClickFriendProfile()}>
+                    <TouchableOpacity
+                      onPress={() => this.onClickFriendProfile()}
+                    >
                       <View
                         style={{
                           flexDirection: "row",
@@ -133,7 +172,44 @@ export default class FriendAll extends Component {
 
                     <View style={styles.buttonContainer}>
                       <TouchableOpacity>
-                      <Ionicons name="ios-more" size={24} color="black" />
+                        <Ionicons name="ios-more" size={24} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              })} */}
+              {imgData.map((item) => {
+                return (
+                  <View style={styles.friendCard}>
+                    <TouchableOpacity
+                      onPress={() => this.onClickFriendProfile()}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          marginLeft: 10,
+                        }}
+                      >
+                        <View style={styles.avatarContainer}>
+                          <Image
+                            style={styles.avatar}
+                            source={{ uri: item.imgSource }}
+                          />
+                        </View>
+                        <View style={styles.friendName}>
+                          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                            {item.name}
+                          </Text>
+                          <Text style={{ fontSize: 13, color: "gray" }}>
+                            4 friends in common
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity>
+                        <Ionicons name="ios-more" size={24} color="black" />
                       </TouchableOpacity>
                     </View>
                   </View>

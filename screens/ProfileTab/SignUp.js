@@ -50,9 +50,15 @@ export default class SignUp extends Component {
       const a = await firebaseApp
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password);
-      //console.log(a);
-      //console.log(a.user.uid, "UID NÈ MÀY ƠIIIII");
-      this.itemRef.ref("user/" + a.user.uid).set({
+
+        //Lấy biến split để gán cho email của tài khoản vừa tạo
+        const split = a.user.email
+        console.log("Lấy biến split", split)
+        //Cắt chuỗi để lấy cụm trước @
+        const splitted   = await split.substring(0, split.lastIndexOf("@"));
+        console.log("Lấy name sau khi cắt split", splitted)
+      
+      this.itemRef.ref("user/" + splitted).set({
         email: this.state.email,
         name: this.state.name,
         password: this.state.password,

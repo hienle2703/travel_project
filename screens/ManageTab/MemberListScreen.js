@@ -102,7 +102,7 @@ export default class MemberListScreen extends Component {
               </View>
               <View style={styles.listContainer}>
                 <View style={styles.countFriends}>
-                  <Text style={styles.countTitle}>230 Friends</Text>
+                  <Text style={styles.countTitle}>5 Members</Text>
                 </View>
     
                 <View style={styles.listFriends}>

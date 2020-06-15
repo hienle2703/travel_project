@@ -261,6 +261,7 @@ function FeedStack() {
         // }}
       />
       <Stack.Screen name="ProfileStack" component={ProfileStack} />
+      <Stack.Screen name="ScheduleStack" component={ScheduleStack} />
     </Stack.Navigator>
   );
 }

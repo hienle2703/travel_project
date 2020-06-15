@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import TabBarIcon from "../../components/TabBarIcon";
+
 const imgData = [
   {
     id: 1,
@@ -45,13 +46,6 @@ const imgData = [
     time: "2hrs",
     cmt: "Nice trip bro, how much did you spend on this vacation?",
   },
-  // { id: 6, imgSource: require("../../assets/images/avacmt5.jpg") },
-  // { id: 7, imgSource: require("../../assets/images/avacmt6.jpg") },
-  // { id: 8, imgSource: require("../../assets/images/avacmt7.jpg") },
-  // { id: 9, imgSource: require("../../assets/images/avacmt8.jpgeg") },
-  // { id: 10, imgSource: require("../../assets/images/avacmt9.jpg") },
-  // { id: 11, imgSource: require("../../assets/images/avacmt10.jpg") },
-  // { id: 12, imgSource: require("../../assets/images/avacmt11.jpg") },
 ];
 
 export default class DetailFeed extends Component {
@@ -202,21 +196,22 @@ export default class DetailFeed extends Component {
                     marginTop: 15,
                   }}
                 >
-                  Todo Things
+                  Your Schedule
                 </Text>
                 <TouchableOpacity
                   style={{
                     marginTop: 15,
                     borderWidth: 0.5,
                     borderRadius: 10,
-                    width: 110,
+                    width: 60,
                     height: 20,
                     alignItems: "center",
                     justifyContent: "center",
                     marginLeft: 150,
                   }}
+                  onPress={()=>this.props.navigation.navigate("ScheduleDetail")}
                 >
-                  <Text style={{ color: "gray" }}>Detail Todo List</Text>
+                  <Text style={{ color: "gray" }}>Detail</Text>
                 </TouchableOpacity>
               </View>
 
@@ -228,7 +223,7 @@ export default class DetailFeed extends Component {
                   />
                   <Text>Day 1</Text>
                   <Text style={{ color: "gray", fontSize: 12 }}>
-                    Thung Lũng Vàng
+                    9 Locations
                   </Text>
                 </View>
                 <View style={styles.cardTodo}>
@@ -237,7 +232,7 @@ export default class DetailFeed extends Component {
                     source={require("../../assets/images/lichtrinh2.jpg")}
                   />
                   <Text>Day 2</Text>
-                  <Text style={{ color: "gray", fontSize: 12 }}>Cáp Treo</Text>
+                  <Text style={{ color: "gray", fontSize: 12 }}>6 Locations</Text>
                 </View>
                 <View style={styles.cardTodo}>
                   <Image
@@ -246,7 +241,7 @@ export default class DetailFeed extends Component {
                   />
                   <Text>Day 3</Text>
                   <Text style={{ color: "gray", fontSize: 12 }}>
-                    Nhà Thờ Con Gà
+                    3 Locations
                   </Text>
                 </View>
                 <View style={styles.cardTodo}>
@@ -256,7 +251,7 @@ export default class DetailFeed extends Component {
                   />
                   <Text>Day 4</Text>
                   <Text style={{ color: "gray", fontSize: 12 }}>
-                    Hồ Xuân Hương
+                    4 Locations
                   </Text>
                 </View>
                 <View style={styles.cardTodo}>
@@ -266,7 +261,7 @@ export default class DetailFeed extends Component {
                   />
                   <Text>Day 5</Text>
                   <Text style={{ color: "gray", fontSize: 12 }}>
-                    Hồ Than Thở
+                    2 Locations
                   </Text>
                 </View>
               </ScrollView>

@@ -69,12 +69,17 @@ export default class EditAccount extends Component {
   }
   componentDidMount = async () => {
     this.itemRef1 = await firebaseApp.auth().currentUser;
-    //await console.log(this.itemRef1);
+    
     const userGet = await this.itemRef1;
     let user = userGet;
-    //console.log(user.uid, "user.uid nè nha")
-    //console.log(this.itemRef1);
-    const itemRef = await firebaseApp.database().ref("user").child(user.uid);
+    
+    const split = user.email;
+    console.log("Lấy biến split", split);
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted = await split.substring(0, split.lastIndexOf("@"));
+    console.log("Lấy name sau khi cắt split", splitted);
+
+    const itemRef = await firebaseApp.database().ref("user").child(splitted);
 
     //console.log(itemRef, "itemRef nè");
     const snapshot = await itemRef.child("name").once("value");
