@@ -578,6 +578,7 @@ const styles = StyleSheet.create({
   feedListContainer: {
     top: 80,
     alignSelf: "center",
+    width:"95%"
   },
   cardTodo: {
     width: 100,

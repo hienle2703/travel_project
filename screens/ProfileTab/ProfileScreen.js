@@ -119,6 +119,7 @@ export default class ProfileScreen extends Component {
     const snapshot1 = await itemRef.child("email").once("value");
     const snapshot2 = await itemRef.child("phone").once("value");
     const snapshot3 = await itemRef.child("ava").once("value");
+  
     let name = snapshot.val();
     let email = snapshot1.val();
     let phone = snapshot2.val();

@@ -69,10 +69,10 @@ export default class EditAccount extends Component {
   }
   componentDidMount = async () => {
     this.itemRef1 = await firebaseApp.auth().currentUser;
-    
+
     const userGet = await this.itemRef1;
     let user = userGet;
-    
+
     const split = user.email;
     console.log("Lấy biến split", split);
     //Cắt chuỗi để lấy cụm trước @
@@ -98,10 +98,14 @@ export default class EditAccount extends Component {
   //update là để update =))
   setDB() {
     const { user } = this.state;
+    const split = this.state.user.email;
+    console.log("Lấy biến split", split);
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted =  split.substring(0, split.lastIndexOf("@"));
+    console.log("Lấy name sau khi cắt split", splitted);
     this.itemRef
       .ref("user")
-      .child(user.uid)
-
+      .child(splitted)
       .update({
         email: this.state.email,
         name: this.state.name,
@@ -127,6 +131,12 @@ export default class EditAccount extends Component {
   // };
 
   selectPicture = async () => {
+    const split = this.state.user.email;
+    console.log("Lấy biến split", split);
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted =  split.substring(0, split.lastIndexOf("@"));
+    console.log("Lấy name sau khi cắt split", splitted);
+
     this.setState({ ava: "" });
     const { user } = this.state;
     await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -139,7 +149,7 @@ export default class EditAccount extends Component {
         .then(() => {
           Alert.alert("Success");
           this.setState({ ava: result.uri });
-          this.itemRef.ref("user/" + user.uid).update({
+          this.itemRef.ref("user/" + splitted).update({
             ava: result.uri,
           });
         })
@@ -149,6 +159,12 @@ export default class EditAccount extends Component {
     }
   };
   takePicture = async () => {
+    const split = this.state.user.email;
+    console.log("Lấy biến split", split);
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted = await split.substring(0, split.lastIndexOf("@"));
+    console.log("Lấy name sau khi cắt split", splitted);
+
     this.setState({ ava: "" });
     const { user } = this.state;
     await Permissions.askAsync(Permissions.CAMERA);
@@ -160,7 +176,7 @@ export default class EditAccount extends Component {
         .then(() => {
           Alert.alert("Success");
           this.setState({ ava: result.uri });
-          this.itemRef.ref("user").child(user.uid).update({
+          this.itemRef.ref("user").child(splitted).update({
             ava: result.uri,
           });
         })
@@ -194,7 +210,13 @@ export default class EditAccount extends Component {
                 1000
               );
               return (
-                <View style={{justifyContent:"center",alignItems:'center',top:300,}}>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    top: 300,
+                  }}
+                >
                   <ActivityIndicator size="large" color="#DB5823" />
                 </View>
               );
@@ -377,6 +399,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     color: "white",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
 });
