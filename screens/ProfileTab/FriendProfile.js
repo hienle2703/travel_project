@@ -70,6 +70,7 @@ const postData = [
     comment: "22",
   },
 ];
+
 export default class FriendProfile extends Component {
   constructor(props) {
     super(props);
@@ -87,6 +88,10 @@ export default class FriendProfile extends Component {
     this.props.navigation.goBack();
   }
   render() {
+    //Lấy params được truyền từ FriendAll
+    const { ava,name } = this.props.route.params;
+    console.log("Ava nè",ava);
+    console.log("Name nè", name)
     return (
       <ScrollView
         style={styles.scrollView}
@@ -119,7 +124,7 @@ export default class FriendProfile extends Component {
           <View style={styles.avataArea}>
             <View style={styles.avataEdit}>
               {(() => {
-                switch (this.state.ava) {
+                switch (ava) {
                   case null:
                     return (
                       <Image
@@ -140,7 +145,7 @@ export default class FriendProfile extends Component {
             </View>
             <View style={styles.infArea}>
               <View style={styles.titleInf}>
-                <Text style={styles.textName}>Name nè</Text>
+            <Text style={styles.textName}>{name}</Text>
               </View>
             </View>
 
@@ -296,7 +301,7 @@ const styles = StyleSheet.create({
   postContainer: {
     width: "90%",
     marginBottom: 50,
-    marginTop:10,
+    marginTop: 10,
     left: 20,
   },
   feedCard: {

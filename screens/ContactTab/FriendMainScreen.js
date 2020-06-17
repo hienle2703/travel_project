@@ -8,6 +8,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import TabBarIcon from "../../components/TabBarIcon";
 
+import { firebaseApp } from "../../components/FirebaseConfig.js";
+import * as firebase from "firebase";
 const imgData = [
   {
     id: 1,
@@ -44,12 +46,139 @@ const imgData = [
 export default class FriendMainScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      arrayFriend: [],
+      arrayFriendInformation: [],
+      arrayAdvice:[],
+      newFriend: null,
+      flexin: false,
+      arrayUsed: [],
+      countFriend: null,
+    };
   }
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  onClickAcceptFriend = async (node, key) => {
+    //console.log(key,"NODE NÈ===========");
+    const userAuth = firebaseApp.auth().currentUser;
+    //console.log(userAuth);
+
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+    //console.log("Splitted nè", splitted);
+    const add = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friend/" + key);
+
+    const remove = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friendRequest/" + key);
+    //console.log("Đường link của list friend nè mày", takeArray);
+    //Lấy ra object list friend của User sở tại
+    remove.remove();
+
+    add.set({
+      name: key,
+    });
+
+    let newArrayFriend = this.state.arrayFriendInformation.filter(
+      (item) => item.key !== key
+    );
+    console.log(newArrayFriend)
+    this.setState({
+      arrayFriendInformation: newArrayFriend,
+      countFriend: newArrayFriend.length,
+    });
+  };
+  componentDidMount = async () => {
+    const userAuth = firebaseApp.auth().currentUser;
+    
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@")); //log Toan Hien
+    //console.log(splitted)
+    const allUser = firebaseApp.database().ref("user");
+    const snapAll = await allUser.once("value")
+    let alo = snapAll.val()
+
+    ////////////////////////////////////////////////////////////////////// => ĐANG LÀM TỚI ĐÂY
+    // //Lấy thông tin bạn bè
+    let arrayFriendZone = []; // cái này
+    const friendZone = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friend");
+      const takeFriend =await friendZone.once("value")
+      let hihi =  takeFriend.val()
+      console.log(hihi,"HIHIHIIHIHI")
+      for (var key in hihi) {
+        arrayFriendZone.push(key)
+      }
+      console.log(arrayFriendZone,"============")
+
+
+    //   let arrayLOL =[]
+    // for (var key in arrayFriendZone ){
+    //   let a= arrayFriendZone[key] + "@gmail.com";
+    //   arrayLOL.push(a);
+    // }
+    // console.log(arrayLOL,"===================")
+////////////////////////////////////////////////////////////////////// => ĐANG LÀM TỚI ĐÂY
+
+    let arrayAdvice = []; // lấy ra mảng tất cả user trừ cái thằng user đang dùng
+    for (var key in alo) {
+      arrayAdvice.push(alo[key])
+    }
+    //console.log(arrayAdvice)
+    const a =  arrayAdvice.filter(
+      (item) => item.email !== split
+    );
+    const takeArray = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friendRequest");
+    //Lấy ra object list friend của User sở tại
+    const snapshot = await takeArray.once("value");
+    //const snap = await JSON.stringify(snapshot)
+    //console.log("Snapshot", snapshot);
+    let test = snapshot.val();
+    //console.log(test);
+    let count = Object.keys(test).length;
+console.log(test,"TEST NÈ")
+    let arrayFriendInformation = []; // cái này
+    for (var key in test) {
+      //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
+      const userName = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("name")
+        .once("value");
+      const userAva = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("ava")
+        .once("value");
+      arrayFriendInformation.push({
+        name: userName,
+        ava: userAva,
+        node: test[key],
+        key: key,
+      });
+    }
+    this.setState({
+      arrayAdvice:a,
+      arrayFriendInformation,
+      countFriend: count,
+    });
+  };
   render() {
+    //console.log(this.state.arrayFriendInformation);
+    //console.log(typeof this.state.arrayFriendInformation);
+    //console.log(this.state.arrayAdvice)
     return (
       <View style={styles.container}>
         <ScrollView
@@ -100,7 +229,9 @@ export default class FriendMainScreen extends Component {
               </View>
             </View>
             <View style={styles.btnFriendList}>
-              <TouchableOpacity onPress={()=>this.props.navigation.navigate("FriendAll")}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("FriendAll")}
+              >
                 <Text>Friend List</Text>
               </TouchableOpacity>
             </View>
@@ -112,28 +243,41 @@ export default class FriendMainScreen extends Component {
                 Friend Requests
               </Text>
               <View style={styles.countInvite}>
-                <Text>23</Text>
+                <Text>{this.state.countFriend}</Text>
               </View>
             </View>
-
+            {/* =====Friend Request Section===== */}
             <View style={styles.inviteContainer}>
-              {imgData.map((item) => {
+              {this.state.arrayFriendInformation.map((item) => {
+                var obj = JSON.stringify(item);
+                var objectValue = JSON.parse(obj);
+                //console.log("ARRAYFRIENDINFORMATION",this.state.arrayFriendInformation)
+                //console.log("ARRAYFRIEND THƯỜNG",this.state.arrayFriend)
+                //console.log("countFriend THƯỜNG",this.state.countFriend)
                 return (
                   <View style={styles.inviteCard}>
                     <View style={styles.ava}>
                       <Image
                         style={{ height: 70, width: 70, borderRadius: 80 }}
-                        source={{ uri: item.imgSource }}
+                        source={{ uri: objectValue.ava }}
                       />
                     </View>
                     <View style={styles.buttonGroup}>
                       <View style={styles.nameInvite}>
                         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                          {item.name}
+                          {objectValue.name}
                         </Text>
                       </View>
                       <View style={styles.buttonSplit}>
-                        <TouchableOpacity style={styles.buttonAcceptStyle}>
+                        <TouchableOpacity
+                          style={styles.buttonAcceptStyle}
+                          onPress={() =>
+                            this.onClickAcceptFriend(
+                              objectValue.node,
+                              objectValue.key
+                            )
+                          }
+                        >
                           <Text style={{ color: "white" }}>Accept</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonDeleteStyle}>
@@ -144,13 +288,13 @@ export default class FriendMainScreen extends Component {
                   </View>
                 );
               })}
-              <View style={styles.loadMore}>
+              {/* <View style={styles.loadMore}>
                 <TouchableOpacity>
                   <Text style={{ color: "gray", fontWeight: "bold" }}>
                     More
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
 
@@ -164,13 +308,13 @@ export default class FriendMainScreen extends Component {
               </View> */}
             </View>
             <View style={styles.inviteContainer}>
-              {imgData.map((item) => {
+              {this.state.arrayAdvice.map((item) => {
                 return (
                   <View style={styles.inviteCard}>
                     <View style={styles.ava}>
                       <Image
                         style={{ height: 70, width: 70, borderRadius: 80 }}
-                        source={{ uri: item.imgSource }}
+                        source={{ uri: item.ava }}
                       />
                     </View>
                     <View style={styles.buttonGroup}>
@@ -263,18 +407,14 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   invite: {
-    height: 510,
-    width: "90%",
     //backgroundColor:"yellow",
-    marginLeft: 20,
     borderBottomWidth: 0.3,
     borderBottomColor: "gray",
   },
   inviteContainer: {
-    height: 200,
     alignSelf: "center",
     width: "90%",
-
+    marginBottom: 40,
     marginTop: 10,
   },
   inviteCard: {
@@ -296,14 +436,14 @@ const styles = StyleSheet.create({
     width: "70%",
     marginLeft: -20,
     top: -10,
-    marginTop:10,
-    backgroundColor:"#EBE6EA",
-    borderRadius:10,
+    marginTop: 10,
+    backgroundColor: "#EBE6EA",
+    borderRadius: 10,
   },
   buttonSplit: {
     flexDirection: "row",
     justifyContent: "space-around",
-    top:-8
+    top: -8,
   },
   buttonAcceptStyle: {
     height: 30,
@@ -327,7 +467,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   advice: {
-    height: 500,
   },
   buttonAddtStyle: {
     height: 30,
@@ -336,6 +475,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    top:-8
+    top: -8,
   },
 });

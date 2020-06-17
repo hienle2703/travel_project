@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
   },
   feedList: {
     //height: 600,
-    width: "90%",
+    width: "100%",
     marginBottom: 90,
   },
   feedCard: {

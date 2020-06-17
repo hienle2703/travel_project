@@ -48,7 +48,6 @@ const imgData = [
   },
 ];
 
-
 export default class FriendAll extends Component {
   constructor(props) {
     super(props);
@@ -61,68 +60,9 @@ export default class FriendAll extends Component {
       friendNumber: null,
       flexin: false,
       arrayUsed: [],
+      countFriend: null,
     };
   }
-  // UNSAFE_componentWillMount = async () => {
-  //   const userAuth = firebaseApp.auth().currentUser;
-  //   //console.log(userAuth);
-
-  //   const split = userAuth.email;
-  //   const splitted = split.substring(0, split.lastIndexOf("@"));
-  //   console.log("Splitted nè", splitted);
-  //   const takeArray = firebaseApp
-  //     .database()
-  //     .ref("user/" + splitted)
-  //     .child("friend");
-  //   //console.log("Đường link của list friend nè mày", takeArray);
-  //   //Lấy ra object list friend của User sở tại
-
-  //   const snapshot = await takeArray.once("value");
-  //   //const snap = await JSON.stringify(snapshot)
-  //   // console.log("Snapshot", snapshot);
-
-  //   let arrayFriend = [];
-
-  //   //Lấy các value name của bạn bè đưa vào trong mảng arrayFriend trong state
-  //   const count = Object.keys(snapshot).length - 1;
-  //   for (let i = 0; i < count; i++) {
-  //     let take = await firebaseApp
-  //       .database()
-  //       .ref("user/" + splitted + "/friend")
-  //       .child(i)
-  //       .once("value");
-  //     arrayFriend.push(take);
-  //   }
-  //   //console.log(this.state.arrayFriend);
-  //   let arrayFriendInformation = []; // cái này
-  //   //Lặp mỗi phần tử của arrayFriend, biến nó thành string, lọc dấu ngoặc rồi gắn vào đường link lấy userInfor
-
-  //   arrayFriend.map(async (element) => {
-  //     const convert = JSON.stringify(element).replace(/[^a-zA-Z ]/g, "");
-  //     //console.log("kiểu dữ liệu của convert nè: ", typeof convert)
-  //     //console.log(convert)
-  //     //console.log("userInfor nè",userInfor)
-  //     //Tạo ra 1 cái mảng, chứa các object có đầy đủ thông tin của bạn bè
-  //     const userName = await firebaseApp
-  //       .database()
-  //       .ref("user")
-  //       .child(convert)
-  //       .child("name")
-  //       .once("value");
-  //     const userAva = await firebaseApp
-  //       .database()
-  //       .ref("user")
-  //       .child(convert)
-  //       .child("ava")
-  //       .once("value");
-  //     arrayFriendInformation.push({ name: userName, ava: userAva });
-  //     console.log("Mảng mới push trong foreach", arrayFriendInformation);
-  //     // Tới đây chuẩn, ok
-  //   });
-  //     this.setState({ arrayFriend, arrayFriendInformation });
- 
-  // };
-
   componentDidMount = async () => {
     const userAuth = firebaseApp.auth().currentUser;
     //console.log(userAuth);
@@ -136,60 +76,38 @@ export default class FriendAll extends Component {
       .child("friend");
     //console.log("Đường link của list friend nè mày", takeArray);
     //Lấy ra object list friend của User sở tại
-
+    
     const snapshot = await takeArray.once("value");
     //const snap = await JSON.stringify(snapshot)
-    // console.log("Snapshot", snapshot);
+    //console.log("Snapshot", snapshot);
+    let test = snapshot.val();
+    console.log(test, "Test nè")
+    let count = Object.keys(test).length
 
-    let arrayFriend = [];
-
-    //Lấy các value name của bạn bè đưa vào trong mảng arrayFriend trong state
-    const count = Object.keys(snapshot).length;
-    for (let i = 0; i < count; i++) {
-      let take = await firebaseApp
-        .database()
-        .ref("user/" + splitted + "/friend")
-        .child(i)
-        .once("value");
-      arrayFriend.push(take);
-    }
-    //console.log(this.state.arrayFriend);
     let arrayFriendInformation = []; // cái này
-    //Lặp mỗi phần tử của arrayFriend, biến nó thành string, lọc dấu ngoặc rồi gắn vào đường link lấy userInfor
-
-    arrayFriend.map(async (element) => {
-      const convert = JSON.stringify(element).replace(/[^a-zA-Z ]/g, "");
-      //console.log("kiểu dữ liệu của convert nè: ", typeof convert)
-      //console.log(convert)
-      //console.log("userInfor nè",userInfor)
-      //Tạo ra 1 cái mảng, chứa các object có đầy đủ thông tin của bạn bè
+    for (var key in test){
+      //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
+      //const convert = JSON.stringify(key).replace(/[^a-zA-Z ]/g, "");
+      console.log(key,"Key==========")
       const userName = await firebaseApp
-        .database()
-        .ref("user")
-        .child(convert)
-        .child("name")
-        .once("value");
-      const userAva = await firebaseApp
-        .database()
-        .ref("user")
-        .child(convert)
-        .child("ava")
-        .once("value");
-      arrayFriendInformation.push({ name: userName, ava: userAva });
-      //console.log("Mảng mới push trong foreach", arrayFriendInformation);
-      // Tới đây chuẩn, ok
+      .database()
+      .ref("user")
+      .child(key)
+      .child("name")
+      .once("value");
+    const userAva = await firebaseApp
+      .database()
+      .ref("user")
+      .child(key)
+      .child("ava")
+      .once("value");
+    arrayFriendInformation.push({ name: userName, ava: userAva });
+    }
+    this.setState({
+      arrayFriendInformation,
+      countFriend: count,
     });
-    setTimeout(() => {
-      //console.log("Mảng mới push ngoài foreach", arrayFriendInformation);
-      this.setState({ arrayFriend, arrayFriendInformation });
-      console.log("array trong setTimeOut", this.state.arrayFriendInformation)
-      console.log(typeof this.state.arrayFriendInformation,"Infor type")
-      console.log(typeof this.state.arrayFriend,"mảng tên type")
-    }, 3000);
-    
-    console.log(this.state.arrayFriendInformation)
-    // this.setState({ arrayFriendInformation }); // Không setState được
-    // console.log(this.state.arrayFriendInformation);
+
   };
 
   onClickBtn() {
@@ -210,14 +128,14 @@ export default class FriendAll extends Component {
                 function () {
                   this.setState({ flexin: true });
                 }.bind(this),
-                3000
+                1000
               );
               return <ActivityIndicator size="large" color="#DB5823" />;
 
             default:
               //console.log(typeof this.state.arrayFriendInformation,"KIỂU DỮ LIỆU======================")
-              console.log(this.state.arrayFriend,"arrayFriend đây nè ==================")
-              console.log(this.state.arrayFriendInformation,"this.state.arrayFriendInformation đây nè =================")
+              //console.log(this.state.arrayFriend,"arrayFriend đây nè ==================")
+              //console.log(this.state.arrayFriendInformation,"this.state.arrayFriendInformation đây nè =================")
 
               return (
                 <ScrollView
@@ -263,7 +181,9 @@ export default class FriendAll extends Component {
                   </View>
                   <View style={styles.listContainer}>
                     <View style={styles.countFriends}>
-                      <Text style={styles.countTitle}>230 Friends</Text>
+                      <Text style={styles.countTitle}>
+                        {this.state.countFriend} Friends
+                      </Text>
                     </View>
 
                     <View style={styles.listFriends}>
@@ -306,13 +226,22 @@ export default class FriendAll extends Component {
                 );
               })} */}
                       {this.state.arrayFriendInformation.map((item) => {
-                        console.log(item, "ITEM ITEM ITEM ITEM ITEM ITEM")
-                        var obj =JSON.stringify(item)
-                        var objectValue = JSON.parse(obj)
+                        //console.log(item, "ITEM ITEM ITEM ITEM ITEM ITEM")
+                        var obj = JSON.stringify(item);
+                        var objectValue = JSON.parse(obj);
                         return (
                           <View style={styles.friendCard}>
                             <TouchableOpacity
-                              onPress={() => this.onClickFriendProfile()}
+                              //onPress={() => this.onClickFriendProfile()}
+                              onPress={() =>
+                                this.props.navigation.navigate(
+                                  "FriendProfile",
+                                  {
+                                    ava: objectValue.ava,
+                                    name: objectValue.name,
+                                  }
+                                )
+                              }
                             >
                               <View
                                 style={{
@@ -323,14 +252,14 @@ export default class FriendAll extends Component {
                                 <View style={styles.avatarContainer}>
                                   <Image
                                     style={styles.avatar}
-                                    source={{ uri: objectValue.ava  }}
+                                    source={{ uri: objectValue.ava }}
                                   />
                                 </View>
                                 <View style={styles.friendName}>
                                   <Text
                                     style={{ fontSize: 18, fontWeight: "bold" }}
                                   >
-                                     {objectValue.name}
+                                    {objectValue.name}
                                   </Text>
                                   <Text style={{ fontSize: 13, color: "gray" }}>
                                     4 friends in common
