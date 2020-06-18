@@ -48,7 +48,7 @@ const scheduleData = [
   {
     id: 3,
     imgSource:
-      "https://lh3.googleusercontent.com/proxy/8wJJaBE6AkYJCPcMxKivHS8o5Md_fktIS8TSUjVpARw1hrWD_pBjnlM9zhmJ9Vn5a3bXxImXzBnHgHhk1qLSxA78RbVpucp0UJez2f3vjyTWwkjZhdl04ecnQagTFbEk",
+      "https://aroma.vn/wp-content/uploads/2018/11/aafed9d6-h%C3%A0-n%E1%BB%99i.jpg",
     name: "Viet Nam Capital",
     start: "HCM",
     end: "Ha Noi",
@@ -127,7 +127,7 @@ const postData = [
     day: "3",
     points: "HCM - Bao Loc",
     imgSource:
-      "https://lh3.googleusercontent.com/proxy/icLRnyEaQgnCk7PPoTVB2PhjkAHUeqeKXZZ8mX6JqmmqH1Mdrykx4SIzSfRYZ-dZMjpz8q8Ec-XHcqG_yp08CFKzqi6RCUy2Kh1wZaSPTRg54e1fnlYUKMQbqtQOwPxB2y-l_n2I4advtMuU0WrVR78CkUlA7zDxqVPFjr4w4uVAGPj85jVoPFe6ytsEWVi5Rfd4JacMD4GhcOPakA8AcMf3o_FXRlvymfChl0D35cidwvN5shVgvYg",
+      "https://sites.google.com/site/vuoncva5461dulich/_/rsrc/1529544852694/dl-55/TP%20Bao%20Loc%202.jpg",
     view: "63",
     comment: "22",
   },

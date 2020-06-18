@@ -88,7 +88,7 @@ export default class FriendAll extends Component {
     for (var key in test){
       //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
       //const convert = JSON.stringify(key).replace(/[^a-zA-Z ]/g, "");
-      console.log(key,"Key==========")
+      
       const userName = await firebaseApp
       .database()
       .ref("user")

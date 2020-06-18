@@ -105,21 +105,17 @@ export default class ProfileScreen extends Component {
   //   };
 
   componentDidMount = async () => {
-    
     const split = this.state.user.email;
     console.log("Lấy biến split", split);
     //Cắt chuỗi để lấy cụm trước @
     const splitted = await split.substring(0, split.lastIndexOf("@"));
     console.log("Lấy name sau khi cắt split", splitted);
-    const itemRef = await firebaseApp
-      .database()
-      .ref("user")
-      .child(splitted);
+    const itemRef = await firebaseApp.database().ref("user").child(splitted);
     const snapshot = await itemRef.child("name").once("value");
     const snapshot1 = await itemRef.child("email").once("value");
     const snapshot2 = await itemRef.child("phone").once("value");
     const snapshot3 = await itemRef.child("ava").once("value");
-  
+
     let name = snapshot.val();
     let email = snapshot1.val();
     let phone = snapshot2.val();
@@ -281,42 +277,6 @@ export default class ProfileScreen extends Component {
                                     </Text>
                                   </View>
                                 </View> */}
-
-                                <View
-                                  style={{ marginTop: 10, marginBottom: 10 }}
-                                >
-                                  <View style={styles.bntEdit}>
-                                    <TouchableOpacity
-                                      style={styles.btnEditPro}
-                                      onPress={() => this.onClickBtn()}
-                                    >
-                                      <Text style={styles.txtEdit}>
-                                        Edit you profile
-                                      </Text>
-                                      <View>
-                                        <FontAwesome
-                                          name="pencil"
-                                          size={12}
-                                          color="white"
-                                        />
-                                      </View>
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
-                                <View
-                                  style={{ marginTop: 0, marginBottom: 20 }}
-                                >
-                                  <View style={styles.bntEdit}>
-                                    <TouchableOpacity
-                                      style={styles.btnLogOut}
-                                      onPress={() => this.logOut()}
-                                    >
-                                      <Text style={styles.txtEdit}>
-                                        Log Out
-                                      </Text>
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
 
                                 <View style={styles.contentBtn}>
                                   <View>
@@ -528,7 +488,46 @@ export default class ProfileScreen extends Component {
                                     </TouchableOpacity>
                                   </View>
                                 </View>
+                                <View
+                                  style={{
+                                    marginTop: 10,
+                                    marginBottom: 10,
+                                  }}
+                                >
+                                  <View style={styles.bntEdit}>
+                                    <TouchableOpacity
+                                      style={styles.btnEditPro}
+                                      onPress={() => this.onClickBtn()}
+                                    >
+                                      <Text style={styles.txtEdit}>
+                                        Edit you profile
+                                      </Text>
+                                      <View>
+                                        <FontAwesome
+                                          name="pencil"
+                                          size={12}
+                                          color="white"
+                                        />
+                                      </View>
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
+                                <View
+                                  style={{ marginTop: 0, marginBottom: 20 }}
+                                >
+                                  <View style={styles.bntEdit}>
+                                    <TouchableOpacity
+                                      style={styles.btnLogOut}
+                                      onPress={() => this.logOut()}
+                                    >
+                                      <Text style={styles.txtEdit}>
+                                        Log Out
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
                               </View>
+
                               {/* <View style={styles.footter}>
                              <ScrollView style={styles.imgArea}>
                                 <Text></Text>
@@ -637,6 +636,7 @@ const styles = StyleSheet.create({
   avataArea: {
     height: 100,
     margin: 80,
+    marginTop:150,
     marginBottom: -100,
   },
   infArea: {
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
   },
   bntEdit: {
     //flex:0.3,
-    width: "80%",
+    width: "100%",
     marginTop: 5,
     justifyContent: "center",
     alignItems: "center",
@@ -682,23 +682,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     marginTop: 30,
+    width: 400
   },
   //màu facebook: #177DEE
   contentBtn: {
     height: 310,
-    marginTop: 7,
+    marginTop: 15,
     borderRadius: 20,
-    width: "100%",
+    width: 380,
     flexDirection: "row",
     backgroundColor: "#DB5823",
+    justifyContent:"center"
   },
   contentBox: {
     height: 80,
-    width: 135,
+    width: 175,
     backgroundColor: "#EEEEEE",
     borderRadius: 20,
     marginTop: 10,
-    marginLeft: 10,
+    marginLeft: 5,
+    marginRight:5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -711,11 +714,11 @@ const styles = StyleSheet.create({
   },
   contentBox1: {
     height: 110,
-    width: 135,
+    width: 175,
     backgroundColor: "#EEEEEE",
     borderRadius: 20,
     marginTop: 10,
-    marginLeft: 10,
+    marginLeft: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image,Alert } from "react-native";
 import {
   ScrollView,
   TextInput,
@@ -49,7 +49,7 @@ export default class FriendMainScreen extends Component {
     this.state = {
       arrayFriend: [],
       arrayFriendInformation: [],
-      arrayAdvice:[],
+      arrayAdvice: [],
       newFriend: null,
       flexin: false,
       arrayUsed: [],
@@ -59,6 +59,43 @@ export default class FriendMainScreen extends Component {
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  onClickAddFriend = async (email) => {
+    //Lấy email user hiện tại
+    const userAuth = firebaseApp.auth().currentUser;
+    const cut = userAuth.email;
+    const cutted = cut.substring(0, cut.lastIndexOf("@"));
+    //Thêm user hiện tại vào danh sách friendRequest của người nhận
+    const splitted = email.substring(0, email.lastIndexOf("@"));
+    const addRequest = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friendRequest/" + cutted);
+
+      addRequest.set({
+      name: cutted,
+    });
+    //Thêm user được nhận lời vào danh sách friendSent của người gửi
+    const addSent = firebaseApp
+      .database()
+      .ref("user/" +cutted)
+      .child("friendSent/" + splitted);
+      addSent.set({
+        name: splitted,
+      });
+    Alert.alert(
+      "You have added this user",
+      "The request has been sent",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+      ],
+      { cancelable: false }
+    );
+  };
   onClickAcceptFriend = async (node, key) => {
     //console.log(key,"NODE NÈ===========");
     const userAuth = firebaseApp.auth().currentUser;
@@ -87,7 +124,7 @@ export default class FriendMainScreen extends Component {
     let newArrayFriend = this.state.arrayFriendInformation.filter(
       (item) => item.key !== key
     );
-    console.log(newArrayFriend)
+    console.log(newArrayFriend);
     this.setState({
       arrayFriendInformation: newArrayFriend,
       countFriend: newArrayFriend.length,
@@ -95,13 +132,13 @@ export default class FriendMainScreen extends Component {
   };
   componentDidMount = async () => {
     const userAuth = firebaseApp.auth().currentUser;
-    
+
     const split = userAuth.email;
     const splitted = split.substring(0, split.lastIndexOf("@")); //log Toan Hien
     //console.log(splitted)
     const allUser = firebaseApp.database().ref("user");
-    const snapAll = await allUser.once("value")
-    let alo = snapAll.val()
+    const snapAll = await allUser.once("value");
+    let alo = snapAll.val();
 
     ////////////////////////////////////////////////////////////////////// => ĐANG LÀM TỚI ĐÂY
     // //Lấy thông tin bạn bè
@@ -110,14 +147,22 @@ export default class FriendMainScreen extends Component {
       .database()
       .ref("user/" + splitted)
       .child("friend");
-      const takeFriend =await friendZone.once("value")
-      let hihi =  takeFriend.val()
-      console.log(hihi,"HIHIHIIHIHI")
-      for (var key in hihi) {
-        arrayFriendZone.push(key)
-      }
-      console.log(arrayFriendZone,"============")
+    const takeFriend = await friendZone.once("value");
+    let hihi = takeFriend.val();
+    //console.log(hihi, "HIHIHIIHIHI");
+    for (var key in hihi) {
+      arrayFriendZone.push(key);
+    }
+    //console.log(arrayFriendZone, "============");
 
+    let arrayAlreadyFriend = [];
+    for (var i in arrayFriendZone) {
+      const combine = arrayFriendZone[i] + "@gmail.com";
+      //console.log(combine,"COMBINE ----------------")
+      arrayAlreadyFriend.push(combine);
+    }
+    //console.log(arrayAlreadyFriend,'ARRAY**************************')
+    let b = JSON.stringify(arrayAlreadyFriend);
 
     //   let arrayLOL =[]
     // for (var key in arrayFriendZone ){
@@ -125,16 +170,15 @@ export default class FriendMainScreen extends Component {
     //   arrayLOL.push(a);
     // }
     // console.log(arrayLOL,"===================")
-////////////////////////////////////////////////////////////////////// => ĐANG LÀM TỚI ĐÂY
 
     let arrayAdvice = []; // lấy ra mảng tất cả user trừ cái thằng user đang dùng
     for (var key in alo) {
-      arrayAdvice.push(alo[key])
+      arrayAdvice.push(alo[key]);
     }
     //console.log(arrayAdvice)
-    const a =  arrayAdvice.filter(
-      (item) => item.email !== split
-    );
+
+    const a = arrayAdvice.filter((item) => item.email !== split);
+
     const takeArray = firebaseApp
       .database()
       .ref("user/" + splitted)
@@ -146,7 +190,6 @@ export default class FriendMainScreen extends Component {
     let test = snapshot.val();
     //console.log(test);
     let count = Object.keys(test).length;
-console.log(test,"TEST NÈ")
     let arrayFriendInformation = []; // cái này
     for (var key in test) {
       //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
@@ -170,7 +213,7 @@ console.log(test,"TEST NÈ")
       });
     }
     this.setState({
-      arrayAdvice:a,
+      arrayAdvice: a,
       arrayFriendInformation,
       countFriend: count,
     });
@@ -309,6 +352,8 @@ console.log(test,"TEST NÈ")
             </View>
             <View style={styles.inviteContainer}>
               {this.state.arrayAdvice.map((item) => {
+                var obj = JSON.stringify(item);
+                var objectValue = JSON.parse(obj);
                 return (
                   <View style={styles.inviteCard}>
                     <View style={styles.ava}>
@@ -324,7 +369,12 @@ console.log(test,"TEST NÈ")
                         </Text>
                       </View>
                       <View style={{ marginLeft: 15 }}>
-                        <TouchableOpacity style={styles.buttonAddtStyle}>
+                        <TouchableOpacity
+                          style={styles.buttonAddtStyle}
+                          onPress={() =>
+                            this.onClickAddFriend(objectValue.email)
+                          }
+                        >
                           <Text style={{ color: "white" }}>Add</Text>
                         </TouchableOpacity>
                         {/* <TouchableOpacity style={styles.buttonDeleteStyle}>
@@ -466,8 +516,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 15,
   },
-  advice: {
-  },
+  advice: {},
   buttonAddtStyle: {
     height: 30,
     width: 100,
