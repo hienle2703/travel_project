@@ -140,7 +140,6 @@ export default class FriendMainScreen extends Component {
     const snapAll = await allUser.once("value");
     let alo = snapAll.val();
 
-    ////////////////////////////////////////////////////////////////////// => ĐANG LÀM TỚI ĐÂY
     // //Lấy thông tin bạn bè
     let arrayFriendZone = []; // cái này
     const friendZone = firebaseApp
@@ -153,23 +152,13 @@ export default class FriendMainScreen extends Component {
     for (var key in hihi) {
       arrayFriendZone.push(key);
     }
-    //console.log(arrayFriendZone, "============");
-
     let arrayAlreadyFriend = [];
     for (var i in arrayFriendZone) {
       const combine = arrayFriendZone[i] + "@gmail.com";
       //console.log(combine,"COMBINE ----------------")
       arrayAlreadyFriend.push(combine);
     }
-    //console.log(arrayAlreadyFriend,'ARRAY**************************')
     let b = JSON.stringify(arrayAlreadyFriend);
-
-    //   let arrayLOL =[]
-    // for (var key in arrayFriendZone ){
-    //   let a= arrayFriendZone[key] + "@gmail.com";
-    //   arrayLOL.push(a);
-    // }
-    // console.log(arrayLOL,"===================")
 
     let arrayAdvice = []; // lấy ra mảng tất cả user trừ cái thằng user đang dùng
     for (var key in alo) {

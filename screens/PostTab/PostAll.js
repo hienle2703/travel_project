@@ -1,10 +1,18 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image,TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import TabBarIcon from "../../components/TabBarIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { firebaseApp } from "../../components/FirebaseConfig";
 
 const postData = [
   {
@@ -67,7 +75,9 @@ const postData = [
 export default class PostAll extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      arrayAllPost: [],
+    };
   }
   onClickBtn() {
     this.props.navigation.goBack();
@@ -78,6 +88,49 @@ export default class PostAll extends Component {
       headerTitle: "Trang chi tiết",
     });
   }
+  componentDidMount = async () => {
+    // Lấy tên người dùng đang đăng nhập
+    const userAuth = firebaseApp.auth().currentUser;
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+
+    //Gọi tới lấy ra mã bài viết của người dùng đang đăng nhập
+    const postCall = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("post");
+    const postTake = await postCall.once("value");
+    let val = postTake.val();
+    let arrayPost = [];
+    for (var key in val) {
+      arrayPost.push(key);
+    }
+    //Gọi vào post để lấy ra tất cả mã bài viết cho vào mảng
+    const allPost = firebaseApp.database().ref("post");
+    const snapAll = await allPost.once("value");
+    let all = snapAll.val();
+    let arrayAllPost = [];
+    let arrayFullInfor = [];
+    for (var key in all) {
+      arrayAllPost.push(key); // lấy ra tên các bài viết
+    }
+    //Giao giữa 2 mảng, lấy ra những phần chung
+    let intersect = arrayAllPost.filter((value) => arrayPost.includes(value)); // lấy ra tên các bài viết chung
+
+    //Chỉ lấy ra những phần tử đó từ trong arrayAllPost để có đầy đủ thông tin bài viết
+
+    for (var i in intersect) {
+      let child = intersect[i];
+      let a = firebaseApp.database().ref("post").child(child);
+      let takeA = await a.once("value");
+
+      arrayFullInfor.push(takeA);
+    }
+
+    //SetState
+    this.setState({ arrayAllPost: arrayFullInfor });
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -121,7 +174,10 @@ export default class PostAll extends Component {
 
         <ScrollView>
           <View style={styles.postContainer}>
-            {postData.map((item) => {
+            {this.state.arrayAllPost.map((item) => {
+              var obj = JSON.stringify(item);
+              var objectValue = JSON.parse(obj);
+              console.log(objectValue)
               return (
                 <TouchableOpacity
                   onPress={() => this.onClickDetail()}
@@ -135,24 +191,25 @@ export default class PostAll extends Component {
                           width: 160,
                           borderRadius: 20,
                         }}
-                        source={{ uri: item.imgSource }}
+                        source={{ uri: objectValue.imgHero }}
                       />
                     </View>
                     <View style={styles.feedTxt}>
                       <Text style={{ color: "#DB5823", fontWeight: "bold" }}>
-                        {item.name}
+                        {objectValue.title}
                       </Text>
                       <Text style={{ fontSize: 12, color: "gray" }}>
-                        {item.author}
+                        {objectValue.author}
+                      </Text>
+                      
+                      {/* <Text style={{ fontSize: 12, color: "gray" }}>
+                        {objectValue.rating}
                       </Text>
                       <Text style={{ fontSize: 12, color: "gray" }}>
-                        {item.points}
-                      </Text>
-                      <Text style={{ fontSize: 12, color: "gray" }}>
-                        {item.day} Days
-                      </Text>
+                        {objectValue.day} Days
+                      </Text> */}
                       {/* Rating */}
-                      <View style={{ marginTop: 35, flexDirection: "row" }}>
+                      <View style={{ marginTop: 65, flexDirection: "row" }}>
                         <AntDesign name="staro" size={15} color="black" />
                         <AntDesign name="staro" size={15} color="black" />
                         <AntDesign name="staro" size={15} color="black" />
@@ -171,14 +228,14 @@ export default class PostAll extends Component {
                           style={{ flexDirection: "row", marginBottom: 10 }}
                         >
                           <Text style={{ fontSize: 12, color: "gray" }}>
-                            {item.view}{" "}
+                            {objectValue.view}{" "}
                           </Text>
                           <Ionicons name="md-eye" size={15} color="gray" />
                         </View>
 
                         <View style={{ flexDirection: "row", left: 10 }}>
                           <Text style={{ fontSize: 12, color: "gray" }}>
-                            {item.comment}{" "}
+                            {objectValue.comment}{" "}
                           </Text>
                           <FontAwesome
                             name="comment-o"

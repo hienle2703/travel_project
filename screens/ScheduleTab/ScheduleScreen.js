@@ -14,6 +14,9 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import TabBarIcon from "../../components/TabBarIcon";
 import { Entypo } from "@expo/vector-icons";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
+import * as firebase from "firebase";
+import FirstRoute from "../ScheduleTab/FirstRoute"
 
 const imgData = [
   {
@@ -73,12 +76,14 @@ export default class ScheduleScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      
       index: 0,
       routes: [
         { key: "first", title: "Your Plans" },
         { key: "second", title: "ONGOING" },
         { key: "third", title: "COMPLETED" },
       ],
+      arrayAllSchedule:[],
     };
   }
   onClickDetail() {
@@ -91,11 +96,54 @@ export default class ScheduleScreen extends Component {
     console.log(index);
     this.setState({ index });
   };
+  componentDidMount = async () => {
+    // Lấy tên người dùng đang đăng nhập
+    const userAuth = firebaseApp.auth().currentUser;
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+
+    //Gọi tới lấy ra mã lịch trình của người dùng đang đăng nhập
+    const postCall = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("schedule");
+    const postTake = await postCall.once("value");
+    let val = postTake.val();
+    let arrayPost = [];
+    for (var key in val) {
+      arrayPost.push(key);
+    }
+    //Gọi vào post để lấy ra tất cả mã bài viết cho vào mảng
+    const allPost = firebaseApp.database().ref("schedule");
+    const snapAll = await allPost.once("value");
+    let all = snapAll.val();
+    let arrayAllPost = [];
+    let arrayFullInfor = [];
+    for (var key in all) {
+      arrayAllPost.push(key); // lấy ra tên các bài viết
+    }
+    //Giao giữa 2 mảng, lấy ra những phần chung
+    let intersect = arrayAllPost.filter((value) => arrayPost.includes(value)); // lấy ra tên các bài viết chung
+
+    //Chỉ lấy ra những phần tử đó từ trong arrayAllPost để có đầy đủ thông tin bài viết
+
+    for (var i in intersect) {
+      let child = intersect[i];
+      let a = firebaseApp.database().ref("schedule").child(child);
+      let takeA = await a.once("value");
+
+      arrayFullInfor.push(takeA);
+    }
+    //SetState
+    this.setState({ arrayAllSchedule: arrayFullInfor });
+  };
+
   FirstRoute = () => (
     <View style={[styles.scene]}>
       <ScrollView>
         <View>
           {imgData.map((item) => {
+            console.log(this.state.arrayAllSchedule,"===============")
             return (
               <TouchableOpacity onPress={() => this.onClickDetail()}>
                 <View style={styles.containerScene}>
@@ -107,7 +155,7 @@ export default class ScheduleScreen extends Component {
                         alignSelf: "center",
                         borderRadius: 20,
                       }}
-                      source={item.imgSource}
+                      source={ item.imgSource}
                     />
                     <View style={styles.txt}>
                       <View style={styles.location}>
@@ -303,12 +351,13 @@ export default class ScheduleScreen extends Component {
     />
   );
   renderScene = SceneMap({
-    first: this.FirstRoute,
+    first: FirstRoute,
     second: this.SecondRoute,
     third: this.ThirdRoute,
   });
   render() {
     const { index, routes } = this.state;
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
