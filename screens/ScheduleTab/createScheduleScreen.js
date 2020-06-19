@@ -18,14 +18,34 @@ import DatePicker from "react-native-datepicker";
 import { auth } from "firebase";
 
 export default class createScheduleScreen extends Component {
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      locationStart: "",
+      locationEnd:"",
+    };
+  }
   onClickDestination() {
     this.props.navigation.navigate("searchLocation");
   }
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  componentDidMount() {
+    const a = this.props.route.params?.locationStart;
+    if (a !== null) {
+      this.setState({ locationStart: "haha" });
+    }
+
+    const b = this.props.route.params?.locationEnd;
+    if (b !== null) {
+      this.setState({ locationEnd: "haha" });
+    }
+  }
   render() {
+    const a = this.props.route.params?.locationStart;
+    const b = this.props.route.params?.locationEnd;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -51,105 +71,133 @@ export default class createScheduleScreen extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.choiceTravel}>
-          <View style={styles.line}>
-            <View style={{ width: "90%" }}>
-              <Text style={styles.txtTitle}>Schedule Name: </Text>
-              <TextInput style={styles.txtInput}></TextInput>
-            </View>
-          </View>
 
-          <View style={styles.line}>
-            <View style={{ width: "90%" }}>
-              <Text style={styles.txtTitle}>Starting location: </Text>
-              <TouchableOpacity
-                style={styles.btnContainer}
-                onPress={() => {
-                  this.props.navigation.navigate("searchLocation");
-                }}
-              >
-                <View style={styles.inputBox}>
-                  <Text style={styles.txtTap}>Tap to pick a location</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.line}>
-            <View style={{ width: "90%" }}>
-              <Text style={styles.txtTitle}>Destination: </Text>
-              <TouchableOpacity
-                onPress={() => this.onClickDestination()}
-                style={styles.btnContainer}
-              >
-                <View style={styles.inputBox}>
-                  <Text style={styles.txtTap}>
-                    Tap to pick another location
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.line}>
-            <View>
-              <View style={styles.dateView}>
-                <Text style={styles.txtTitle}>Start Date</Text>
-                <DatePicker
-                  style={styles.datePicker}
-                  date={this.state.date}
-                  mode="date"
-                  placeholder="Select date"
-                  format="DD-MM"
-                  minDate={this.state.date}
-                  maxDate="2021-06-01"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  showIcon={true}
-                  customStyles={{
-                    dateIcon: {
-                      position: "relative",
-                    },
-                    dateInput: {
-                      borderColor: "white",
-                    },
-                    // ... You can check the source to find the other keys.
-                  }}
-                  onDateChange={(date) => {
-                    this.setState({ date: date });
-                  }}
-                />
-              </View>
-              <View style={styles.dateView}>
-                <Text style={styles.txtTitle}> Date End </Text>
-                <DatePicker
-                  style={styles.datePicker}
-                  date={this.state.date}
-                  mode="date"
-                  placeholder="Select date"
-                  format="DD-MM"
-                  minDate="2020-05-01"
-                  maxDate="2021-06-01"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  showIcon={true}
-                  customStyles={{
-                    dateIcon: {
-                      position: "relative",
-                    },
-                    dateInput: {
-                      borderColor: "white",
-                    },
-                    // ... You can check the source to find the other keys.
-                  }}
-                  onDateChange={(date) => {
-                    this.setState({ date: date });
-                  }}
-                />
+        <View style={styles.formContainer}>
+          <View style={styles.choiceTravel}>
+            <View style={styles.line}>
+              <View style={{ width: "90%" }}>
+                <Text style={styles.txtTitle}>Schedule Name: </Text>
+                <TextInput
+                  value={this.state.name}
+                  onChangeText={(name) => this.setState({ name })}
+                  style={styles.txtInput}
+                ></TextInput>
               </View>
             </View>
-          </View>
-          {/* <View style={styles.line}>
+
+            <View style={styles.line}>
+              <View style={{ width: "90%" }}>
+                <Text style={styles.txtTitle}>Starting location: </Text>
+                <TouchableOpacity
+                  style={styles.btnContainer}
+                  onPress={() => {
+                    this.props.navigation.navigate("searchLocationScreen");
+                  }}
+                >
+                  <View style={styles.inputBox}>
+                    {(() => {
+                      switch (this.state.locationStart) {
+                        case "":
+                          return (
+                            <Text style={styles.txtTap}>
+                              Tap to pick a location
+                            </Text>
+                          );
+                        default:
+                          return <Text style={styles.txtTap}>{a}</Text>;
+                      }
+                    })()}
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.line}>
+              <View style={{ width: "90%" }}>
+                <Text style={styles.txtTitle}>Destination: </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.props.navigation.navigate("searchDestinationScreen");
+                  }}
+                  style={styles.btnContainer}
+                >
+                  <View style={styles.inputBox}>
+                  {(() => {
+                      switch (this.state.locationEnd) {
+                        case "":
+                          return (
+                            <Text style={styles.txtTap}>
+                              Tap to pick your destination
+                            </Text>
+                          );
+                        default:
+                          return <Text style={styles.txtTap}>{b}</Text>;
+                      }
+                    })()}
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.line}>
+              <View>
+                <View style={styles.dateView}>
+                  <Text style={styles.txtTitle}>Start Date</Text>
+                  <DatePicker
+                    style={styles.datePicker}
+                    date={this.state.date}
+                    mode="date"
+                    placeholder="Select date"
+                    format="DD-MM"
+                    minDate={this.state.date}
+                    maxDate="2021-06-01"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    showIcon={true}
+                    customStyles={{
+                      dateIcon: {
+                        position: "relative",
+                      },
+                      dateInput: {
+                        borderColor: "white",
+                      },
+                      // ... You can check the source to find the other keys.
+                    }}
+                    onDateChange={(date) => {
+                      this.setState({ date: date });
+                    }}
+                  />
+                </View>
+                <View style={styles.dateView}>
+                  <Text style={styles.txtTitle}> Date End </Text>
+                  <DatePicker
+                    style={styles.datePicker}
+                    date={this.state.date}
+                    mode="date"
+                    placeholder="Select date"
+                    format="DD-MM"
+                    minDate="2020-05-01"
+                    maxDate="2021-06-01"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    showIcon={true}
+                    customStyles={{
+                      dateIcon: {
+                        position: "relative",
+                      },
+                      dateInput: {
+                        borderColor: "white",
+                      },
+                      // ... You can check the source to find the other keys.
+                    }}
+                    onDateChange={(date) => {
+                      this.setState({ date: date });
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+            {/* <View style={styles.line}>
             <View style={{ flex: 1 }}>
               <Text style={styles.txtTitle}>Members :</Text>
               <TouchableOpacity
@@ -163,6 +211,7 @@ export default class createScheduleScreen extends Component {
               </TouchableOpacity>
             </View>
           </View> */}
+          </View>
         </View>
 
         <View style={styles.saveBtnContainer}>
@@ -269,13 +318,16 @@ const styles = StyleSheet.create({
   saveBtnText: {
     color: "white",
   },
-  txtInput:{
-    height:30,
-    width:"100%",
-    backgroundColor:"#D4D4D4",
-    alignSelf:"center",
-    borderRadius:10,
-    color:"black",
-    left:5,
-  }
+  txtInput: {
+    height: 30,
+    width: "100%",
+    backgroundColor: "#D4D4D4",
+    alignSelf: "center",
+    borderRadius: 10,
+    color: "black",
+    left: 5,
+  },
+  formContainer: {
+    marginTop: 40,
+  },
 });

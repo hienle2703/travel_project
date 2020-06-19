@@ -10,9 +10,7 @@ import {
   Image,
 } from "react-native";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
-import { TabView, SceneMap } from "react-native-tab-view";
-import { TabBar } from "react-native-tab-view";
-import TabBarIcon from "../../components/TabBarIcon";
+
 import { Entypo } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import * as firebase from "firebase";
@@ -52,6 +50,7 @@ export default class FirstRoute extends Component {
     for (var key in val) {
       arrayPost.push(key);
     }
+    
     //Gọi vào post để lấy ra tất cả mã bài viết cho vào mảng
     const allPost = firebaseApp.database().ref("schedule");
     const snapAll = await allPost.once("value");
@@ -70,7 +69,6 @@ export default class FirstRoute extends Component {
       let child = intersect[i];
       let a = firebaseApp.database().ref("schedule").child(child);
       let takeA = await a.once("value");
-
       arrayFullInfor.push(takeA);
     }
     //SetState
@@ -85,6 +83,9 @@ export default class FirstRoute extends Component {
             {this.state.arrayAllSchedule.map((item) => {
               var obj = JSON.stringify(item);
               var objectValue = JSON.parse(obj);
+              //console.log(objectValue)
+              var countPlaces = objectValue.choosePlaces
+              var count = Object.keys(countPlaces).length;
               return (
                 <TouchableOpacity onPress={() => this.onClickDetail()}>
                   <View style={styles.containerScene}>
@@ -107,7 +108,7 @@ export default class FirstRoute extends Component {
                               color="#DB5823"
                             />
                           </View>
-                          <Text style={{ color: "gray" }}>{item.location}</Text>
+                      <Text style={{ color: "gray" }}>{objectValue.start} to {objectValue.end}</Text>
                         </View>
                         <View style={styles.titleCard}>
                           <Text
@@ -117,25 +118,28 @@ export default class FirstRoute extends Component {
                               color: "#DB5823",
                             }}
                           >
-                            {item.title}
+                            {objectValue.name}
                           </Text>
                         </View>
                         <View style={styles.detailCard}>
                           <View>
                             <Text style={{ color: "gray" }}>
-                              Date: {item.date}
+                              Date: From {objectValue.dateStart} to {objectValue.dateEnd}
+                            </Text>
+                            <Text style={{ color: "gray" }}>
+                              Places: {count}
                             </Text>
                           </View>
-                          <View style={{ flexDirection: "row" }}>
+                          {/* <View style={{ flexDirection: "row" }}>
                             <Text style={{ color: "gray", bottom: 2 }}>
                               {item.view}{" "}
                             </Text>
                             <Ionicons name="md-eye" size={15} color="gray" />
-                          </View>
+                          </View> */}
                         </View>
                         <View style={styles.descriptionCard}>
-                          <Text>Status: {item.status}</Text>
-                          <Text>Member: {item.member}</Text>
+                          {/* <Text>Status: {item.status}</Text> */}
+                          {/* <Text>Member: {item.member}</Text> */}
                         </View>
                       </View>
                     </View>

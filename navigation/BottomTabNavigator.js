@@ -49,6 +49,9 @@ import AddMember from "../screens/ManageTab/AddMember";
 import ManageSchedule from "../screens/ManageTab/ManageSchedule";
 
 import FriendMainScreen from "../screens/ContactTab/FriendMainScreen";
+import FirstRoute from "../screens/ScheduleTab/FirstRoute";
+
+import searchDestinationScreen from "../screens/ScheduleTab/searchDestinationScreen"
 //Phần của Luân
 // function feedStack({ navigation }) {
 //   return (
@@ -164,6 +167,7 @@ function ScheduleStack() {
         //   ),
         //}}
       />
+      <Stack.Screen name="FirstRoute" title="Lịch trình 1" component={FirstRoute}/>
       <Stack.Screen
         name="ScheduleDetail"
         title="Chi tiết lịch trình"
@@ -183,8 +187,9 @@ function ScheduleStack() {
           ),
         }}
       />
+      <Stack.Screen name="searchDestinationScreen" title="Chọn điểm đến" component={searchDestinationScreen}/>
       <Stack.Screen
-        name="searchLocation"
+        name="searchLocationScreen"
         title="ABC"
         component={searchLocationScreen}
         options={{

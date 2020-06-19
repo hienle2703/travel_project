@@ -1,134 +1,316 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { Component } from 'react';
-import { Image, Platform, FlatList,ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import LocationItem from '../../components/LocationItem';
-import { MonoText } from '../../components/StyledText';
-import TabBarIcon from '../../components/TabBarIcon';
+import React, { Component } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
+import TabBarIcon from "../../components/TabBarIcon";
+import { Ionicons } from "@expo/vector-icons";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
 
-export default class searchLocationScreen extends Component{
-  state = {
-    isLoading: true,
-    listArticles: [],
-    totalResults: 0,
-    page: 1,
-    isLoadMore: false,
-  };
 
-  componentDidMount = async () => {
-    const { page } = this.state;
-    this.setState({
-      isLoading: true,
-    });
-    this.callApi(page);
+export default class searchLocationScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      arrayFriend: [],
+      arrayFriendInformation: [],
+      friendAva: null,
+      friendEmail: null,
+      friendName: null,
+      friendNumber: null,
+      flexin: false,
+      arrayUsed: [],
+      countFriend: null,
 
-  };
-  callApi = async (page) => {
 
-    const { listArticles } = this.state;
-    const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?country=us&apiKey=6eec2f7fe6cd4c40a3fef8f33f5778fe&page=${page}`
-    );
-    //await setTimeout(() => { }, 2000);
-    const jsonResponse = await response.json();
-    this.setState({
-      page: page,
-      isLoading: false,
-      listArticles: listArticles.concat(jsonResponse.articles),
-      totalResult: jsonResponse.totalResults,
-
-    });
+      locationName: "",
+      arrayLocation:[],
+    };
   }
-  onEndReached = async () => {
-    const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?country=us&apiKey=6eec2f7fe6cd4c40a3fef8f33f5778fe&page=${newPage}`
-    );
-    const jsonResponse = await response.json();
-    const { isLoading } = this.state;
-    const { page, listArticles } = this.state;
-    const newPage = page + 1;
-    this.callApi(newPage);
-    //console.log(listArticles.length);
-    // console.log(jsonResponse.totalResults);
-    if (listArticles.length == jsonResponse.totalResults) {
-      console.log('END');
-      this.setState({
-        isLoading: false
-      });
-      return (
-        <Text style={{fontSize:200}}>You have reached the end</Text>
+  componentDidMount = async () => {
+    const locationCall = firebaseApp.database().ref("location")
+    const locationTake = await locationCall.once("value")
+    let location = locationTake.val()
+    let arrayLocation = [];
+    for(var key in location){
 
-      )
-
+      const locationName  = await firebaseApp
+        .database()
+        .ref("location")
+        .child(key)
+        .child("name")
+        .once("value");
+        arrayLocation.push({name: locationName})
     }
 
+    this.setState({arrayLocation}) // Lấy được mảng Object tên của các địa điểm
+    console.log(this.state.arrayLocation)
 
+
+    const userAuth = firebaseApp.auth().currentUser;
+
+
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+
+    const takeArray = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friend");
+    //Lấy ra object list friend của User sở tại
+
+    const snapshot = await takeArray.once("value");
+
+    let test = snapshot.val();
+    let count = Object.keys(test).length;
+
+    let arrayFriendInformation = []; // cái này
+    for (var key in test) {
+      //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
+      //const convert = JSON.stringify(key).replace(/[^a-zA-Z ]/g, "");
+
+      const userName = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("name")
+        .once("value");
+      const userAva = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("ava")
+        .once("value");
+      arrayFriendInformation.push({ name: userName, ava: userAva });
+    }
+    this.setState({
+      arrayFriendInformation,
+      countFriend: count,
+    });
   };
-  renderItem = ({ item }) => {
-    return <LocationItem item={item} />
-  };
 
-  renderFooter = () => {
-    
-    //const { isLoading } = this.state;
-    const { page, listArticles,jsonResponse } = this.state;
-    const newPage = page + 1;
-    //this.callApi(newPage);
-    console.log(listArticles.length);
-    
-    return (
-      <ActivityIndicator size="large" animating={true} />
-
-    )
-    
-  };
-  onRefresh = async () => {
-    const newPage = 1;
-    await this.setState({ isLoading: true, listArticles: [], page: newPage });
-    await setTimeout(() => {
-
-    }, 2000);
-    this.callApi(newPage);
-
-  };
+  onClickBtn() {
+    this.props.navigation.goBack();
+  }
+  onClickFriendProfile() {
+    this.props.navigation.navigate("FriendProfile");
+  }
   render() {
-    //console.log('render');
-    const { isLoading, listArticles } = this.state;
-    if (isLoading) {
-      return (
-        <View style={styles.container}>
-          <ActivityIndicator size="large" animating={isLoading} />
 
-        </View>
-      );
-    }
     return (
       <View style={styles.container}>
-        <FlatList
-          data={listArticles}
-          renderItem={this.renderItem}
-          style={styles.flatList}
-          onEndReached={this.onEndReached}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={this.renderFooter()}
-          onRefresh={this.onRefresh}
-          refreshing={false}
-        />
-      </View>
+        {(() => {
+          switch (this.state.flexin) {
+            case false:
+              setTimeout(
+                function () {
+                  this.setState({ flexin: true });
+                }.bind(this),
+                1000
+              );
+              return <ActivityIndicator size="large" color="#DB5823" />;
 
-    )
+            default:
+              return (
+                <ScrollView
+                  style={styles.scrollView}
+                  showsVerticalScrollIndicator={false}
+                >
+                  <View style={styles.header}>
+                    <View styles={styles.backBtn}>
+                      <TouchableOpacity
+                        style={{ left: 30, top: 15, flexDirection: "row" }}
+                        onPress={() => this.onClickBtn()}
+                      >
+                        <TabBarIcon
+                          style={{ color: "gray", alignItems: "flex-start" }}
+                          name="ios-arrow-back"
+                        />
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            color: "gray",
+                            left: 10,
+                          }}
+                        >
+                          Back
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={styles.searchContainer}>
+                    <View style={styles.searchBarrr}>
+                      <AntDesign
+                        name="search1"
+                        size={20}
+                        color="gray"
+                        style={{ marginLeft: 10, top: 10 }}
+                      />
+                      <TextInput
+                        style={styles.searchBar}
+                        placeholder="Search location"
+                      ></TextInput>
+                    </View>
+                  </View>
+                  <View style={styles.listContainer}>
+                    <View style={styles.listFriends}>
+                      {this.state.arrayLocation.map((item) => {
+                        var obj = JSON.stringify(item);
+                        var objectValue = JSON.parse(obj);
+                        return (
+                          <View style={styles.friendCard}>
+                            <TouchableOpacity
+                              //onPress={() => this.onClickFriendProfile()}
+                              onPress={() => {
+                                // Pass params back to home screen
+                                this.props.navigation.navigate('createScheduleScreen', { locationStart: objectValue.name });
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  marginLeft: 10,
+                                }}
+                              >
+                                <View style={styles.avatarContainer}>
+                                  <Image
+                                    style={styles.avatar}
+                                    source={{ uri: "https://freeiconshop.com/wp-content/uploads/edd/location-pin-flat.png" }}
+                                  />
+                                </View>
+                                <View style={styles.friendName}>
+                                  <Text
+                                    style={{ fontSize: 15, fontWeight: "bold" }}
+                                  >
+                                    {objectValue.name}
+                                  </Text>
+                                  
+                                </View>
+                              </View>
+                            </TouchableOpacity>
+
+                            {/* <View style={styles.buttonContainer}>
+                              <TouchableOpacity>
+                                <Ionicons
+                                  name="ios-more"
+                                  size={24}
+                                  color="black"
+                                />
+                              </TouchableOpacity>
+                            </View> */}
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View style={styles.footer}></View>
+                </ScrollView>
+              );
+          }
+        })()}
+      </View>
+    );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    //backgroundColor: "yellow",
   },
-  flatList: {
-    margin: 20,
-    marginTop: 5
-  }
-})
+  header: {
+    height: 100,
+    justifyContent: "center",
+  },
+  listContainer: {
+    height: 600,
+    //backgroundColor: "red",
+    width: "90%",
+    alignSelf: "center",
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+  footer: {
+    height: 300,
+    //backgroundColor: "green",
+  },
+  searchContainer: {
+    height: 70,
+    //backgroundColor: "",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    width: "90%",
+    borderBottomColor: "gray",
+    borderBottomWidth: 0.3,
+  },
+  searchBarrr: {
+    backgroundColor: "white",
+    width: "100%",
+    flexDirection: "row",
+    borderRadius: 13,
+  },
+  searchBar: {
+    height: 40,
+    width: "85%",
+    //backgroundColor:"white",
+    borderRadius: 13,
+    paddingLeft: 5,
+  },
+  countFriends: {
+    top: 20,
+    left: 20,
+    height: 60,
+  },
+  countTitle: {
+    fontWeight: "bold",
+    fontSize: 18,
+    color: "#DB5823",
+  },
+  listFriends: {
+    //backgroundColor: "yellow",
+    height: 500,
+    width: "100%",
+  },
+  friendCard: {
+    height: 60,
+    width: "100%",
+    backgroundColor: "#EBEBEB",
+    //backgroundColor:"red",
+    flexDirection: "row",
+    alignSelf: "center",
+    marginTop: 15,
+    borderRadius: 10,
+  },
+  avatarContainer: {
+    height: 60,
+    width: 60,
+  },
+  avatar: {
+    height: 60,
+    width: 60,
+    borderRadius: 60,
+  },
+  friendName: {
+    top: 20,
+    left: 10,
+  },
+  buttonContainer: {
+    height: 40,
+    width: 80,
+    //backgroundColor:"white",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 60,
+    marginTop: 10,
+  },
+});

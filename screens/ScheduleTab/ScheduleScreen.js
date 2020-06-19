@@ -350,6 +350,7 @@ export default class ScheduleScreen extends Component {
       style={{ backgroundColor: "#DB5823" }}
     />
   );
+ 
   renderScene = SceneMap({
     first: FirstRoute,
     second: this.SecondRoute,

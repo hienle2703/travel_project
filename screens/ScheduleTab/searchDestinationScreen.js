@@ -14,7 +14,8 @@ import TabBarIcon from "../../components/TabBarIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 
-export default class FriendAll extends Component {
+
+export default class searchDestinationScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,53 +28,72 @@ export default class FriendAll extends Component {
       flexin: false,
       arrayUsed: [],
       countFriend: null,
+
+
+      locationName: "",
+      arrayLocation:[],
     };
   }
   componentDidMount = async () => {
+    const locationCall = firebaseApp.database().ref("location")
+    const locationTake = await locationCall.once("value")
+    let location = locationTake.val()
+    let arrayLocation = [];
+    for(var key in location){
+
+      const locationName  = await firebaseApp
+        .database()
+        .ref("location")
+        .child(key)
+        .child("name")
+        .once("value");
+        arrayLocation.push({name: locationName})
+    }
+
+    this.setState({arrayLocation}) // Lấy được mảng Object tên của các địa điểm
+    console.log(this.state.arrayLocation)
+
+
     const userAuth = firebaseApp.auth().currentUser;
-    //console.log(userAuth);
+
 
     const split = userAuth.email;
     const splitted = split.substring(0, split.lastIndexOf("@"));
-    //console.log("Splitted nè", splitted);
+
     const takeArray = firebaseApp
       .database()
       .ref("user/" + splitted)
       .child("friend");
-    //console.log("Đường link của list friend nè mày", takeArray);
     //Lấy ra object list friend của User sở tại
-    
+
     const snapshot = await takeArray.once("value");
-    //const snap = await JSON.stringify(snapshot)
-    //console.log("Snapshot", snapshot);
+
     let test = snapshot.val();
-    console.log(test, "Test nè")
-    let count = Object.keys(test).length
+    let count = Object.keys(test).length;
 
     let arrayFriendInformation = []; // cái này
-    for (var key in test){
+    for (var key in test) {
       //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
       //const convert = JSON.stringify(key).replace(/[^a-zA-Z ]/g, "");
-      
+
       const userName = await firebaseApp
-      .database()
-      .ref("user")
-      .child(key)
-      .child("name")
-      .once("value");
-    const userAva = await firebaseApp
-      .database()
-      .ref("user")
-      .child(key)
-      .child("ava")
-      .once("value");
-    arrayFriendInformation.push({ name: userName, ava: userAva });
+        .database()
+        .ref("user")
+        .child(key)
+        .child("name")
+        .once("value");
+      const userAva = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("ava")
+        .once("value");
+      arrayFriendInformation.push({ name: userName, ava: userAva });
     }
     this.setState({
       arrayFriendInformation,
       countFriend: count,
     });
-
   };
 
   onClickBtn() {
@@ -83,7 +103,6 @@ export default class FriendAll extends Component {
     this.props.navigation.navigate("FriendProfile");
   }
   render() {
-    //console.log("arrayFriendInformation nè", this.state.arrayFriendInformation);
 
     return (
       <View style={styles.container}>
@@ -99,10 +118,6 @@ export default class FriendAll extends Component {
               return <ActivityIndicator size="large" color="#DB5823" />;
 
             default:
-              //console.log(typeof this.state.arrayFriendInformation,"KIỂU DỮ LIỆU======================")
-              //console.log(this.state.arrayFriend,"arrayFriend đây nè ==================")
-              //console.log(this.state.arrayFriendInformation,"this.state.arrayFriendInformation đây nè =================")
-
               return (
                 <ScrollView
                   style={styles.scrollView}
@@ -141,35 +156,23 @@ export default class FriendAll extends Component {
                       />
                       <TextInput
                         style={styles.searchBar}
-                        placeholder="Search for friends"
+                        placeholder="Search location"
                       ></TextInput>
                     </View>
                   </View>
                   <View style={styles.listContainer}>
-                    <View style={styles.countFriends}>
-                      <Text style={styles.countTitle}>
-                        {this.state.countFriend} Friends
-                      </Text>
-                    </View>
-
                     <View style={styles.listFriends}>
-                      {this.state.arrayFriendInformation.map((item) => {
-                        //console.log(item, "ITEM ITEM ITEM ITEM ITEM ITEM")
+                      {this.state.arrayLocation.map((item) => {
                         var obj = JSON.stringify(item);
                         var objectValue = JSON.parse(obj);
                         return (
                           <View style={styles.friendCard}>
                             <TouchableOpacity
                               //onPress={() => this.onClickFriendProfile()}
-                              onPress={() =>
-                                this.props.navigation.navigate(
-                                  "FriendProfile",
-                                  {
-                                    ava: objectValue.ava,
-                                    name: objectValue.name,
-                                  }
-                                )
-                              }
+                              onPress={() => {
+                                // Pass params back to home screen
+                                this.props.navigation.navigate('createScheduleScreen', { locationEnd: objectValue.name });
+                              }}
                             >
                               <View
                                 style={{
@@ -180,23 +183,21 @@ export default class FriendAll extends Component {
                                 <View style={styles.avatarContainer}>
                                   <Image
                                     style={styles.avatar}
-                                    source={{ uri: objectValue.ava }}
+                                    source={{ uri: "https://freeiconshop.com/wp-content/uploads/edd/location-pin-flat.png" }}
                                   />
                                 </View>
                                 <View style={styles.friendName}>
                                   <Text
-                                    style={{ fontSize: 18, fontWeight: "bold" }}
+                                    style={{ fontSize: 15, fontWeight: "bold" }}
                                   >
                                     {objectValue.name}
                                   </Text>
-                                  <Text style={{ fontSize: 13, color: "gray" }}>
-                                    4 friends in common
-                                  </Text>
+                                  
                                 </View>
                               </View>
                             </TouchableOpacity>
 
-                            <View style={styles.buttonContainer}>
+                            {/* <View style={styles.buttonContainer}>
                               <TouchableOpacity>
                                 <Ionicons
                                   name="ios-more"
@@ -204,7 +205,7 @@ export default class FriendAll extends Component {
                                   color="black"
                                 />
                               </TouchableOpacity>
-                            </View>
+                            </View> */}
                           </View>
                         );
                       })}
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
   },
   friendName: {
-    top: 10,
+    top: 20,
     left: 10,
   },
   buttonContainer: {

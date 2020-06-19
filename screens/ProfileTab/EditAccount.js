@@ -54,8 +54,6 @@ import * as firebase from "firebase";
 export default class EditAccount extends Component {
   constructor(props) {
     super(props);
-
-    //ref('lớp cha').child( 'lớp con')
     this.itemRef = firebaseApp.database();
     this.state = {
       image: "",
