@@ -38,8 +38,15 @@ export default class searchDestinationScreen extends Component {
     const locationCall = firebaseApp.database().ref("location")
     const locationTake = await locationCall.once("value")
     let location = locationTake.val()
+    console.log(location,"LOCATION")
     let arrayLocation = [];
     for(var key in location){
+      const locationImage = await firebaseApp
+      .database()
+      .ref("location")
+      .child(key)
+      .child("imgHero")
+      .once("value");
 
       const locationName  = await firebaseApp
         .database()
@@ -47,11 +54,12 @@ export default class searchDestinationScreen extends Component {
         .child(key)
         .child("name")
         .once("value");
-        arrayLocation.push({name: locationName})
+        
+        arrayLocation.push({name: locationName, key: key, imgHero: locationImage})
     }
 
     this.setState({arrayLocation}) // Lấy được mảng Object tên của các địa điểm
-    console.log(this.state.arrayLocation)
+   console.log(this.state.arrayLocation)
 
 
     const userAuth = firebaseApp.auth().currentUser;
@@ -164,6 +172,7 @@ export default class searchDestinationScreen extends Component {
                     <View style={styles.listFriends}>
                       {this.state.arrayLocation.map((item) => {
                         var obj = JSON.stringify(item);
+                        console.log(obj)
                         var objectValue = JSON.parse(obj);
                         return (
                           <View style={styles.friendCard}>
@@ -171,7 +180,7 @@ export default class searchDestinationScreen extends Component {
                               //onPress={() => this.onClickFriendProfile()}
                               onPress={() => {
                                 // Pass params back to home screen
-                                this.props.navigation.navigate('createScheduleScreen', { locationEnd: objectValue.name });
+                                this.props.navigation.navigate('createScheduleScreen', { locationEnd: objectValue.name, locationKey: objectValue.key, locationImage: objectValue.imgHero });
                               }}
                             >
                               <View

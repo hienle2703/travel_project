@@ -154,7 +154,7 @@ function ProfileStack() {
 function ScheduleStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Schedule" component={ScheduleScreen} />
+      <Stack.Screen name="ScheduleScreen" component={ScheduleScreen} />
       <Stack.Screen
         name="createScheduleScreen"
         title="Tạo lịch trình mới"

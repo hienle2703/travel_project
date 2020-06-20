@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import ScheduleItem from "../../components/ScheduleItem";
@@ -16,14 +17,21 @@ import { MonoText } from "../../components/StyledText";
 import TabBarIcon from "../../components/TabBarIcon";
 import DatePicker from "react-native-datepicker";
 import { auth } from "firebase";
+import { firebaseApp } from "../../components/FirebaseConfig";
 
 export default class createScheduleScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      user: null,
+      scheName: "",
       locationStart: "",
-      locationEnd:"",
+      locationEnd: "",
+      dateStart: null,
+      dateEnd: null,
+      curTime: null,
+      imgHero: null,
+      locationKey: null,
     };
   }
   onClickDestination() {
@@ -32,20 +40,102 @@ export default class createScheduleScreen extends Component {
   onClickBtn() {
     this.props.navigation.goBack();
   }
-  componentDidMount() {
+  onClickSaveSchedule = async () => {
+
     const a = this.props.route.params?.locationStart;
     if (a !== null) {
-      this.setState({ locationStart: "haha" });
+      this.setState({ locationStart: a })
     }
 
     const b = this.props.route.params?.locationEnd;
     if (b !== null) {
-      this.setState({ locationEnd: "haha" });
+      this.setState({ locationEnd: b });
     }
+    const c = this.props.route.params?.locationKey;
+    const d = this.props.route.params?.locationImage;
+
+    const date = this.state.curTime;
+    const user = this.state.user;
+    const saveCall = firebaseApp
+      .database()
+      .ref("schedule")
+      .child("schedule_" + user + "_" + date);
+
+     
+
+
+    // const userCall = firebaseApp.database().ref("user/"+user)
+    const newSche = "schedule_"+user+"_"+date; 
+    const userCall = firebaseApp.database().ref("user/"+user+"/schedule/"+ newSche)
+    await userCall.set({
+      name: newSche
+    })
+
+   
+    await saveCall.set({
+      dateStart: this.state.dateStart,
+      dateEnd: this.state.dateEnd,
+      start: this.state.locationStart,
+      end: this.state.locationEnd,
+      name: this.state.scheName,
+      imgHero: d
+    });
+    
+    Alert.alert(
+      "",
+      "Successfully Added Your New Adventure",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            this.setState({
+              start: "",
+              end: "",
+              scheName: "",
+              dateStart: null,
+              dateEnd: null,
+              curTime: null,
+            }),
+              this.props.navigation.replace("ScheduleScreen");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  componentDidMount() {
+    let date = new Date();
+    let n = date.getDate();
+    let h = date.getMinutes();
+    let g = date.getSeconds();
+    let s = n + h * n + g;
+
+    this.setState({ curTime: s });
+    //
+    const userAuth = firebaseApp.auth().currentUser;
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@")); // Tên người dùng đang đăng nhập
+
+    const a = this.props.route.params?.locationStart;
+    if (a !== null) {
+      this.setState({ locationStart: a })
+    }
+
+    const b = this.props.route.params?.locationEnd;
+    if (b !== null) {
+      this.setState({ locationEnd: b });
+    }
+    const c = this.props.route.params?.locationKey;
+    const d = this.props.route.params?.locationImage;
+
+    this.setState({ user: splitted, locationKey: c, imgHero: d });
+    
+    
   }
   render() {
     const a = this.props.route.params?.locationStart;
     const b = this.props.route.params?.locationEnd;
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -78,8 +168,8 @@ export default class createScheduleScreen extends Component {
               <View style={{ width: "90%" }}>
                 <Text style={styles.txtTitle}>Schedule Name: </Text>
                 <TextInput
-                  value={this.state.name}
-                  onChangeText={(name) => this.setState({ name })}
+                  value={this.state.scheName}
+                  onChangeText={(scheName) => this.setState({ scheName })}
                   style={styles.txtInput}
                 ></TextInput>
               </View>
@@ -92,6 +182,7 @@ export default class createScheduleScreen extends Component {
                   style={styles.btnContainer}
                   onPress={() => {
                     this.props.navigation.navigate("searchLocationScreen");
+                    
                   }}
                 >
                   <View style={styles.inputBox}>
@@ -118,11 +209,12 @@ export default class createScheduleScreen extends Component {
                 <TouchableOpacity
                   onPress={() => {
                     this.props.navigation.navigate("searchDestinationScreen");
+                    
                   }}
                   style={styles.btnContainer}
                 >
                   <View style={styles.inputBox}>
-                  {(() => {
+                    {(() => {
                       switch (this.state.locationEnd) {
                         case "":
                           return (
@@ -145,12 +237,10 @@ export default class createScheduleScreen extends Component {
                   <Text style={styles.txtTitle}>Start Date</Text>
                   <DatePicker
                     style={styles.datePicker}
-                    date={this.state.date}
+                    date={this.state.dateStart}
                     mode="date"
                     placeholder="Select date"
-                    format="DD-MM"
-                    minDate={this.state.date}
-                    maxDate="2021-06-01"
+                    format="DD/MM"
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     showIcon={true}
@@ -164,7 +254,8 @@ export default class createScheduleScreen extends Component {
                       // ... You can check the source to find the other keys.
                     }}
                     onDateChange={(date) => {
-                      this.setState({ date: date });
+                      this.setState({ dateStart: date });
+                      console.log(this.state.dateStart);
                     }}
                   />
                 </View>
@@ -172,12 +263,10 @@ export default class createScheduleScreen extends Component {
                   <Text style={styles.txtTitle}> Date End </Text>
                   <DatePicker
                     style={styles.datePicker}
-                    date={this.state.date}
+                    date={this.state.dateEnd}
                     mode="date"
                     placeholder="Select date"
-                    format="DD-MM"
-                    minDate="2020-05-01"
-                    maxDate="2021-06-01"
+                    format="DD/MM"
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     showIcon={true}
@@ -191,31 +280,21 @@ export default class createScheduleScreen extends Component {
                       // ... You can check the source to find the other keys.
                     }}
                     onDateChange={(date) => {
-                      this.setState({ date: date });
+                      this.setState({ dateEnd: date });
+                      console.log(this.state.dateEnd);
                     }}
                   />
                 </View>
               </View>
             </View>
-            {/* <View style={styles.line}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.txtTitle}>Members :</Text>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("SearchFriend")}
-              >
-                <View style={styles.inputBox}>
-                  <Text style={styles.txtTap}>
-                    Choose friends from your connections
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View> */}
           </View>
         </View>
 
         <View style={styles.saveBtnContainer}>
-          <TouchableOpacity style={styles.saveBtn}>
+          <TouchableOpacity
+            style={styles.saveBtn}
+            onPress={() => this.onClickSaveSchedule()}
+          >
             <Text style={styles.saveBtnText}>Save Your Trip</Text>
           </TouchableOpacity>
         </View>

@@ -63,6 +63,8 @@ export default class FirstRoute extends Component {
     //Giao giữa 2 mảng, lấy ra những phần chung
     let intersect = arrayAllPost.filter((value) => arrayPost.includes(value)); // lấy ra tên các bài viết chung
 
+    
+
     //Chỉ lấy ra những phần tử đó từ trong arrayAllPost để có đầy đủ thông tin bài viết
 
     for (var i in intersect) {
@@ -84,8 +86,8 @@ export default class FirstRoute extends Component {
               var obj = JSON.stringify(item);
               var objectValue = JSON.parse(obj);
               //console.log(objectValue)
-              var countPlaces = objectValue.choosePlaces
-              var count = Object.keys(countPlaces).length;
+              //var countPlaces = objectValue.choosePlaces
+              //var count = Object.keys(countPlaces).length;
               return (
                 <TouchableOpacity onPress={() => this.onClickDetail()}>
                   <View style={styles.containerScene}>
@@ -127,7 +129,7 @@ export default class FirstRoute extends Component {
                               Date: From {objectValue.dateStart} to {objectValue.dateEnd}
                             </Text>
                             <Text style={{ color: "gray" }}>
-                              Places: {count}
+                              Places: 4
                             </Text>
                           </View>
                           {/* <View style={{ flexDirection: "row" }}>
