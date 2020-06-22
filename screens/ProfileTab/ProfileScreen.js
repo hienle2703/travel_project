@@ -75,7 +75,9 @@ export default class ProfileScreen extends Component {
     this.props.navigation.navigate("SignIn");
     this.props.navigation.setOptions({});
   }
-
+  onClickGroup(){
+    this.props.navigation.navigate("ManageStack", {screen:"ManageScreen"})
+  }
   onClickFriends() {
     this.props.navigation.navigate("FriendMainScreen");
   }
@@ -282,6 +284,7 @@ export default class ProfileScreen extends Component {
                                   <View>
                                     <TouchableOpacity
                                       style={styles.contentBox1}
+                                      onPress={()=> this.onClickGroup()}
                                     >
                                       <View
                                         style={{

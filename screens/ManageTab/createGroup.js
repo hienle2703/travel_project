@@ -27,6 +27,9 @@ export default class createGroupScreen extends Component {
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  onClickAddGroup(){
+    this.props.navigation.navigate("PickFriend")
+  }
 
   render() {
     let { image } = this.state;
@@ -67,7 +70,7 @@ export default class createGroupScreen extends Component {
             {/* <MaterialIcons name="group" size={24} color="black" /> */}
             <View>
               <Text>Pick members</Text>
-              <TouchableOpacity style={styles.inputForm}>
+              <TouchableOpacity style={styles.inputForm} onPress={()=>this.onClickAddGroup()}>
                 <Text style={{ color: "white", left: 10, top: 5 }}>Choose</Text>
               </TouchableOpacity>
             </View>

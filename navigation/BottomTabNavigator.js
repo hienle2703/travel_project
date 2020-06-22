@@ -51,6 +51,8 @@ import ManageSchedule from "../screens/ManageTab/ManageSchedule";
 import FriendMainScreen from "../screens/ContactTab/FriendMainScreen";
 import FirstRoute from "../screens/ScheduleTab/FirstRoute";
 
+import PickFriend from "../screens/ManageTab/PickFriend";
+
 import searchDestinationScreen from "../screens/ScheduleTab/searchDestinationScreen"
 //Phần của Luân
 // function feedStack({ navigation }) {
@@ -112,24 +114,7 @@ function ProfileStack() {
         component={SignIn}
       />
       <Stack.Screen name="Account" title="Tài khoản" component={Account} />
-      {/* <Stack.Screen
-        name="Account"
-        component={Account}
-        options={{
-          title: " Trang cá nhân",
-          headerTitleStyle: { fontWeight: "bold" },
-          headerLeftContainerStyle: { marginLeft: 20 },
-          headerRightContainerStyle: { marginRight: 20 },
-          headerLeft: (props) => (
-            <Ionicons
-              name="md-arrow-round-back"
-              size={35}
-              color="green"
-              {...props}
-            />
-          ),
-        }}
-      /> */}
+      <Stack.Screen name="ManageStack" component={ManageStack}/>
       <Stack.Screen
         name="EditAccount"
         component={EditAccount}
@@ -275,6 +260,7 @@ function ManageStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Manage" component={ManageScreen} />
       <Stack.Screen name="DetailGroup" component={DetailGroup} />
+      <Stack.Screen name="PickFriend" component={PickFriend} />
       <Stack.Screen
         name="createGroup"
         title="Creating a new Group"

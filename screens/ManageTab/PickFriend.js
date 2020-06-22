@@ -8,16 +8,19 @@ import {
   TextInput,
   ActivityIndicator,
 } from "react-native";
+
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import TabBarIcon from "../../components/TabBarIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
+import { FontAwesome5 } from "@expo/vector-icons";
 
-export default class FriendAll extends Component {
+export default class AddMember extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      added: false,
       arrayFriend: [],
       arrayFriendInformation: [],
       friendAva: null,
@@ -27,54 +30,9 @@ export default class FriendAll extends Component {
       flexin: false,
       arrayUsed: [],
       countFriend: null,
+      arrayPicked: [],
     };
   }
-  componentDidMount = async () => {
-    const userAuth = firebaseApp.auth().currentUser;
-    //console.log(userAuth);
-
-    const split = userAuth.email;
-    const splitted = split.substring(0, split.lastIndexOf("@"));
-    //console.log("Splitted nè", splitted);
-    const takeArray = firebaseApp
-      .database()
-      .ref("user/" + splitted)
-      .child("friend");
-    //console.log("Đường link của list friend nè mày", takeArray);
-    //Lấy ra object list friend của User sở tại
-    
-    const snapshot = await takeArray.once("value");
-    //const snap = await JSON.stringify(snapshot)
-    //console.log("Snapshot", snapshot);
-    let test = snapshot.val();
-    console.log(test, "Test nè")
-    let count = Object.keys(test).length
-
-    let arrayFriendInformation = []; // cái này
-    for (var key in test){
-      //const convert = JSON.stringify(test[key]).replace(/[^a-zA-Z ]/g, "");
-      //const convert = JSON.stringify(key).replace(/[^a-zA-Z ]/g, "");
-      
-      const userName = await firebaseApp
-      .database()
-      .ref("user")
-      .child(key)
-      .child("name")
-      .once("value");
-    const userAva = await firebaseApp
-      .database()
-      .ref("user")
-      .child(key)
-      .child("ava")
-      .once("value");
-    arrayFriendInformation.push({ name: userName, ava: userAva });
-    }
-    this.setState({
-      arrayFriendInformation,
-      countFriend: count,
-    });
-
-  };
 
   onClickBtn() {
     this.props.navigation.goBack();
@@ -82,9 +40,49 @@ export default class FriendAll extends Component {
   onClickFriendProfile() {
     this.props.navigation.navigate("FriendProfile");
   }
-  render() {
-    //console.log("arrayFriendInformation nè", this.state.arrayFriendInformation);
+  onClickAddButton(key) {
+    //this.setState({ added: true });
+    console.log(key);
+    let arrayNew = this.state.arrayPicked;
+    arrayNew.push(key);
+    this.setState({ arrayPicked: arrayNew });
+  }
+  componentDidMount = async () => {
+    const userAuth = firebaseApp.auth().currentUser;
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+    const takeArray = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("friend");
 
+    const snapshot = await takeArray.once("value");
+    let test = snapshot.val();
+    let count = Object.keys(test).length;
+    let arrayFriendInformation = [];
+    for (var key in test) {
+      const userName = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("name")
+        .once("value");
+      const userAva = await firebaseApp
+        .database()
+        .ref("user")
+        .child(key)
+        .child("ava")
+        .once("value");
+      arrayFriendInformation.push({ name: userName, ava: userAva, key: key });
+    }
+
+    this.setState({
+      arrayFriendInformation,
+      countFriend: count,
+    });
+  };
+  render() {
+    console.log(this.state.arrayPicked);
     return (
       <View style={styles.container}>
         {(() => {
@@ -99,10 +97,6 @@ export default class FriendAll extends Component {
               return <ActivityIndicator size="large" color="#DB5823" />;
 
             default:
-              //console.log(typeof this.state.arrayFriendInformation,"KIỂU DỮ LIỆU======================")
-              //console.log(this.state.arrayFriend,"arrayFriend đây nè ==================")
-              //console.log(this.state.arrayFriendInformation,"this.state.arrayFriendInformation đây nè =================")
-
               return (
                 <ScrollView
                   style={styles.scrollView}
@@ -154,9 +148,11 @@ export default class FriendAll extends Component {
 
                     <View style={styles.listFriends}>
                       {this.state.arrayFriendInformation.map((item) => {
-                        //console.log(item, "ITEM ITEM ITEM ITEM ITEM ITEM")
                         var obj = JSON.stringify(item);
                         var objectValue = JSON.parse(obj);
+                        let result = this.state.arrayPicked.filter(
+                          (item) => item === objectValue.key
+                        );
                         return (
                           <View style={styles.friendCard}>
                             <TouchableOpacity
@@ -167,6 +163,7 @@ export default class FriendAll extends Component {
                                   {
                                     ava: objectValue.ava,
                                     name: objectValue.name,
+                                    key: objectValue.key,
                                   }
                                 )
                               }
@@ -197,13 +194,25 @@ export default class FriendAll extends Component {
                             </TouchableOpacity>
 
                             <View style={styles.buttonContainer}>
-                              <TouchableOpacity>
-                                <Ionicons
-                                  name="ios-more"
+                              {result.length > 0 ? (
+                                <FontAwesome5
+                                  name="check-circle"
                                   size={24}
-                                  color="black"
+                                  color="tomato"
                                 />
-                              </TouchableOpacity>
+                              ) : (
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    this.onClickAddButton(objectValue.key)
+                                  }
+                                >
+                                  <Ionicons
+                                    name="ios-add"
+                                    size={24}
+                                    color="black"
+                                  />
+                                </TouchableOpacity>
+                              )}
                             </View>
                           </View>
                         );
@@ -284,7 +293,6 @@ const styles = StyleSheet.create({
     height: 60,
     width: "100%",
     backgroundColor: "#EBEBEB",
-    //backgroundColor:"red",
     flexDirection: "row",
     alignSelf: "center",
     marginTop: 15,
