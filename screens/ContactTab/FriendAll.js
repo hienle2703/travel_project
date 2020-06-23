@@ -84,7 +84,7 @@ export default class FriendAll extends Component {
   }
   render() {
     //console.log("arrayFriendInformation nè", this.state.arrayFriendInformation);
-
+    
     return (
       <View style={styles.container}>
         {(() => {

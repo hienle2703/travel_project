@@ -106,7 +106,7 @@ export default class AddMember extends Component {
                     <View styles={styles.backBtn}>
                       <TouchableOpacity
                         style={{ left: 30, top: 15, flexDirection: "row" }}
-                        onPress={() => this.onClickBtn()}
+                        onPress={() => this.props.navigation.navigate("createGroup",{arrayFriendChoose: this.state.arrayPicked})}
                       >
                         <TabBarIcon
                           style={{ color: "gray", alignItems: "flex-start" }}

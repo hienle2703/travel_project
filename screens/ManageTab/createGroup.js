@@ -30,9 +30,14 @@ export default class createGroupScreen extends Component {
   onClickAddGroup(){
     this.props.navigation.navigate("PickFriend")
   }
+  componentDidMount(){
+    
+  }
 
   render() {
     let { image } = this.state;
+    const a = this.props.route.params?.arrayFriendChoose;
+    console.log(a,"Mảng truyển vào")
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -60,21 +65,26 @@ export default class createGroupScreen extends Component {
         </View>
 
         <View style={styles.formContainer}>
+          {/* Group Name */}
           <View style={styles.line}>
             {/* <Entypo name="edit" size={24} color="black" /> */}
 
             <Text>Your group name</Text>
             <TextInput style={styles.inputForm}></TextInput>
           </View>
+          {/* Pick Friends */}
           <View style={styles.line}>
-            {/* <MaterialIcons name="group" size={24} color="black" /> */}
             <View>
               <Text>Pick members</Text>
               <TouchableOpacity style={styles.inputForm} onPress={()=>this.onClickAddGroup()}>
                 <Text style={{ color: "white", left: 10, top: 5 }}>Choose</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.showMemberPicked}>
+            
+            </View>
           </View>
+          {/* Pick Location */}
           <View style={styles.line}>
             {/* <Feather name="map" size={24} color="black" /> */}
             <View>
