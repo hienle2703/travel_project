@@ -52,42 +52,9 @@ import FriendMainScreen from "../screens/ContactTab/FriendMainScreen";
 import FirstRoute from "../screens/ScheduleTab/FirstRoute";
 
 import PickFriend from "../screens/ManageTab/PickFriend";
-
+import PickSchedule from "../screens/ManageTab/PickSchedule"
 import searchDestinationScreen from "../screens/ScheduleTab/searchDestinationScreen"
-//Phần của Luân
-// function feedStack({ navigation }) {
-//   return (
-//     <FeedStack.Navigator
-//       screenOptions={{ headerShown: false }}
-//       initialRouteName="Feed"
-//     >
-//       {/* <FeedStack.Screen
-//         name="Feed"
-//         title="Feed"
-//         component={FeedScreen}
-//         options={{
-//           headerRight: () => (
-//             <TouchableOpacity onPress={() => navigation.navigate("createFeed")}>
-//               <Text>Add</Text>
-//             </TouchableOpacity>
-//           ),
-//         }}
-//       /> */}
-//       <FeedStack.Screen
-//         name="createFeed"
-//         title="Creating Your new Feed"
-//         component={createFeedScreen}
-//         options={{
-//           headerRight: () => (
-//             <TouchableOpacity onPress={() => navigation.navigate("Feed")}>
-//               <Text>Add</Text>
-//             </TouchableOpacity>
-//           ),
-//         }}
-//       />
-//     </FeedStack.Navigator>
-//   );
-// }
+
 const Stack = createStackNavigator();
 
 function FriendStack() {
@@ -261,6 +228,7 @@ function ManageStack() {
       <Stack.Screen name="Manage" component={ManageScreen} />
       <Stack.Screen name="DetailGroup" component={DetailGroup} />
       <Stack.Screen name="PickFriend" component={PickFriend} />
+      <Stack.Screen name="PickSchedule" component={PickSchedule} />
       <Stack.Screen
         name="createGroup"
         title="Creating a new Group"

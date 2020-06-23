@@ -41,7 +41,6 @@ export default class AddMember extends Component {
     this.props.navigation.navigate("FriendProfile");
   }
   onClickAddButton(key) {
-    //this.setState({ added: true });
     console.log(key);
     let arrayNew = this.state.arrayPicked;
     arrayNew.push(key);
@@ -151,7 +150,7 @@ export default class AddMember extends Component {
                         var obj = JSON.stringify(item);
                         var objectValue = JSON.parse(obj);
                         let result = this.state.arrayPicked.filter(
-                          (item) => item === objectValue.key
+                          (item) => item === objectValue.name
                         );
                         return (
                           <View style={styles.friendCard}>
@@ -203,7 +202,7 @@ export default class AddMember extends Component {
                               ) : (
                                 <TouchableOpacity
                                   onPress={() =>
-                                    this.onClickAddButton(objectValue.key)
+                                    this.onClickAddButton(objectValue.name)
                                   }
                                 >
                                   <Ionicons

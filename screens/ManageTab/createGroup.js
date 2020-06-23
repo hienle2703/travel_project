@@ -20,24 +20,28 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 export default class createGroupScreen extends Component {
-  state = {
- 
-  };
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      arrayValue: [],
+    };
+  }
   onClickBtn() {
     this.props.navigation.goBack();
   }
-  onClickAddGroup(){
-    this.props.navigation.navigate("PickFriend")
+  onClickAddGroup() {
+    this.props.navigation.navigate("PickFriend");
   }
-  componentDidMount(){
-    
-  }
+  componentDidMount() {}
 
   render() {
     let { image } = this.state;
-    const a = this.props.route.params?.arrayFriendChoose;
-    console.log(a,"Mảng truyển vào")
+    let array = [];
+    let value = this.props.route.params?.arrayFriendChoose;
+    if(value !== undefined){
+      array = value
+    }
+    
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -76,12 +80,21 @@ export default class createGroupScreen extends Component {
           <View style={styles.line}>
             <View>
               <Text>Pick members</Text>
-              <TouchableOpacity style={styles.inputForm} onPress={()=>this.onClickAddGroup()}>
+              <TouchableOpacity
+                style={styles.inputForm}
+                onPress={() => this.onClickAddGroup()}
+              >
                 <Text style={{ color: "white", left: 10, top: 5 }}>Choose</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.showMemberPicked}>
-            
+              {array.map((item) => {
+                return (
+                  <View style={styles.friendPickContainer}>
+                    <Text style={styles.friendPickText}>{item}</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
           {/* Pick Location */}
@@ -89,7 +102,7 @@ export default class createGroupScreen extends Component {
             {/* <Feather name="map" size={24} color="black" /> */}
             <View>
               <Text>Pick a schedule</Text>
-              <TouchableOpacity style={styles.inputForm}>
+              <TouchableOpacity style={styles.inputForm} onPress={()=> this.props.navigation.navigate("PickSchedule")}>
                 <Text style={{ color: "white", left: 10, top: 5 }}>
                   Open schedule list
                 </Text>
@@ -151,5 +164,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 5,
     color: "white",
+  },
+  showMemberPicked: {
+    backgroundColor: "#E6E6E6",
+    width: "80%",
+    alignSelf: "center",
+    top: 15,
+    borderRadius: 10,
+  },
+  friendPickContainer: {
+    //height: 30,
+    marginBottom:10,
+  },
+  friendPickText: {
+    marginLeft: 10,
+    top: 5,
+    color: "#DB5823",
   },
 });
