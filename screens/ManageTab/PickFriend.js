@@ -31,20 +31,18 @@ export default class AddMember extends Component {
       arrayUsed: [],
       countFriend: null,
       arrayPicked: [],
+      arrayItem: [],
     };
   }
 
-  onClickBtn() {
-    this.props.navigation.goBack();
-  }
-  onClickFriendProfile() {
-    this.props.navigation.navigate("FriendProfile");
-  }
-  onClickAddButton(key) {
-    console.log(key);
+  onClickAddButton(key,item) {
+    
     let arrayNew = this.state.arrayPicked;
+    let arrayItem = this.state.arrayItem;
+    arrayItem.push(item);
     arrayNew.push(key);
-    this.setState({ arrayPicked: arrayNew });
+    this.setState({ arrayPicked: arrayNew ,arrayItem});
+    console.log(arrayItem)
   }
   componentDidMount = async () => {
     const userAuth = firebaseApp.auth().currentUser;
@@ -81,7 +79,6 @@ export default class AddMember extends Component {
     });
   };
   render() {
-    console.log(this.state.arrayPicked);
     return (
       <View style={styles.container}>
         {(() => {
@@ -105,7 +102,7 @@ export default class AddMember extends Component {
                     <View styles={styles.backBtn}>
                       <TouchableOpacity
                         style={{ left: 30, top: 15, flexDirection: "row" }}
-                        onPress={() => this.props.navigation.navigate("createGroup",{arrayFriendChoose: this.state.arrayPicked})}
+                        onPress={() => this.props.navigation.navigate("createGroup",{arrayFriendChoose: this.state.arrayPicked, arrayItemChoose: this.state.arrayItem})}
                       >
                         <TabBarIcon
                           style={{ color: "gray", alignItems: "flex-start" }}
@@ -154,19 +151,7 @@ export default class AddMember extends Component {
                         );
                         return (
                           <View style={styles.friendCard}>
-                            <TouchableOpacity
-                              //onPress={() => this.onClickFriendProfile()}
-                              onPress={() =>
-                                this.props.navigation.navigate(
-                                  "FriendProfile",
-                                  {
-                                    ava: objectValue.ava,
-                                    name: objectValue.name,
-                                    key: objectValue.key,
-                                  }
-                                )
-                              }
-                            >
+                            
                               <View
                                 style={{
                                   flexDirection: "row",
@@ -190,7 +175,6 @@ export default class AddMember extends Component {
                                   </Text>
                                 </View>
                               </View>
-                            </TouchableOpacity>
 
                             <View style={styles.buttonContainer}>
                               {result.length > 0 ? (
@@ -202,7 +186,7 @@ export default class AddMember extends Component {
                               ) : (
                                 <TouchableOpacity
                                   onPress={() =>
-                                    this.onClickAddButton(objectValue.name)
+                                    this.onClickAddButton(objectValue.name,objectValue.key)
                                   }
                                 >
                                   <Ionicons

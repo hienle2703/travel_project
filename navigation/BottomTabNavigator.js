@@ -44,7 +44,7 @@ import Account from "../screens/ProfileTab/Account";
 import EditAccount from "../screens/ProfileTab/EditAccount";
 
 import createFeedScreen from "../screens/FeedTab/createFeedScreen";
-import createGroupScreen from "../screens/ManageTab/createGroup";
+import createGroup from "../screens/ManageTab/createGroup";
 import AddMember from "../screens/ManageTab/AddMember";
 import ManageSchedule from "../screens/ManageTab/ManageSchedule";
 
@@ -225,14 +225,13 @@ function FeedStack() {
 function ManageStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Manage" component={ManageScreen} />
+      <Stack.Screen name="ManageScreen" component={ManageScreen} />
       <Stack.Screen name="DetailGroup" component={DetailGroup} />
       <Stack.Screen name="PickFriend" component={PickFriend} />
       <Stack.Screen name="PickSchedule" component={PickSchedule} />
       <Stack.Screen
         name="createGroup"
-        title="Creating a new Group"
-        component={createGroupScreen}
+        component={createGroup}
       />
       <Stack.Screen
         name="ChoiceTravelScreen"

@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
+import TabBarIcon from "../../components/TabBarIcon";
 
 import { Entypo } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
@@ -21,16 +22,27 @@ export default class PickSchedule extends Component {
     super(props);
     this.state = {
       arrayAllSchedule: [],
+      arrayScheduleKey: [],
     };
   }
-  onClickDetail() {
-    this.props.navigation.navigate("ScheduleDetail");
-  }
-  onClickAdd() {
-    this.props.navigation.navigate("createScheduleScreen");
+  onClickChoose(txt, key) {
+    let array = this.state.arrayScheduleKey;
+    let keyA = key;
+    let scheduleKey = "";
+    for (var i in array) {
+      let string = JSON.stringify(array[i].name);
+      let stringTake = JSON.parse(string);
+      
+      if (stringTake === keyA) {
+        scheduleKey = array[i].key;
+      }
+    }
+    this.props.navigation.navigate("createGroup", {
+      scheduleName: txt,
+      scheduleKey: scheduleKey,
+    });
   }
   setIndex = (index) => {
-    console.log(index);
     this.setState({ index });
   };
   componentDidMount = async () => {
@@ -47,10 +59,26 @@ export default class PickSchedule extends Component {
     const postTake = await postCall.once("value");
     let val = postTake.val();
     let arrayPost = [];
+    let arrayName = [];
     for (var key in val) {
       arrayPost.push(key);
+      let nameCall = firebaseApp
+        .database()
+        .ref("user/" + splitted + "/schedule")
+        .child(key)
+        .child("name");
+      const nameTake = await nameCall.once("value");
+      let name = nameTake.val();
+
+      //gọi tới schedule tổng lấy ra thông tin
+      let scheCall = firebaseApp
+        .database()
+        .ref("schedule")
+        .child(name)
+        .child("name");
+      const nameSche = await scheCall.once("value");
+      arrayName.push({ name: nameSche, key: name });
     }
-    
     //Gọi vào post để lấy ra tất cả mã bài viết cho vào mảng
     const allPost = firebaseApp.database().ref("schedule");
     const snapAll = await allPost.once("value");
@@ -63,8 +91,6 @@ export default class PickSchedule extends Component {
     //Giao giữa 2 mảng, lấy ra những phần chung
     let intersect = arrayAllPost.filter((value) => arrayPost.includes(value)); // lấy ra tên các bài viết chung
 
-    
-
     //Chỉ lấy ra những phần tử đó từ trong arrayAllPost để có đầy đủ thông tin bài viết
 
     for (var i in intersect) {
@@ -74,22 +100,52 @@ export default class PickSchedule extends Component {
       arrayFullInfor.push(takeA);
     }
     //SetState
-    this.setState({ arrayAllSchedule: arrayFullInfor });
+    this.setState({
+      arrayAllSchedule: arrayFullInfor,
+      arrayScheduleKey: arrayName,
+    });
   };
 
   render() {
     return (
       <View style={[styles.scene]}>
         <ScrollView>
+          <View style={styles.header}>
+            <View styles={styles.backBtn}>
+              <TouchableOpacity
+                style={{ left: 30, top: 15, flexDirection: "row" }}
+                onPress={() =>
+                  this.props.navigation.navigate("createGroup", {
+                    arrayFriendChoose: this.state.arrayPicked,
+                  })
+                }
+              >
+                <TabBarIcon
+                  style={{ color: "gray", alignItems: "flex-start" }}
+                  name="ios-arrow-back"
+                />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    color: "gray",
+                    left: 10,
+                  }}
+                >
+                  Back
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           <View>
             {this.state.arrayAllSchedule.map((item) => {
               var obj = JSON.stringify(item);
               var objectValue = JSON.parse(obj);
-              //console.log(objectValue)
-              //var countPlaces = objectValue.choosePlaces
-              //var count = Object.keys(countPlaces).length;
+              var name = objectValue.name;
               return (
-                <TouchableOpacity onPress={() => this.onClickDetail()}>
+                <TouchableOpacity
+                  onPress={() => this.onClickChoose(objectValue.name, name)}
+                >
                   <View style={styles.containerScene}>
                     <View style={styles.cardSchedule}>
                       <Image
@@ -99,7 +155,7 @@ export default class PickSchedule extends Component {
                           alignSelf: "center",
                           borderRadius: 20,
                         }}
-                        source={{uri: objectValue.imgHero}}
+                        source={{ uri: objectValue.imgHero }}
                       />
                       <View style={styles.txt}>
                         <View style={styles.location}>
@@ -110,7 +166,9 @@ export default class PickSchedule extends Component {
                               color="#DB5823"
                             />
                           </View>
-                      <Text style={{ color: "gray" }}>{objectValue.start} to {objectValue.end}</Text>
+                          <Text style={{ color: "gray" }}>
+                            {objectValue.start} to {objectValue.end}
+                          </Text>
                         </View>
                         <View style={styles.titleCard}>
                           <Text
@@ -126,11 +184,10 @@ export default class PickSchedule extends Component {
                         <View style={styles.detailCard}>
                           <View>
                             <Text style={{ color: "gray" }}>
-                              Date: From {objectValue.dateStart} to {objectValue.dateEnd}
+                              Date: From {objectValue.dateStart} to{" "}
+                              {objectValue.dateEnd}
                             </Text>
-                            <Text style={{ color: "gray" }}>
-                              Places: 4
-                            </Text>
+                            <Text style={{ color: "gray" }}>Places: 4</Text>
                           </View>
                           {/* <View style={{ flexDirection: "row" }}>
                             <Text style={{ color: "gray", bottom: 2 }}>
@@ -156,44 +213,42 @@ export default class PickSchedule extends Component {
   }
 }
 const styles = StyleSheet.create({
-    scene: {
-      flex: 1,
-      marginTop:30,
-    },
-    container: {
-      flex: 1,
-    },
-    header: {
-      flex: 0.11,
-      justifyContent: "center",
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    addBtn: {
-      justifyContent: "flex-end",
-      left: 95,
-      top: 13,
-    },
-    cardSchedule: {
-      height: 300,
-      width: "100%",
-      top: 30,
-    },
-    txt: {
-      left: 20,
-      top: 5,
-    },
-    location: {
-      flexDirection: "row",
-      color: "gray",
-    },
-    detailCard: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      width: "90%",
-    },
-    titleCard: {
-      marginTop: 5,
-    },
-  });
-  
+  scene: {
+    flex: 1,
+    marginTop: 50,
+  },
+  container: {
+    flex: 1,
+  },
+  header: {
+    height: 50,
+    flexDirection: "row",
+    left: -0,
+  },
+  addBtn: {
+    justifyContent: "flex-end",
+    left: 95,
+    top: 13,
+  },
+  cardSchedule: {
+    height: 300,
+    width: "100%",
+    top: 30,
+  },
+  txt: {
+    left: 20,
+    top: 5,
+  },
+  location: {
+    flexDirection: "row",
+    color: "gray",
+  },
+  detailCard: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+  },
+  titleCard: {
+    marginTop: 5,
+  },
+});

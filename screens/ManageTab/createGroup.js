@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
   Button,
+  Alert
 } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import ScheduleItem from "../../components/ScheduleItem";
@@ -19,11 +20,15 @@ import DatePicker from "react-native-datepicker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { firebaseApp } from "../../components/FirebaseConfig";
 export default class createGroupScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       arrayValue: [],
+      user: null,
+      curTime: null,
+      groupName: null,
     };
   }
   onClickBtn() {
@@ -32,16 +37,106 @@ export default class createGroupScreen extends Component {
   onClickAddGroup() {
     this.props.navigation.navigate("PickFriend");
   }
-  componentDidMount() {}
-
-  render() {
-    let { image } = this.state;
+  onClickCreateGroup= async ()=>{
+    //Lấy mảng tên bạn bè
     let array = [];
     let value = this.props.route.params?.arrayFriendChoose;
-    if(value !== undefined){
-      array = value
+    if (value !== undefined) {
+      array = value;
     }
+    //Lấy mảng item bạn bè
+    let item =[];
+    let itemArray = this.props.route.params?.arrayItemChoose
+    if (itemArray !== null) {
+      item = itemArray;
+    }
+    //Lấy mã hành trình
+    let key = "";
+    let scheduleKey = this.props.params?.scheduleKey
+    if (scheduleKey !== null) {
+      key = scheduleKey;
+    }
+    //Lấy tên hành trình
+    let name = "";
+    let scheduleName = this.props.route.params?.scheduleName;
+    if (scheduleName !== null) {
+      name = scheduleName;
+    }
+    let groupCall = this.state.groupName
+    const date = this.state.curTime;
+    let userName = this.state.user
+    const itemRef = firebaseApp.database().ref("group").child("group_"+userName).child("group_"+userName+"_"+date)
+    await itemRef.set({
+      groupName: groupCall,
+      memberName: array,
+      //memberKey: item,
+      //scheduleKey: key,
+      scheduleName: name,
+      leader: this.state.user
+    })
+    for(var i in item){
+      const itemRefMember = firebaseApp.database().ref("group").child("group_"+userName).child("group_"+userName+"_"+date).child("memberKey").child(item[i])
+      await itemRefMember.set({
+        name: item[i]
+      })
+    }
+    const userRef = firebaseApp.database().ref("user/"+userName).child("group").child("group_"+userName+"_"+date)
+    await userRef.set({
+      name: "group_"+userName+"_"+date
+    })
+    Alert.alert(
+      "Travel group created",
+      "Wish you guys a wonderful trip",
+      [
+        
+        { text: "OK", onPress: () => this.props.navigation.replace("ManageScreen") },
+      ],
+      { cancelable: false }
+    );
     
+  }
+  
+  componentDidMount() {
+    let date = new Date();
+    let n = date.getDate();
+    let h = date.getMinutes();
+    let g = date.getSeconds();
+    let s = n + h * n + g;
+
+    this.setState({ curTime: s });
+    //Lấy thông tin user hiện tại
+    const userCur = firebaseApp.auth().currentUser;
+    const split = userCur.email;
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted =  split.substring(0, split.lastIndexOf("@"));
+    this.setState({user: splitted})
+  }
+  render() {
+    let { image } = this.state;
+    //Lấy mảng tên bạn bè
+    let array = [];
+    let value = this.props.route.params?.arrayFriendChoose;
+    if (value !== undefined) {
+      array = value;
+    }
+    //Lấy mảng item bạn bè
+    let item =[];
+    let itemArray = this.props.route.params?.arrayItemChoose
+    if (itemArray !== null) {
+      item = itemArray;
+    }
+    //Lấy mã hành trình
+    let key = "";
+    let scheduleKey = this.props.params?.scheduleKey
+    if (scheduleKey !== null) {
+      key = scheduleKey;
+    }
+    //Lấy tên hành trình
+    let name = "";
+    let scheduleName = this.props.route.params?.scheduleName;
+    if (scheduleName !== null) {
+      name = scheduleName;
+    }
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -74,7 +169,7 @@ export default class createGroupScreen extends Component {
             {/* <Entypo name="edit" size={24} color="black" /> */}
 
             <Text>Your group name</Text>
-            <TextInput style={styles.inputForm}></TextInput>
+            <TextInput style={styles.inputForm} onChangeText={(groupName) => this.setState({ groupName })}></TextInput>
           </View>
           {/* Pick Friends */}
           <View style={styles.line}>
@@ -102,17 +197,25 @@ export default class createGroupScreen extends Component {
             {/* <Feather name="map" size={24} color="black" /> */}
             <View>
               <Text>Pick a schedule</Text>
-              <TouchableOpacity style={styles.inputForm} onPress={()=> this.props.navigation.navigate("PickSchedule")}>
+              <TouchableOpacity
+                style={styles.inputForm}
+                onPress={() => this.props.navigation.navigate("PickSchedule")}
+              >
                 <Text style={{ color: "white", left: 10, top: 5 }}>
                   Open schedule list
                 </Text>
               </TouchableOpacity>
+              <View style={styles.showMemberPicked}>
+                <View style={styles.friendPickContainer}>
+                  <Text style={styles.friendPickText}>{name}</Text>
+                </View>
+              </View>
             </View>
           </View>
 
           <View style={styles.buttonContainer}>
             <View>
-              <TouchableOpacity style={styles.buttonCreate}>
+              <TouchableOpacity style={styles.buttonCreate} onPress={()=> this.onClickCreateGroup()}>
                 <Text style={{ color: "white" }}>Create Your Group</Text>
               </TouchableOpacity>
             </View>
@@ -174,7 +277,7 @@ const styles = StyleSheet.create({
   },
   friendPickContainer: {
     //height: 30,
-    marginBottom:10,
+    marginBottom: 10,
   },
   friendPickText: {
     marginLeft: 10,
