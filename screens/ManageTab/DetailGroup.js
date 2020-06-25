@@ -18,20 +18,32 @@ import ChatScreen from "./ChatScreen";
 export default class ManageScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      groupName: null,
+    };
   }
   onPressButton(screen) {
     this.props.navigation.navigate(screen);
     this.props.navigation.setOptions({});
   }
-  onClickAddMember(){
-    this.props.navigation.navigate("AddMember")
+  onClickAddMember(node){
+    this.props.navigation.navigate("AddMember",{nodeGroup: node})
   }
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  componentDidMount(){
+
+  }
 
   render() {
+    const groupName = this.props.route.params?.nameA;
+    const groupNode = this.props.route.params?.nodeA;
+    var obj = JSON.stringify(groupName);
+    var objectValue = JSON.parse(obj);
+
+    var node  = JSON.stringify(groupNode);
+    var nodeValue = JSON.parse(node);
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -60,16 +72,18 @@ export default class ManageScreen extends Component {
 
         <View style={styles.content}>
           <View style={styles.groupName}>
-            <Text style={styles.groupNameText}>Infamous Team</Text>
+              <Text style={styles.groupNameText}>
+                {objectValue.name}
+                </Text>
           </View>
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={styles.btn}
-              onPress={() => this.onClickAddMember()}
+              onPress={() => this.onClickAddMember({node: nodeValue.node})}
             >
               <View style={styles.iconEdit}>
                 {/* <MaterialIcons name="person-add" size={25} color="black" /> */}
-                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://plus24h.com/upload/images/add-person-2646097_960_720.png"}}/>
+                <Image style={{height:60, width:60, borderRadius:60,}} source={{uri: "https://plus24h.com/upload/images/add-person-2646097_960_720.png"}}/>
               </View>
               <Text style={styles.txt}>Add Member</Text>
             </TouchableOpacity>
@@ -82,7 +96,7 @@ export default class ManageScreen extends Component {
             >
               <View style={styles.iconEdit}>
                 {/* <Ionicons name="ios-people" size={25} color="black" /> */}
-                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://thumbs.dreamstime.com/b/people-flat-icon-group-round-colorful-button-team-circular-vector-sign-shadow-effect-style-design-92997577.jpg"}}/>
+                <Image style={{height:60, width:60, borderRadius:60,}} source={{uri: "https://thumbs.dreamstime.com/b/people-flat-icon-group-round-colorful-button-team-circular-vector-sign-shadow-effect-style-design-92997577.jpg"}}/>
               </View>
               <Text style={styles.txt}>Manage members </Text>
             </TouchableOpacity>
@@ -95,7 +109,7 @@ export default class ManageScreen extends Component {
             >
               <View style={styles.iconEdit}>
                 {/* <AntDesign name="find" size={25} color="black" /> */}
-                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://img.freepik.com/free-vector/hand-with-pen-mark-calendar_1325-126.jpg?size=338&ext=jpg"}}/>
+                <Image style={{height:60, width:60, borderRadius:60,}} source={{uri: "https://img.freepik.com/free-vector/hand-with-pen-mark-calendar_1325-126.jpg?size=338&ext=jpg"}}/>
               </View>
               <Text style={styles.txt}>Your Schedule</Text>
             </TouchableOpacity>
@@ -107,7 +121,7 @@ export default class ManageScreen extends Component {
             >
               <View style={styles.iconEdit}>
                 {/* <MaterialIcons name="chat" size={25} color="black" /> */}
-                <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://image.freepik.com/free-vector/chat-bubble_53876-25540.jpg"}}/>
+                <Image style={{height:60, width:60, borderRadius:60,}} source={{uri: "https://image.freepik.com/free-vector/chat-bubble_53876-25540.jpg"}}/>
               </View>
               <Text style={styles.txt}>Group Chat</Text>
             </TouchableOpacity>
@@ -120,7 +134,7 @@ export default class ManageScreen extends Component {
             >
               <View style={styles.iconEdit}>
               {/* <AntDesign name="search1" size={25} color="black" /> */}
-              <Image style={{height:40, width:40, borderRadius:40,}} source={{uri: "https://img.freepik.com/free-vector/street-map_23-2147510569.jpg?size=338&ext=jpg"}}/>
+              <Image style={{height:60, width:60, borderRadius:60,}} source={{uri: "https://img.freepik.com/free-vector/street-map_23-2147510569.jpg?size=338&ext=jpg"}}/>
               </View>
               <Text style={styles.txt}>Tracking Members</Text>
             </TouchableOpacity>
@@ -142,27 +156,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   content: {
-    height: 600,
-    //backgroundColor:"green",
+    height: 700,
     alignItems: "center",
   },
   btn: {
     backgroundColor: "#DB5823",
     color: "white",
     alignItems: "center",
+    alignSelf:"center",
     flexDirection:"row",
-    width: 300,
-    height: 70,
+    width: "100%",
+    height: 100,
     borderRadius: 20,
   },
   txt: {
     color: "white",
-    left:10,
+    left:20,
     fontWeight:"bold",
+    fontSize:20
   },
   btnContainer: {
     marginBottom:10,
-    //backgroundColor:"white",
+    width:"90%",
+    alignItems:"center"
   },
   iconEdit: {
     height: 40,
@@ -171,7 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft:60,
+    marginLeft:80,
   },
   groupName: {
     height: 50,

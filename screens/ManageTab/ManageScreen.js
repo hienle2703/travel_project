@@ -113,8 +113,11 @@ export default class ManageScreen extends Component {
       arrayGroup: [],
     };
   }
-  onClickDetailGroup() {
-    this.props.navigation.navigate("DetailGroup");
+  onClickDetailGroup(node,name) {
+    let nodeA = node;
+    let nameA = name;
+    console.log(nodeA,"ALOOOOOOOOOO")
+    this.props.navigation.navigate("DetailGroup",{nodeA,nameA});
   }
   componentDidMount= async ()=>{
     //Lấy thông tin user hiện tại
@@ -148,13 +151,10 @@ export default class ManageScreen extends Component {
     //Chỉ lấy ra những phần tử đó từ trong arrayContainer để có đầy đủ thông tin nhóm
     for (var i in intersect) {
       let child = intersect[i];
-      console.log(child)
       let a = firebaseApp.database().ref("group").child("group_"+ splitted).child(child);
       let takeA = await a.once("value");
       arrayFullInfor.push(takeA);
-
     }
-    
     this.setState({arrayGroup:arrayFullInfor})
   }
   render() {
@@ -206,43 +206,14 @@ export default class ManageScreen extends Component {
             </View>
 
             <View style={styles.inviteContainer}>
-              {/* {groupData.map((item) => {
-                return (
-                  <TouchableOpacity onPress={() => this.onClickDetailGroup()}>
-                    <View style={styles.inviteCard}>
-                      <View style={styles.ava}>
-                        <Image
-                          style={{ height: 70, width: 70, borderRadius: 80 }}
-                          source={{ uri: item.imgSource }}
-                        />
-                      </View>
-                      <View style={styles.buttonGroup}>
-                        <View style={styles.nameInvite}>
-                          <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                            {item.name}
-                          </Text>
-                          <Text style={{ color: "gray", fontSize: 12 }}>
-                            Member: {item.member}
-                          </Text>
-                          <Text style={{ color: "gray", fontSize: 12 }}>
-                            Schedule: {item.schedule}
-                          </Text>
-                        </View>
-                        
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })} */}
                {this.state.arrayGroup.map((item) => {
                  var obj = JSON.stringify(item);
                  var objectValue = JSON.parse(obj);
+                 
                  let countMem = [];
                  countMem = objectValue
-                 //var count = Object.keys(countMem).length
-                 console.log(countMem)
                 return (
-                  <TouchableOpacity onPress={() => this.onClickDetailGroup()}>
+                  <TouchableOpacity onPress={() => this.onClickDetailGroup({node: objectValue.node},{name: objectValue.groupName})}>
                     <View style={styles.inviteCard}>
                       <View style={styles.ava}>
                         <Image

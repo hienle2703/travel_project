@@ -71,6 +71,7 @@ export default class createGroupScreen extends Component {
       memberName: array,
       //memberKey: item,
       //scheduleKey: key,
+      node: "group_"+userName+"_"+date,
       scheduleName: name,
       leader: this.state.user
     })

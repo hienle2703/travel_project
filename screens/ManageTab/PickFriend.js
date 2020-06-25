@@ -16,7 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-export default class AddMember extends Component {
+export default class PickFriend extends Component {
   constructor(props) {
     super(props);
     this.state = {

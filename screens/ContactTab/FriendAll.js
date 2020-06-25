@@ -99,10 +99,7 @@ export default class FriendAll extends Component {
               return <ActivityIndicator size="large" color="#DB5823" />;
 
             default:
-              //console.log(typeof this.state.arrayFriendInformation,"KIỂU DỮ LIỆU======================")
-              //console.log(this.state.arrayFriend,"arrayFriend đây nè ==================")
-              //console.log(this.state.arrayFriendInformation,"this.state.arrayFriendInformation đây nè =================")
-
+            
               return (
                 <ScrollView
                   style={styles.scrollView}
