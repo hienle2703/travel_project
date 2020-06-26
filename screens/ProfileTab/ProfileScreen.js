@@ -87,24 +87,6 @@ export default class ProfileScreen extends Component {
   onClickPost() {
     this.props.navigation.navigate("PostAll");
   }
-  //USELESS - Không ảnh hưởng render
-
-  //   componentWillMount = async () => {
-  //     // await console.log("LIỆU THẰNG NÀY CÓ LOG ĐẦU TIÊN?")
-
-  //     this.itemRef1 = await firebaseApp.auth().currentUser;
-  //     // await console.log(itemRef1, "itemRef1 từ WilMount");
-  //     // let user = await this.itemRef1;
-  //     // this.setState({user})
-  //     // await console.log(user, "User từ WilMount");
-  // console.log(this.itemRef1, "itemRef1 từ WillMount")
-  //     if (this.itemRef1 !== null) {
-  //       //console.log("NULL NULL NULL NULL NULL");
-  //       await this.setState({ logged: true, flexin: true });
-
-  //       await console.log(this.state.logged, "logged từ WillMount nha mày ơi");
-  //     }
-  //   };
 
   componentDidMount = async () => {
     const split = this.state.user.email;

@@ -1,25 +1,8 @@
 import * as WebBrowser from "expo-web-browser";
 import React, { Component } from "react";
-import {
-  Image,
-  Platform,
-  FlatList,
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Button,
-  Alert
-} from "react-native";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import ScheduleItem from "../../components/ScheduleItem";
-import { MonoText } from "../../components/StyledText";
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import TabBarIcon from "../../components/TabBarIcon";
-import DatePicker from "react-native-datepicker";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig";
 export default class createGroupScreen extends Component {
   constructor(props) {
@@ -37,7 +20,7 @@ export default class createGroupScreen extends Component {
   onClickAddGroup() {
     this.props.navigation.navigate("PickFriend");
   }
-  onClickCreateGroup= async ()=>{
+  onClickCreateGroup = async () => {
     //Lấy mảng tên bạn bè
     let array = [];
     let value = this.props.route.params?.arrayFriendChoose;
@@ -45,14 +28,14 @@ export default class createGroupScreen extends Component {
       array = value;
     }
     //Lấy mảng item bạn bè
-    let item =[];
-    let itemArray = this.props.route.params?.arrayItemChoose
+    let item = [];
+    let itemArray = this.props.route.params?.arrayItemChoose;
     if (itemArray !== null) {
       item = itemArray;
     }
     //Lấy mã hành trình
     let key = "";
-    let scheduleKey = this.props.params?.scheduleKey
+    let scheduleKey = this.props.params?.scheduleKey;
     if (scheduleKey !== null) {
       key = scheduleKey;
     }
@@ -62,41 +45,56 @@ export default class createGroupScreen extends Component {
     if (scheduleName !== null) {
       name = scheduleName;
     }
-    let groupCall = this.state.groupName
+    let groupCall = this.state.groupName;
     const date = this.state.curTime;
-    let userName = this.state.user
-    const itemRef = firebaseApp.database().ref("group").child("group_"+userName).child("group_"+userName+"_"+date)
+    let userName = this.state.user;
+    const itemRef = firebaseApp
+      .database()
+      .ref("group")
+      .child("group_" + userName)
+      .child("group_" + userName + "_" + date);
     await itemRef.set({
       groupName: groupCall,
       memberName: array,
       //memberKey: item,
       //scheduleKey: key,
-      node: "group_"+userName+"_"+date,
+      node: "group_" + userName + "_" + date,
       scheduleName: name,
-      leader: this.state.user
-    })
-    for(var i in item){
-      const itemRefMember = firebaseApp.database().ref("group").child("group_"+userName).child("group_"+userName+"_"+date).child("memberKey").child(item[i])
+      leader: this.state.user,
+    });
+    for (var i in item) {
+      const itemRefMember = firebaseApp
+        .database()
+        .ref("group")
+        .child("group_" + userName)
+        .child("group_" + userName + "_" + date)
+        .child("memberKey")
+        .child(item[i]);
       await itemRefMember.set({
-        name: item[i]
-      })
+        name: item[i],
+      });
     }
-    const userRef = firebaseApp.database().ref("user/"+userName).child("group").child("group_"+userName+"_"+date)
+    const userRef = firebaseApp
+      .database()
+      .ref("user/" + userName)
+      .child("group")
+      .child("group_" + userName + "_" + date);
     await userRef.set({
-      name: "group_"+userName+"_"+date
-    })
+      name: "group_" + userName + "_" + date,
+    });
     Alert.alert(
       "Travel group created",
       "Wish you guys a wonderful trip",
       [
-        
-        { text: "OK", onPress: () => this.props.navigation.replace("ManageScreen") },
+        {
+          text: "OK",
+          onPress: () => this.props.navigation.replace("ManageScreen"),
+        },
       ],
       { cancelable: false }
     );
-    
-  }
-  
+  };
+
   componentDidMount() {
     let date = new Date();
     let n = date.getDate();
@@ -109,8 +107,8 @@ export default class createGroupScreen extends Component {
     const userCur = firebaseApp.auth().currentUser;
     const split = userCur.email;
     //Cắt chuỗi để lấy cụm trước @
-    const splitted =  split.substring(0, split.lastIndexOf("@"));
-    this.setState({user: splitted})
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+    this.setState({ user: splitted });
   }
   render() {
     let { image } = this.state;
@@ -121,14 +119,14 @@ export default class createGroupScreen extends Component {
       array = value;
     }
     //Lấy mảng item bạn bè
-    let item =[];
-    let itemArray = this.props.route.params?.arrayItemChoose
+    let item = [];
+    let itemArray = this.props.route.params?.arrayItemChoose;
     if (itemArray !== null) {
       item = itemArray;
     }
     //Lấy mã hành trình
     let key = "";
-    let scheduleKey = this.props.params?.scheduleKey
+    let scheduleKey = this.props.params?.scheduleKey;
     if (scheduleKey !== null) {
       key = scheduleKey;
     }
@@ -170,7 +168,10 @@ export default class createGroupScreen extends Component {
             {/* <Entypo name="edit" size={24} color="black" /> */}
 
             <Text>Your group name</Text>
-            <TextInput style={styles.inputForm} onChangeText={(groupName) => this.setState({ groupName })}></TextInput>
+            <TextInput
+              style={styles.inputForm}
+              onChangeText={(groupName) => this.setState({ groupName })}
+            ></TextInput>
           </View>
           {/* Pick Friends */}
           <View style={styles.line}>
@@ -206,17 +207,18 @@ export default class createGroupScreen extends Component {
                   Open schedule list
                 </Text>
               </TouchableOpacity>
-              <View style={styles.showMemberPicked}>
-                <View style={styles.friendPickContainer}>
-                  <Text style={styles.friendPickText}>{name}</Text>
-                </View>
+              <View style={styles.friendPickContainer}>
+                <Text style={styles.friendPickText}>{name}</Text>
               </View>
             </View>
           </View>
 
           <View style={styles.buttonContainer}>
             <View>
-              <TouchableOpacity style={styles.buttonCreate} onPress={()=> this.onClickCreateGroup()}>
+              <TouchableOpacity
+                style={styles.buttonCreate}
+                onPress={() => this.onClickCreateGroup()}
+              >
                 <Text style={{ color: "white" }}>Create Your Group</Text>
               </TouchableOpacity>
             </View>

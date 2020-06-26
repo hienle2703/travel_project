@@ -36,7 +36,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import ScheduleDetail from "../screens/ScheduleTab/ScheduleDetail";
 
 import ChoiceTravelScreen from "../screens/ManageTab/ChoiceTravelScreen";
-
+import PickScheduleDone from "../screens/FeedTab/PickScheduleDone"
 import { FontAwesome } from "@expo/vector-icons";
 import ChatScreen from "../screens/ManageTab/ChatScreen";
 import MemberListScreen from "../screens/ManageTab/MemberListScreen";
@@ -217,8 +217,10 @@ function FeedStack() {
         //   ),
         // }}
       />
+      <Stack.Screen name="PickScheduleDone" component={PickScheduleDone} />
       <Stack.Screen name="ProfileStack" component={ProfileStack} />
       <Stack.Screen name="ScheduleStack" component={ScheduleStack} />
+      
     </Stack.Navigator>
   );
 }

@@ -66,7 +66,7 @@ export default class DetailFeed extends Component {
               onPress={() => this.onClickBtn()}
             >
               <TabBarIcon
-                style={{ color: "#333333", alignItems: "flex-start" }}
+                style={{ color: "red", alignItems: "flex-start" }}
                 name="ios-arrow-back"
               />
             </TouchableOpacity>

@@ -245,10 +245,6 @@ export default class EditAccount extends Component {
                             return <ActivityIndicator />;
 
                           default:
-                            console.log(
-                              this.state.ava,
-                              "Địa chỉ hình ảnh nè nha"
-                            );
                             return (
                               <Image
                                 style={styles.avata}
