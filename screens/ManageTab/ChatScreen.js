@@ -12,9 +12,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput
 } from "react-native";
-import ChatScreen from "./ChatScreen";
-export default class ManageScreen extends Component {
+export default class ChatScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,7 +50,14 @@ export default class ManageScreen extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        <Text> ChatScreen </Text>
+        <View style={styles.textBox}>
+          <View style={styles.input}>
+                <TextInput style={{marginLeft:10,top:3,}} placeholder="Chat"></TextInput>
+          </View>
+          <View style={styles.likeButton}>
+          <AntDesign name="like1" size={24} color="#DB5823" />
+          </View>
+        </View>
       </View>
     );
   }
@@ -64,4 +71,25 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: "center",
   },
-})
+  textBox: {
+    backgroundColor: "#D9D9D9",
+    height:50,
+    width:"100%",
+    position:"absolute",
+    top:769,
+    flexDirection:"row"
+  },
+  likeButton:{
+    justifyContent: 'center',
+    
+  },
+  input:{
+    width:"85%",
+    backgroundColor:"white",
+    height:"70%",
+    alignSelf: 'center',
+    marginRight:10,
+    marginLeft:10,
+    borderRadius:20,
+  }
+});
