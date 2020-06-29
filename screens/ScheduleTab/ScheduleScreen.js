@@ -213,7 +213,7 @@ export default class ScheduleScreen extends Component {
         <View>
           {imgData.map((item) => {
             return (
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=> this.onClickDetail()}>
                 <View style={styles.containerScene}>
                   <View style={styles.cardSchedule}>
                     <Image
@@ -355,7 +355,7 @@ export default class ScheduleScreen extends Component {
     first: FirstRoute,
     second: this.SecondRoute,
     third: this.ThirdRoute,
-  });
+  }).bind(this);
   render() {
     const { index, routes } = this.state;
 

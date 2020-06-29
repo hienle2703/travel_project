@@ -32,6 +32,9 @@ export default class ManageScreen extends Component {
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  onPressMapSchedule(){
+    this.props.navigation.navigate("ScheduleDetail")
+  }
   componentDidMount(){
 
   }
@@ -105,7 +108,7 @@ export default class ManageScreen extends Component {
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={styles.btn}
-              onPress={() => this.onPressButton("ManageSchedule")}
+              onPress={() => this.onPressMapSchedule()}
             >
               <View style={styles.iconEdit}>
                 {/* <AntDesign name="find" size={25} color="black" /> */}

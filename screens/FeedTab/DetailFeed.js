@@ -53,6 +53,9 @@ export default class DetailFeed extends Component {
     super(props);
     this.state = {};
   }
+  onClickUseSchedule(){
+    this.props.navigation.navigate("ScheduleStack",{screen:"UseSchedule"})
+  }
   onClickBtn() {
     this.props.navigation.goBack();
   }
@@ -103,6 +106,28 @@ export default class DetailFeed extends Component {
                   </Text>
                 </View>
               </View>
+            </View>
+            
+              
+            
+            <View
+              style={{
+                height: 50,
+                width: 140,
+                borderRadius: 10,
+                backgroundColor: "#DB5823",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
+                zIndex: 100,
+                left: 240,
+                top: 290,
+              }}
+            >
+              <TouchableOpacity onPress={()=>this.onClickUseSchedule()}>
+              <Text style={{color:"white"}}>Use this schedule</Text>
+              </TouchableOpacity>
+              
             </View>
           </View>
 
@@ -207,15 +232,21 @@ export default class DetailFeed extends Component {
                     height: 20,
                     alignItems: "center",
                     justifyContent: "center",
-                    marginLeft: 150,
+                    marginLeft: 180,
                   }}
-                  onPress={()=>this.props.navigation.navigate("ScheduleDetail")}
+                  onPress={() =>
+                    this.props.navigation.navigate("ScheduleDetail")
+                  }
                 >
                   <Text style={{ color: "gray" }}>Detail</Text>
                 </TouchableOpacity>
               </View>
 
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{}} >
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{}}
+              >
                 <View style={styles.cardTodo}>
                   <Image
                     style={styles.imgTodo}
@@ -232,7 +263,9 @@ export default class DetailFeed extends Component {
                     source={require("../../assets/images/lichtrinh2.jpg")}
                   />
                   <Text>Day 2</Text>
-                  <Text style={{ color: "gray", fontSize: 12 }}>6 Locations</Text>
+                  <Text style={{ color: "gray", fontSize: 12 }}>
+                    6 Locations
+                  </Text>
                 </View>
                 <View style={styles.cardTodo}>
                   <Image
@@ -332,7 +365,6 @@ export default class DetailFeed extends Component {
                   );
                 })}
               </View>
-              
             </View>
           </View>
         </View>
@@ -398,6 +430,7 @@ const styles = StyleSheet.create({
   containerCpnt: {
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 55,
   },
   titleTxt: {
     fontSize: 20,
@@ -463,7 +496,7 @@ const styles = StyleSheet.create({
   },
   commentSec: {
     height: "100%",
-    marginBottom:25,
+    marginBottom: 25,
   },
   owner: {
     justifyContent: "center",
@@ -494,6 +527,5 @@ const styles = StyleSheet.create({
   commentBox: {
     marginLeft: 5,
     width: "87%",
-    
   },
 });

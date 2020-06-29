@@ -68,6 +68,9 @@ export default class ScheduleDetail extends Component {
       ],
     };
   }
+  onClickOpenMap(){
+    this.props.navigation.navigate("MapSchedule");
+  }
   onClickDetail() {
     this.props.navigation.navigate("ScheduleDetail");
   }
@@ -109,12 +112,100 @@ export default class ScheduleDetail extends Component {
           })}
         </View>
       </ScrollView>
+      <View style={styles.floatButton}>
+        <TouchableOpacity onPress={()=> this.onClickOpenMap()}>
+        <Text style={{color:"white"}}>Open Map</Text>
+        </TouchableOpacity>
+        
+      </View>
     </View>
   );
 
-  SecondRoute = () => <View style={[styles.scene]}></View>;
+  SecondRoute = () =>  (
+    <View style={[styles.scene]}>
+      <ScrollView>
+        <View style={styles.bao}>
+          {imgData.map((item) => {
+            return (
+              <View style={styles.cardContainer}>
+                <View style={styles.card}>
+                  
+                  <View style={styles.contentInside}>
+                    <View style={styles.imgContainer}>
+                      <Image style={styles.img} source={item.imgSource} />
+                    </View>
+                    <View style={styles.infor}>
+                      <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                        {item.title}
+                      </Text>
+                      <Text>Time: {item.duration}</Text>
+                      <Text>Reached by: {item.reach}</Text>
+                      <TouchableOpacity>
+                        <Text style={{ color: "gray" }}>Ghi chú</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.timeContainer}>
+                      <Text style={{ color: "white" }}>{item.time1}</Text>
+                      <Text style={{ color: "white" }}>{item.time2}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+      <View style={styles.floatButton}>
+        <TouchableOpacity onPress={()=> this.onClickOpenMap()}>
+        <Text style={{color:"white"}}>Open Map</Text>
+        </TouchableOpacity>
+        
+      </View>
+    </View>
+  );
 
-  ThirdRoute = () => <View style={[styles.scene]}></View>;
+  ThirdRoute = () =>  (
+    <View style={[styles.scene]}>
+      <ScrollView>
+        <View style={styles.bao}>
+          {imgData.map((item) => {
+            return (
+              <View style={styles.cardContainer}>
+                <View style={styles.card}>
+                  
+                  <View style={styles.contentInside}>
+                    <View style={styles.imgContainer}>
+                      <Image style={styles.img} source={item.imgSource} />
+                    </View>
+                    <View style={styles.infor}>
+                      <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                        {item.title}
+                      </Text>
+                      <Text>Time: {item.duration}</Text>
+                      <Text>Reached by: {item.reach}</Text>
+                      <TouchableOpacity>
+                        <Text style={{ color: "gray" }}>Ghi chú</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.timeContainer}>
+                      <Text style={{ color: "white" }}>{item.time1}</Text>
+                      <Text style={{ color: "white" }}>{item.time2}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+      <View style={styles.floatButton}>
+        <TouchableOpacity onPress={()=> this.onClickOpenMap()}>
+        <Text style={{color:"white"}}>Open Map</Text>
+        </TouchableOpacity>
+        
+      </View>
+    </View>
+  );
   setIndex = (index) => {
     console.log(index);
     this.setState({ index });
@@ -261,4 +352,14 @@ const styles = StyleSheet.create({
   bao: {
     height: 1000,
   },
+  floatButton:{
+    height:50,
+    width:200,
+    borderRadius:20,
+    backgroundColor:"#DB5823",
+    alignItems:"center",
+    justifyContent:"center",
+    alignSelf:"center",
+    bottom:20,
+  }
 });

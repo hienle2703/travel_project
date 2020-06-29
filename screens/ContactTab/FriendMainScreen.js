@@ -177,7 +177,6 @@ export default class FriendMainScreen extends Component {
     //const snap = await JSON.stringify(snapshot)
     //console.log("Snapshot", snapshot);
     let test = snapshot.val();
-    //console.log(test);
     let count = Object.keys(test).length;
     let arrayFriendInformation = []; // cái này
     for (var key in test) {
@@ -341,6 +340,7 @@ export default class FriendMainScreen extends Component {
             </View>
             <View style={styles.inviteContainer}>
               {this.state.arrayAdvice.map((item) => {
+                console.log(this.state.arrayAdvice)
                 var obj = JSON.stringify(item);
                 var objectValue = JSON.parse(obj);
                 return (

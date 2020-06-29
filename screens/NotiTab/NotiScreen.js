@@ -69,10 +69,13 @@ export default function NotiScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.textTitle}>Thông Báo</Text>
+        <Text style={styles.textTitle}>Notification</Text>
       </View>
       <View style={styles.notiArea}>
-        <ScrollView style={styles.srollInf} >
+        
+        <Image style={{height:200, width:200,marginTop:-60}} source={require("../../assets/images/noti.png")}/>
+        <Text>You don't have any notification yet</Text>
+        {/* <ScrollView style={styles.srollInf} >
           {data.map((item, index)=>{
             return (
               <View  key={index}>
@@ -94,7 +97,7 @@ export default function NotiScreen() {
               </View>
             )
           })}          
-        </ScrollView>
+        </ScrollView> */}
       </View>
     </View>
   );
@@ -129,7 +132,7 @@ const styles = StyleSheet.create({
     
   },
   header:{
-    flex:0.1,
+    flex:0.2,
     justifyContent: "center",
     backgroundColor: '#fafafa',
   },
@@ -144,7 +147,9 @@ const styles = StyleSheet.create({
    justifyContent: "space-around"
   },
   notiArea:{
-    flex:0.9,
+    flex:0.7,
+    justifyContent: 'center',
+    alignItems:"center"
   },
   bntInf:{
     backgroundColor: 'white',

@@ -50,10 +50,11 @@ import ManageSchedule from "../screens/ManageTab/ManageSchedule";
 
 import FriendMainScreen from "../screens/ContactTab/FriendMainScreen";
 import FirstRoute from "../screens/ScheduleTab/FirstRoute";
-
+import MapSchedule from "../screens/ScheduleTab/MapSchedule";
 import PickFriend from "../screens/ManageTab/PickFriend";
-import PickSchedule from "../screens/ManageTab/PickSchedule"
-import searchDestinationScreen from "../screens/ScheduleTab/searchDestinationScreen"
+import PickSchedule from "../screens/ManageTab/PickSchedule";
+import searchDestinationScreen from "../screens/ScheduleTab/searchDestinationScreen";
+import UseSchedule from "../screens/ScheduleTab/UseSchedule";
 
 const Stack = createStackNavigator();
 
@@ -107,24 +108,20 @@ function ScheduleStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ScheduleScreen" component={ScheduleScreen} />
+      <Stack.Screen name="MapSchedule" component={MapSchedule} />
       <Stack.Screen
         name="createScheduleScreen"
         title="Tạo lịch trình mới"
         component={createScheduleScreen}
-        // options={{
-        //   headerRight: () => (
-        //     <TouchableOpacity onPress={() => navigation.navigate("Schedule")}>
-        //       <Text>Add</Text>
-        //     </TouchableOpacity>
-        //   ),
-        //}}
       />
-      <Stack.Screen name="FirstRoute" title="Lịch trình 1" component={FirstRoute}/>
+      <Stack.Screen name="UseSchedule" component={UseSchedule} />
+      
       <Stack.Screen
         name="ScheduleDetail"
         title="Chi tiết lịch trình"
         component={ScheduleDetail}
       />
+      <Stack.Screen name="FirstRoute" component={FirstRoute}/>
       {/* <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} /> */}
 
       <Stack.Screen

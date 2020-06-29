@@ -10,11 +10,12 @@ import {
   Image,
 } from "react-native";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
-
+import { TabView, SceneMap } from "react-native-tab-view";
 import { Entypo } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import * as firebase from "firebase";
 import FeedScreen from "../FeedTab/FeedScreen";
+//import ScheduleDetail from "../ScheduleTab/ScheduleDetail";
 
 export default class FirstRoute extends Component {
   constructor(props) {
@@ -26,11 +27,8 @@ export default class FirstRoute extends Component {
   onClickDetail() {
     this.props.navigation.navigate("ScheduleDetail");
   }
-  onClickAdd() {
-    this.props.navigation.navigate("createScheduleScreen");
-  }
+  
   setIndex = (index) => {
-    console.log(index);
     this.setState({ index });
   };
   componentDidMount = async () => {

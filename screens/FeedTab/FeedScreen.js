@@ -301,10 +301,10 @@ export default class FeedScreen extends Component {
           <View style={styles.body}>
             <View style={styles.headerDes}>
               <View>
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                   Your trusted friend on your vacation
                 </Text>
-                <Text style={{ fontSize: 10, color: "gray" }}>
+                <Text style={{ fontSize: 13, color: "gray" }}>
                   Plan your vacation, gather friends, pick your location and
                   just go
                 </Text>
@@ -541,6 +541,7 @@ const styles = StyleSheet.create({
     left: 20,
     top: 25,
     marginTop: 30,
+    marginBottom:10,
     flexDirection: "row",
     width: "75%",
   },

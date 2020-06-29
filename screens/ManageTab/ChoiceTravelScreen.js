@@ -3,29 +3,7 @@ import { View, Text, StyleSheet, TextInput, Image , Button} from "react-native";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons';
-const data =[
-  {
-    startCity : " HCM",
-    endCity: " DL",
-    timeGo : "18/03/2020-20/03/2020"
-  },
-  {
-    startCity : " HCM",
-    endCity: " DL",
-    timeGo : "18/03/2020-20/04/2020"
-  },
-  {
-    startCity : " HCM",
-    endCity: " DL",
-    timeGo : "18/03/2020-20/05/2020"
-  },
-  {
-    startCity : " HCM",
-    endCity: " DL",
-    timeGo : "18/03/2020-20/06/2020"
-  },
 
-]
 export default class ChoiceTravelScreen extends Component {
   constructor(props) {
     super(props);
@@ -37,52 +15,7 @@ export default class ChoiceTravelScreen extends Component {
     //console.log(this.props.route.params);
     return (
       <View style={styles.container}>
-          <View style={styles.header}>
-          </View>
-
-          <View style={styles.travelStart}>
-            <View style={styles.titleArea} > 
-                  <Text style={styles.textTilte}>Lịch trình chưa đi</Text>
-            </View>
-              <ScrollView >
-                {data.map((item , index)=> { 
-                  return(
-                    <TouchableOpacity style={styles.bntInf}>
-                  <MaterialCommunityIcons name="earth" size={24} color="green" />
-                  <View style={styles.textInf}>
-                  <Text style={styles.textCity}> {item.startCity}: {item.endCity}</Text>
-                  <Text style={styles.textDate}> {item.timeGo}</Text>
-                    </View>
-                  <Entypo name="dots-three-horizontal" size={24} color="black" />
-                </TouchableOpacity>
-                  )
-                })}
-                                             
-              </ScrollView>
-          </View> 
-
-          
-          <View style={styles.travelDone}>
-            <View style={styles.titleArea}> 
-                 <Text  style={styles.textTilte}>Lịch trình đã đi</Text>
-            </View>
-            <ScrollView >
-            {data.map((item , index)=> { 
-                  return(
-                    <TouchableOpacity style={styles.bntInf}>
-                  <MaterialCommunityIcons name="earth" size={24} color="green" />
-                  <View style={styles.textInf}>
-                  <Text style={styles.textCity}> {item.startCity}: {item.endCity}</Text>
-                  <Text style={styles.textDate}> {item.timeGo}</Text>
-                    </View>
-                  <Entypo name="dots-three-horizontal" size={24} color="black" />
-                </TouchableOpacity>
-                  )
-                })}
-                     
-            </ScrollView>
-          </View>
-      
+        <Image style={styles.map} source={require('../../assets/images/mapFriend.jpg')}/>
        </View>
     );
   }
@@ -139,5 +72,9 @@ const styles = StyleSheet.create({
   titleArea:{
     shadowColor: 'gray',
     shadowOpacity: 0.1,
+  },
+  map:{
+    height:"100%",
+    width:"100%"
   }
 });
