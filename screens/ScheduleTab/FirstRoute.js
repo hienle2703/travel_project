@@ -24,19 +24,20 @@ export default class FirstRoute extends Component {
       arrayAllSchedule: [],
     };
   }
-  onClickDetail() {
-    this.props.navigation.navigate("ScheduleDetail");
-  }
-  
+  // onClickDetail() {
+  //   this.props.navigation.navigate("ScheduleDetail");
+  //   //console.log(this.props.navigation)
+  // }
+
   setIndex = (index) => {
     this.setState({ index });
   };
-  componentDidMount = async () => {
+  UNSAFE_componentWillMount = async () => {
     // Lấy tên người dùng đang đăng nhập
     const userAuth = firebaseApp.auth().currentUser;
     const split = userAuth.email;
     const splitted = split.substring(0, split.lastIndexOf("@"));
-
+    // const splitted = this.props.splitted
     //Gọi tới lấy ra mã lịch trình của người dùng đang đăng nhập
     const postCall = firebaseApp
       .database()
@@ -48,7 +49,7 @@ export default class FirstRoute extends Component {
     for (var key in val) {
       arrayPost.push(key);
     }
-    
+
     //Gọi vào post để lấy ra tất cả mã bài viết cho vào mảng
     const allPost = firebaseApp.database().ref("schedule");
     const snapAll = await allPost.once("value");
@@ -61,8 +62,6 @@ export default class FirstRoute extends Component {
     //Giao giữa 2 mảng, lấy ra những phần chung
     let intersect = arrayAllPost.filter((value) => arrayPost.includes(value)); // lấy ra tên các bài viết chung
 
-    
-
     //Chỉ lấy ra những phần tử đó từ trong arrayAllPost để có đầy đủ thông tin bài viết
 
     for (var i in intersect) {
@@ -74,6 +73,7 @@ export default class FirstRoute extends Component {
     //SetState
     this.setState({ arrayAllSchedule: arrayFullInfor });
   };
+  componentDidMount = async () => {};
 
   render() {
     return (
@@ -83,11 +83,12 @@ export default class FirstRoute extends Component {
             {this.state.arrayAllSchedule.map((item) => {
               var obj = JSON.stringify(item);
               var objectValue = JSON.parse(obj);
-              //console.log(objectValue)
-              //var countPlaces = objectValue.choosePlaces
-              //var count = Object.keys(countPlaces).length;
               return (
-                <TouchableOpacity onPress={() => this.onClickDetail()}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.props.onClickDetail.navigate("ScheduleDetail")
+                  }
+                >
                   <View style={styles.containerScene}>
                     <View style={styles.cardSchedule}>
                       <Image
@@ -97,7 +98,7 @@ export default class FirstRoute extends Component {
                           alignSelf: "center",
                           borderRadius: 20,
                         }}
-                        source={{uri: objectValue.imgHero}}
+                        source={{ uri: objectValue.imgHero }}
                       />
                       <View style={styles.txt}>
                         <View style={styles.location}>
@@ -108,7 +109,9 @@ export default class FirstRoute extends Component {
                               color="#DB5823"
                             />
                           </View>
-                      <Text style={{ color: "gray" }}>{objectValue.start} to {objectValue.end}</Text>
+                          <Text style={{ color: "gray" }}>
+                            {objectValue.start} to {objectValue.end}
+                          </Text>
                         </View>
                         <View style={styles.titleCard}>
                           <Text
@@ -124,11 +127,10 @@ export default class FirstRoute extends Component {
                         <View style={styles.detailCard}>
                           <View>
                             <Text style={{ color: "gray" }}>
-                              Date: From {objectValue.dateStart} to {objectValue.dateEnd}
+                              Date: From {objectValue.dateStart} to{" "}
+                              {objectValue.dateEnd}
                             </Text>
-                            <Text style={{ color: "gray" }}>
-                              Places: 4
-                            </Text>
+                            <Text style={{ color: "gray" }}>Places: 4</Text>
                           </View>
                           {/* <View style={{ flexDirection: "row" }}>
                             <Text style={{ color: "gray", bottom: 2 }}>
@@ -154,43 +156,42 @@ export default class FirstRoute extends Component {
   }
 }
 const styles = StyleSheet.create({
-    scene: {
-      flex: 1,
-    },
-    container: {
-      flex: 1,
-    },
-    header: {
-      flex: 0.11,
-      justifyContent: "center",
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    addBtn: {
-      justifyContent: "flex-end",
-      left: 95,
-      top: 13,
-    },
-    cardSchedule: {
-      height: 300,
-      width: "100%",
-      top: 30,
-    },
-    txt: {
-      left: 20,
-      top: 5,
-    },
-    location: {
-      flexDirection: "row",
-      color: "gray",
-    },
-    detailCard: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      width: "90%",
-    },
-    titleCard: {
-      marginTop: 5,
-    },
-  });
-  
+  scene: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+  header: {
+    flex: 0.11,
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  addBtn: {
+    justifyContent: "flex-end",
+    left: 95,
+    top: 13,
+  },
+  cardSchedule: {
+    height: 300,
+    width: "100%",
+    top: 30,
+  },
+  txt: {
+    left: 20,
+    top: 5,
+  },
+  location: {
+    flexDirection: "row",
+    color: "gray",
+  },
+  detailCard: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+  },
+  titleCard: {
+    marginTop: 5,
+  },
+});

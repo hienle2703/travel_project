@@ -25,6 +25,7 @@ import ScheduleScreen from "../screens/ScheduleTab/ScheduleScreen";
 import createScheduleScreen from "../screens/ScheduleTab/createScheduleScreen";
 import searchLocationScreen from "../screens/ScheduleTab/searchLocationScreen";
 import searchFriendScreen from "../screens/ScheduleTab/searchFriendScreen";
+import TimeLineDetail from "../screens/ScheduleTab/TimeLineDetail"
 import ManageScreen from "../screens/ManageTab/ManageScreen";
 import DetailGroup from "../screens/ManageTab/DetailGroup";
 import NotiScreen from "../screens/NotiTab/NotiScreen";
@@ -55,7 +56,8 @@ import PickFriend from "../screens/ManageTab/PickFriend";
 import PickSchedule from "../screens/ManageTab/PickSchedule";
 import searchDestinationScreen from "../screens/ScheduleTab/searchDestinationScreen";
 import UseSchedule from "../screens/ScheduleTab/UseSchedule";
-
+import ConfirmDetailSchedule from "../screens/ScheduleTab/ConfirmDetailSchedule"
+import test_DragAndDrop from "../screens/ScheduleTab/test_DragAndDrop";
 const Stack = createStackNavigator();
 
 function FriendStack() {
@@ -121,9 +123,9 @@ function ScheduleStack() {
         title="Chi tiết lịch trình"
         component={ScheduleDetail}
       />
-      <Stack.Screen name="FirstRoute" component={FirstRoute}/>
-      {/* <Stack.Screen name="SignIn" title="Đăng nhập" component={SignIn} /> */}
-
+      <Stack.Screen name="FirstRoute" title="Lịch trình chưa đi" component={FirstRoute}/>
+      <Stack.Screen name= "test_DragAndDrop" component={test_DragAndDrop}/>
+      <Stack.Screen name="TimeLineDetail" component={TimeLineDetail}/>
       <Stack.Screen
         name="createSchedule"
         title="Tạo lịch trình mới"
@@ -136,6 +138,7 @@ function ScheduleStack() {
           ),
         }}
       />
+      <Stack.Screen name="ConfirmDetailSchedule" component={ConfirmDetailSchedule} title="Xác Nhận Tạo Hành Trình" />
       <Stack.Screen name="searchDestinationScreen" title="Chọn điểm đến" component={searchDestinationScreen}/>
       <Stack.Screen
         name="searchLocationScreen"

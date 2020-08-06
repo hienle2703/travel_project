@@ -207,9 +207,6 @@ export default class FriendMainScreen extends Component {
     });
   };
   render() {
-    //console.log(this.state.arrayFriendInformation);
-    //console.log(typeof this.state.arrayFriendInformation);
-    //console.log(this.state.arrayAdvice)
     return (
       <View style={styles.container}>
         <ScrollView

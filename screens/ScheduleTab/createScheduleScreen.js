@@ -32,6 +32,7 @@ export default class createScheduleScreen extends Component {
       curTime: null,
       imgHero: null,
       locationKey: null,
+      days: null,
     };
   }
   onClickDestination() {
@@ -40,19 +41,31 @@ export default class createScheduleScreen extends Component {
   onClickBtn() {
     this.props.navigation.goBack();
   }
+  onClickConfirm() {
+    const img = this.props.route.params?.locationImage;
+    const locationStart = this.props.route.params?.locationStart;
+    const locationEnd = this.props.route.params?.locationEnd;
+    this.props.navigation.navigate("ConfirmDetailSchedule", {
+      days: this.state.days,
+      imgHero: img,
+      dateStart: this.state.dateStart,
+      dateEnd: this.state.dateEnd,
+      locationStart: locationStart,
+      locationEnd: locationEnd,
+    });
+  }
   onClickSaveSchedule = async () => {
-
-    const a = this.props.route.params?.locationStart;
+    const locationStart = this.props.route.params?.locationStart;
     if (a !== null) {
-      this.setState({ locationStart: a })
+      this.setState({ locationStart: a });
     }
 
     const b = this.props.route.params?.locationEnd;
-    if (b !== null) {
-      this.setState({ locationEnd: b });
-    }
     const c = this.props.route.params?.locationKey;
     const d = this.props.route.params?.locationImage;
+    if (b !== null) {
+      this.setState({ locationEnd: b, imgHero: d });
+    }
 
     const date = this.state.curTime;
     const user = this.state.user;
@@ -60,30 +73,43 @@ export default class createScheduleScreen extends Component {
       .database()
       .ref("schedule")
       .child("schedule_" + user + "_" + date);
+    const newDetail = "detail_schedule_" + user + "_" + date;
 
-     
+    const detailCall = firebaseApp
+      .database()
+      .ref("detail_schedule")
+      .child("user")
+      .child(newDetail);
 
+    const newSche = "schedule_" + user + "_" + date;
 
-    // const userCall = firebaseApp.database().ref("user/"+user)
-    const newSche = "schedule_"+user+"_"+date; 
-    const userCall = firebaseApp.database().ref("user/"+user+"/schedule/"+ newSche)
+    const userCall = firebaseApp
+      .database()
+      .ref("user/" + user + "/schedule/" + newSche);
+
     await userCall.set({
-      name: newSche
-    })
+      name: newSche,
+    });
 
-   
     await saveCall.set({
       dateStart: this.state.dateStart,
       dateEnd: this.state.dateEnd,
       start: this.state.locationStart,
       end: this.state.locationEnd,
       name: this.state.scheName,
-      imgHero: d
+      imgHero: d,
+      days: this.state.days,
+      detail: newDetail,
     });
-    
+
+    // await detailCall.set({
+    //   id: newDetail,
+
+    // })
+
     Alert.alert(
       "",
-      "Successfully Added Your New Adventure",
+      "We have arrange an example schedule for you. Check it out.",
       [
         {
           text: "OK",
@@ -96,7 +122,8 @@ export default class createScheduleScreen extends Component {
               dateEnd: null,
               curTime: null,
             }),
-              this.props.navigation.replace("ScheduleScreen");
+              //this.props.navigation.replace("ConfirmDetailSchedule");
+              this.onClickConfirm();
           },
         },
       ],
@@ -118,7 +145,7 @@ export default class createScheduleScreen extends Component {
 
     const a = this.props.route.params?.locationStart;
     if (a !== null) {
-      this.setState({ locationStart: a })
+      this.setState({ locationStart: a });
     }
 
     const b = this.props.route.params?.locationEnd;
@@ -129,8 +156,6 @@ export default class createScheduleScreen extends Component {
     const d = this.props.route.params?.locationImage;
 
     this.setState({ user: splitted, locationKey: c, imgHero: d });
-    
-    
   }
   render() {
     const a = this.props.route.params?.locationStart;
@@ -182,7 +207,6 @@ export default class createScheduleScreen extends Component {
                   style={styles.btnContainer}
                   onPress={() => {
                     this.props.navigation.navigate("searchLocationScreen");
-                    
                   }}
                 >
                   <View style={styles.inputBox}>
@@ -209,7 +233,6 @@ export default class createScheduleScreen extends Component {
                 <TouchableOpacity
                   onPress={() => {
                     this.props.navigation.navigate("searchDestinationScreen");
-                    
                   }}
                   style={styles.btnContainer}
                 >
@@ -234,56 +257,69 @@ export default class createScheduleScreen extends Component {
             <View style={styles.line}>
               <View>
                 <View style={styles.dateView}>
-                  <Text style={styles.txtTitle}>Start Date</Text>
-                  <DatePicker
-                    style={styles.datePicker}
-                    date={this.state.dateStart}
-                    mode="date"
-                    placeholder="Select date"
-                    format="DD/MM"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    showIcon={true}
-                    customStyles={{
-                      dateIcon: {
-                        position: "relative",
-                      },
-                      dateInput: {
-                        borderColor: "white",
-                      },
-                      // ... You can check the source to find the other keys.
-                    }}
-                    onDateChange={(date) => {
-                      this.setState({ dateStart: date });
-                      console.log(this.state.dateStart);
-                    }}
-                  />
+                  <View style={{}}>
+                    <Text style={styles.txtTitle}>Start Date</Text>
+                  </View>
+                  <View style={{marginRight:20,}}>
+                    <DatePicker
+                      style={styles.datePicker}
+                      date={this.state.dateStart}
+                      mode="date"
+                      placeholder="Select date"
+                      format="MM/DD/YYYY"
+                      confirmBtnText="Confirm"
+                      cancelBtnText="Cancel"
+                      showIcon={false}
+                      customStyles={{
+                        dateIcon: {
+                          position: "relative",
+                        },
+                        dateInput: {
+                          borderColor: "white",
+                        },
+                        // ... You can check the source to find the other keys.
+                      }}
+                      onDateChange={(date) => {
+                        this.setState({ dateStart: date });
+                      }}
+                    />
+                  </View>
                 </View>
                 <View style={styles.dateView}>
                   <Text style={styles.txtTitle}> Date End </Text>
-                  <DatePicker
-                    style={styles.datePicker}
-                    date={this.state.dateEnd}
-                    mode="date"
-                    placeholder="Select date"
-                    format="DD/MM"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    showIcon={true}
-                    customStyles={{
-                      dateIcon: {
-                        position: "relative",
-                      },
-                      dateInput: {
-                        borderColor: "white",
-                      },
-                      // ... You can check the source to find the other keys.
-                    }}
-                    onDateChange={(date) => {
-                      this.setState({ dateEnd: date });
-                      console.log(this.state.dateEnd);
-                    }}
-                  />
+                  <View style={{marginRight:20,}}>
+                    <DatePicker
+                      style={styles.datePicker}
+                      date={this.state.dateEnd}
+                      mode="date"
+                      placeholder="Select date"
+                      format="MM/DD/YYYY"
+                      confirmBtnText="Confirm"
+                      cancelBtnText="Cancel"
+                      showIcon={false}
+                      customStyles={{
+                        dateIcon: {
+                          position: "relative",
+                        },
+                        dateInput: {
+                          borderColor: "white",
+                        },
+                        // ... You can check the source to find the other keys.
+                      }}
+                      onDateChange={(date) => {
+                        this.setState({ dateEnd: date });
+                        console.log(this.state.dateEnd);
+                        const one_day = 1000 * 60 * 60 * 24;
+                        const Difference_In_Time =
+                          new Date(this.state.dateEnd).getTime() -
+                          new Date(this.state.dateStart).getTime();
+                        const days =
+                          Math.floor(Difference_In_Time / (1000 * 3600 * 24)) +
+                          1;
+                        this.setState({ days });
+                      }}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -291,11 +327,17 @@ export default class createScheduleScreen extends Component {
         </View>
 
         <View style={styles.saveBtnContainer}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.saveBtn}
             onPress={() => this.onClickSaveSchedule()}
           >
             <Text style={styles.saveBtnText}>Save Your Trip</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            style={styles.saveBtn}
+            onPress={() => this.onClickConfirm()}
+          >
+            <Text style={styles.saveBtnText}>Confirm</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -338,11 +380,10 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   datePicker: {
-    width: 200,
-    borderColor: "white",
+    width: 240,
     borderWidth: 0.5,
     borderColor: "gray",
-    marginLeft: 5,
+    marginLeft: -18,
     borderWidth: 2,
     margin: 10,
     borderRadius: 10,
@@ -388,8 +429,8 @@ const styles = StyleSheet.create({
   },
   saveBtn: {
     backgroundColor: "#DB5823",
-    height: 40,
-    width: 160,
+    height: 45,
+    width: "90%",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,

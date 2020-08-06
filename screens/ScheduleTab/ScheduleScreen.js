@@ -16,8 +16,8 @@ import TabBarIcon from "../../components/TabBarIcon";
 import { Entypo } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import * as firebase from "firebase";
-import FirstRoute from "../ScheduleTab/FirstRoute"
-
+import FirstRoute from "../ScheduleTab/FirstRoute";
+import SecondRoute from "../ScheduleTab/SecondRoute";
 const imgData = [
   {
     id: 1,
@@ -76,24 +76,24 @@ export default class ScheduleScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      
+      splitted: null,
       index: 0,
       routes: [
         { key: "first", title: "Your Plans" },
         { key: "second", title: "ONGOING" },
         { key: "third", title: "COMPLETED" },
       ],
-      arrayAllSchedule:[],
+      arrayAllSchedule: [],
     };
   }
   onClickDetail() {
     this.props.navigation.navigate("ScheduleDetail");
+    // console.log(this.props.navigation.navigate);
   }
-  onClickAdd(){
+  onClickAdd() {
     this.props.navigation.navigate("createScheduleScreen");
   }
   setIndex = (index) => {
-    console.log(index);
     this.setState({ index });
   };
   componentDidMount = async () => {
@@ -135,7 +135,7 @@ export default class ScheduleScreen extends Component {
       arrayFullInfor.push(takeA);
     }
     //SetState
-    this.setState({ arrayAllSchedule: arrayFullInfor });
+    this.setState({ arrayAllSchedule: arrayFullInfor,splitted });
   };
 
   FirstRoute = () => (
@@ -143,7 +143,7 @@ export default class ScheduleScreen extends Component {
       <ScrollView>
         <View>
           {imgData.map((item) => {
-            console.log(this.state.arrayAllSchedule,"===============")
+            console.log(this.state.arrayAllSchedule, "===============");
             return (
               <TouchableOpacity onPress={() => this.onClickDetail()}>
                 <View style={styles.containerScene}>
@@ -155,7 +155,7 @@ export default class ScheduleScreen extends Component {
                         alignSelf: "center",
                         borderRadius: 20,
                       }}
-                      source={ item.imgSource}
+                      source={item.imgSource}
                     />
                     <View style={styles.txt}>
                       <View style={styles.location}>
@@ -213,7 +213,7 @@ export default class ScheduleScreen extends Component {
         <View>
           {imgData.map((item) => {
             return (
-              <TouchableOpacity onPress={()=> this.onClickDetail()}>
+              <TouchableOpacity onPress={() => this.onClickDetail()}>
                 <View style={styles.containerScene}>
                   <View style={styles.cardSchedule}>
                     <Image
@@ -350,12 +350,21 @@ export default class ScheduleScreen extends Component {
       style={{ backgroundColor: "#DB5823" }}
     />
   );
- 
-  renderScene = SceneMap({
-    first: FirstRoute,
-    second: this.SecondRoute,
-    third: this.ThirdRoute,
-  }).bind(this);
+  renderScene = ({ route }) => {
+    switch (route.key) {
+      case "first":
+        return <FirstRoute onClickDetail={this.props.navigation} splitted={this.state.splitted}/>;
+      case "second":
+        return <SecondRoute onClickDetail={this.props.navigation}/>;
+      default:
+        return null;
+    }
+  };
+  // renderScene = SceneMap({
+  //   first: FirstRoute,
+  //   second: this.SecondRoute,
+  //   third: this.ThirdRoute,
+  // }).bind(this);
   render() {
     const { index, routes } = this.state;
 
@@ -377,7 +386,10 @@ export default class ScheduleScreen extends Component {
           </View>
 
           <View style={styles.addBtn}>
-            <TouchableOpacity style={{ color: "#DB5823" }} onPress={() => this.onClickAdd()}>
+            <TouchableOpacity
+              style={{ color: "#DB5823" }}
+              onPress={() => this.onClickAdd()}
+            >
               <TabBarIcon
                 style={{ color: "#DB5823", alignItems: "flex-end" }}
                 name="ios-add-circle"

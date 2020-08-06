@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,122 +18,21 @@ import Dialog, { DialogContent } from "react-native-popup-dialog";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import * as firebase from "firebase";
 
+import { connect } from "react-redux";
+
+import {
+  actions as actionsPost,
+  types as typesPost,
+} from "../../redux/Reducers/postReducer";
+
 const item = firebase.auth().currentUser;
 const b = function onClickFriends() {
   const ref = React.useRef(null);
 
-  console.log(ref);
   return ref;
 };
-const scheduleData = [
-  {
-    id: 1,
-    imgSource:
-      "https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2018/01/kinh-nghiem-du-lich-da-lat-ban-can-luu-lai-1.png",
-    name: "Da Lat For Life",
-    start: "HCM",
-    end: "Da Lat",
-    member: "4",
-    date: "14/6 to 17/6",
-  },
-  {
-    id: 2,
-    imgSource:
-      "https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2017/08/hoi-an-quang-nam-vntrip-1.jpg",
-    name: "Hoi An Vintage Town",
-    start: "HCM",
-    end: "Hoi An",
-    member: "4",
-    date: "14/6 to 18/6",
-  },
-  {
-    id: 3,
-    imgSource:
-      "https://aroma.vn/wp-content/uploads/2018/11/aafed9d6-h%C3%A0-n%E1%BB%99i.jpg",
-    name: "Viet Nam Capital",
-    start: "HCM",
-    end: "Ha Noi",
-    member: "4",
-    date: "14/6 to 17/6",
-  },
-  {
-    id: 4,
-    imgSource:
-      "https://tour.dulichvietnam.com.vn/uploads/tour/1553224096_sapa-5.jpg",
-    name: "The City In The Fog",
-    start: "HCM",
-    end: "Sapa",
-    member: "4",
-    date: "14/6 to 17/6",
-  },
-  {
-    id: 5,
-    imgSource:"https://saigonstartravel.com/wp-content/uploads/2019/03/26-2.jpg",
-    name: "Get Some Vitamin Sea",
-    start: "HCM",
-    end: "Vung Tau",
-    member: "4",
-    date: "14/6 to 17/6",
-  },
-];
-const postData = [
-  {
-    id: 1,
-    name: "Đà Lạt Trips",
-    author: "Hien Le",
-    day: "3",
-    points: "HCM - Da Lat, Lam Dong",
-    imgSource:
-      "https://wikidulich.org/wp-content/uploads/2018/08/Ngu%E1%BB%93n-g%E1%BB%91c-c%C3%A1i-t%C3%AAn-%C4%90%C3%A0-L%E1%BA%A1t.jpg",
-    view: "102",
-    comment: "10",
-  },
-  {
-    id: 2,
-    name: "Đi Vũng Tàu nào",
-    author: "Ngoc Thien",
-    day: "3",
-    points: "HCM - Ba Ria, Vung Tau",
-    imgSource:
-      "https://media.baodautu.vn/Images/phongvien/2018/08/25/festival-bien-ba-ria---vung-tau-se-duoc-to-chuc-tu-ngay-288-den-3920181535178310.jpg",
-    view: "12",
-    comment: "1",
-  },
-  {
-    id: 3,
-    name: "Hít Hà",
-    author: "Nam Tran",
-    day: "3",
-    points: "Vinh Long - HCM",
-    imgSource:
-      "https://d3jyiu4jpn0ihr.cloudfront.net/wp-content/uploads/sites/6/20190918160006/ve-may-bay-di-sai-gon1.jpg",
-    view: "23",
-    comment: "2",
-  },
-  {
-    id: 4,
-    name: "Chiếc du lịch nhỏ xinh",
-    author: "Huy Le",
-    day: "3",
-    points: "HCM - Da Nang",
-    imgSource:
-      "https://travel.com.vn/Images/destination/tf_190311041030_727050.jpg",
-    view: "300",
-    comment: "21",
-  },
-  {
-    id: 5,
-    name: "Abacaxibala",
-    author: "Anh Tuyet",
-    day: "3",
-    points: "HCM - Bao Loc",
-    imgSource:
-      "https://sites.google.com/site/vuoncva5461dulich/_/rsrc/1529544852694/dl-55/TP%20Bao%20Loc%202.jpg",
-    view: "63",
-    comment: "22",
-  },
-];
-export default class FeedScreen extends Component {
+
+class FeedScreen extends Component {
   constructor(props) {
     super(props);
     this.itemRef = firebaseApp.database();
@@ -140,12 +40,15 @@ export default class FeedScreen extends Component {
     this.state = {
       user: this.itemRef1,
       isLoading: true,
+      isScheduleLoading: true,
       listArticles: [],
       totalResults: 0,
       page: 1,
       isLoadMore: false,
       visible: false,
       itemRef: null,
+      postData: null,
+      scheduleData: null,
     };
   }
 
@@ -163,23 +66,9 @@ export default class FeedScreen extends Component {
     this.props.navigation.navigate("ProfileStack", { screen: "ProfileScreen" });
   }
   onClickWritePost = async () => {
-    //console.log("User đang đăng nhập", this.itemRef1);
-    //console.log("this.state.user DAYYYYYYYY", this.state.user);
-    // const userRef = firebaseApp
-    //   .database()
-    //   .ref("user")
-    //   .child(this.state.user.uid);
-
-    // console.log("userRef", userRef);
-    // const itemRef = await firebaseApp
-    //   .database()
-    //   .ref("user")
-    //   .child(this.state.user.uid);
     const itemRef = await firebaseApp.auth().currentUser;
     if (itemRef !== null) {
-      //await this.setState({ logged: true, flexin: true });
       await this.setState({ visible: false });
-      await console.log("Đã lấy được");
       await this.props.navigation.navigate("createFeedScreen");
     } else {
       await this.setState({ visible: true });
@@ -190,7 +79,6 @@ export default class FeedScreen extends Component {
     if (itemRef !== null) {
       //await this.setState({ logged: true, flexin: true });
       await this.setState({ visible: false });
-      await console.log("Đã lấy được");
       await this.props.navigation.navigate("ScheduleStack", {
         screen: "createScheduleScreen",
       });
@@ -201,45 +89,34 @@ export default class FeedScreen extends Component {
   onClickFriendProfile() {
     this.props.navigation.navigate("FriendProfile");
   }
-  // UNSAFE_componentWillMount = async () => {
-  //   const item = await firebaseApp.auth().currentUser;
-  //   console.log("HELLO");
-  //   console.log("user ddang dang nhap", item);
-  //   // if (itemRef !== null) {
-  //   //console.log("itemRef trong ComponentMount", itemRef);
-  //   // }
-  //   this.setState({
-  //     isLoading: true,
-  //   });
-  // };
+  UNSAFE_componentWillMount = async () => {
+    await this.props.get_all();
+  };
   componentDidMount = async () => {
     const itemRef = await firebaseApp
       .database()
       .ref("user")
       .child(this.state.user.uid);
-
     if (itemRef !== null) {
-      //await this.setState({ logged: true, flexin: true });
-      //await console.log("Đã lấy được");
-      await this.setState({ visible: false });
+      this.setState({
+        visible: false,
+      });
     } else {
-      //await console.log("Chưa lấy được");
     }
-
-    //await this.setState({ name, email, phone, ava });
   };
-  // componentDidMount = async () => {
-  //   const item = firebaseApp.auth().currentUser;
 
-  //   console.log("user ddang dang nhap", item);
-  //   // if (itemRef !== null) {
-  //   //console.log("itemRef trong ComponentMount", itemRef);
-  //   // }
-  //   this.setState({
-  //     isLoading: true,
-  //   });
-  // };
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.post.type === typesPost.GET_ALL) {
+      this.setState({
+        postData: nextProps.post.data.postData,
+        isLoading: false,
+        scheduleData: nextProps.post.data.scheduleData,
+        isScheduleLoading: false,
+      });
+    }
+  }
   render() {
+    const { isLoading, postData, isScheduleLoading, scheduleData } = this.state;
     return (
       <ScrollView>
         <Dialog
@@ -309,11 +186,6 @@ export default class FeedScreen extends Component {
                   just go
                 </Text>
               </View>
-              {/* <View style={styles.findBtn}>
-                <TouchableOpacity>
-                  <Entypo name="magnifying-glass" size={22} color="gray" />
-                </TouchableOpacity>
-              </View> */}
             </View>
 
             <View style={styles.content}>
@@ -392,128 +264,157 @@ export default class FeedScreen extends Component {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{}}
                   >
-                    {scheduleData.map((item) => {
-                      return (
-                        <View style={styles.cardTodo}>
-                          <Image
-                            style={styles.imgTodo}
-                            source={{ uri: item.imgSource }}
-                          />
-                          {/* <Text>Day: {item.id}</Text> */}
-                          <View style={{height:30, left: 5}}>
-                            <Text style={{ color: "tomato", fontSize: 12 }}>
-                              {item.name}
-                            </Text>
-                          </View>
+                    {isScheduleLoading ? (
+                      <ActivityIndicator size="large" />
+                    ) : (
+                      scheduleData.map((item) => {
+                        return (
+                          <View style={styles.cardTodo}>
+                            <Image
+                              style={styles.imgTodo}
+                              source={{ uri: item.imgSource }}
+                            />
+                            {/* <Text>Day: {item.id}</Text> */}
+                            <View style={{ height: 30, left: 5 }}>
+                              <Text style={{ color: "tomato", fontSize: 12 }}>
+                                {item.name}
+                              </Text>
+                            </View>
 
-                          <View style={{left:5}}>
-                            <Text style={{ color: "gray", fontSize: 10 }}>
-                              From: {item.start}
-                            </Text>
-                            <Text style={{ color: "gray", fontSize: 10 }}>
-                              To: {item.end}
-                            </Text>
-                            <Text style={{ color: "gray", fontSize: 10 }}>
-                              Members: {item.member}
-                            </Text>
-                            <Text style={{ color: "gray", fontSize: 10 }}>
-                              Time: {item.date}
-                            </Text>
+                            <View style={{ left: 5 }}>
+                              <Text style={{ color: "gray", fontSize: 10 }}>
+                                From: {item.start}
+                              </Text>
+                              <Text style={{ color: "gray", fontSize: 10 }}>
+                                To: {item.end}
+                              </Text>
+                              <Text style={{ color: "gray", fontSize: 10 }}>
+                                Members: {item.member}
+                              </Text>
+                              <Text style={{ color: "gray", fontSize: 10 }}>
+                                Time: {item.date}
+                              </Text>
+                            </View>
                           </View>
-                        </View>
-                      );
-                    })}
-                    
+                        );
+                      })
+                    )}
                   </ScrollView>
                 </View>
               </View>
               <View style={styles.feedListContainer}>
                 <View style={styles.feedList}>
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                    Feed of interesting trips
+                    Feed of interesting posts
                   </Text>
-                  {postData.map((item) => {
-                    return (
-                      <TouchableOpacity
-                        onPress={() => this.onClickDetail()}
-                        style={{ marginBottom: 20 }}
-                      >
-                        <View style={styles.feedCard}>
-                          <View>
-                            <Image
-                              style={{
-                                height: "100%",
-                                width: 160,
-                                borderRadius: 20,
-                              }}
-                              source={{ uri: item.imgSource }}
-                            />
-                          </View>
-                          <View style={styles.feedTxt}>
-                            <Text
-                              style={{ color: "#DB5823", fontWeight: "bold" }}
-                            >
-                              {item.name}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: "gray" }}>
-                              {item.author}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: "gray" }}>
-                              {item.points}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: "gray" }}>
-                              {item.day} Days
-                            </Text>
-                            {/* Rating */}
-                            <View
-                              style={{ marginTop: 35, flexDirection: "row" }}
-                            >
-                              <AntDesign name="staro" size={15} color="black" />
-                              <AntDesign name="staro" size={15} color="black" />
-                              <AntDesign name="staro" size={15} color="black" />
-                              <AntDesign name="staro" size={15} color="black" />
-                              <AntDesign name="staro" size={15} color="black" />
+                  {isLoading ? (
+                    <ActivityIndicator size="large" />
+                  ) : (
+                    postData.map((item) => {
+                      return (
+                        <TouchableOpacity
+                          onPress={() => this.onClickDetail()}
+                          style={{ marginBottom: 20 }}
+                        >
+                          <View style={styles.feedCard}>
+                            <View>
+                              <Image
+                                style={{
+                                  height: "100%",
+                                  width: 160,
+                                  borderRadius: 20,
+                                }}
+                                source={{ uri: item.imgSource }}
+                              />
                             </View>
+                            <View style={styles.feedTxt}>
+                              <Text
+                                style={{ color: "#DB5823", fontWeight: "bold" }}
+                              >
+                                {item.name}
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "gray" }}>
+                                {item.author}
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "gray" }}>
+                                {item.points}
+                              </Text>
+                              <Text style={{ fontSize: 12, color: "gray" }}>
+                                {item.day} Days
+                              </Text>
+                              {/* Rating */}
+                              <View
+                                style={{ marginTop: 35, flexDirection: "row" }}
+                              >
+                                <AntDesign
+                                  name="staro"
+                                  size={15}
+                                  color="black"
+                                />
+                                <AntDesign
+                                  name="staro"
+                                  size={15}
+                                  color="black"
+                                />
+                                <AntDesign
+                                  name="staro"
+                                  size={15}
+                                  color="black"
+                                />
+                                <AntDesign
+                                  name="staro"
+                                  size={15}
+                                  color="black"
+                                />
+                                <AntDesign
+                                  name="staro"
+                                  size={15}
+                                  color="black"
+                                />
+                              </View>
 
-                            <View
-                              style={{
-                                flexDirection: "row",
-                                right: 10,
-                                left: 2,
-                              }}
-                            >
                               <View
                                 style={{
                                   flexDirection: "row",
-                                  marginBottom: 10,
+                                  right: 10,
+                                  left: 2,
                                 }}
                               >
-                                <Text style={{ fontSize: 12, color: "gray" }}>
-                                  {item.view}{" "}
-                                </Text>
-                                <Ionicons
-                                  name="md-eye"
-                                  size={15}
-                                  color="gray"
-                                />
-                              </View>
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    marginBottom: 10,
+                                  }}
+                                >
+                                  <Text style={{ fontSize: 12, color: "gray" }}>
+                                    {item.view}{" "}
+                                  </Text>
+                                  <Ionicons
+                                    name="md-eye"
+                                    size={15}
+                                    color="gray"
+                                  />
+                                </View>
 
-                              <View style={{ flexDirection: "row", left: 10 }}>
-                                <Text style={{ fontSize: 12, color: "gray" }}>
-                                  {item.comment}{" "}
-                                </Text>
-                                <FontAwesome
-                                  name="comment-o"
-                                  size={15}
-                                  color="gray"
-                                />
+                                <View
+                                  style={{ flexDirection: "row", left: 10 }}
+                                >
+                                  <Text style={{ fontSize: 12, color: "gray" }}>
+                                    {item.comment}{" "}
+                                  </Text>
+                                  <FontAwesome
+                                    name="comment-o"
+                                    size={15}
+                                    color="gray"
+                                  />
+                                </View>
                               </View>
                             </View>
                           </View>
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })}
+                        </TouchableOpacity>
+                      );
+                    })
+                  )}
                 </View>
               </View>
             </View>
@@ -541,7 +442,7 @@ const styles = StyleSheet.create({
     left: 20,
     top: 25,
     marginTop: 30,
-    marginBottom:10,
+    marginBottom: 10,
     flexDirection: "row",
     width: "75%",
   },
@@ -579,7 +480,7 @@ const styles = StyleSheet.create({
   feedListContainer: {
     top: 80,
     alignSelf: "center",
-    width:"95%"
+    width: "95%",
   },
   cardTodo: {
     width: 100,
@@ -587,18 +488,18 @@ const styles = StyleSheet.create({
     top: 10,
     marginRight: 15,
     backgroundColor: "#E6E6E6",
-    borderRadius:10,
+    borderRadius: 10,
   },
   imgTodo: {
     width: "95%",
     height: 100,
     borderRadius: 10,
-    alignSelf:"center"
+    alignSelf: "center",
   },
   tripsList: {
     height: 220,
     width: "90%",
-    marginBottom:20,
+    marginBottom: 20,
   },
   feedList: {
     //height: 600,
@@ -674,3 +575,19 @@ const styles = StyleSheet.create({
     top: 70,
   },
 });
+
+const mapStateToProps = ({ post }) => {
+  return {
+    post: post,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    get_all: () => {
+      dispatch(actionsPost.get_all());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen);

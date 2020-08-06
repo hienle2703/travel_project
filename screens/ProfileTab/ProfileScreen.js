@@ -2,7 +2,6 @@ import * as WebBrowser from "expo-web-browser";
 import React, { Component } from "react";
 import {
   Image,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,15 +9,14 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 import * as firebase from "firebase";
-import { NavigationContainer } from "@react-navigation/native";
-import FriendMainScreen from "../../screens/ContactTab/FriendMainScreen";
 import { createStackNavigator } from "@react-navigation/stack";
+import { connect } from "react-redux";
+
+import { actions, types } from "../../redux/Reducers/profileReducer";
 
 const item = firebase.auth().currentUser;
 
@@ -29,14 +27,11 @@ const b = function onClickFriends() {
   return ref;
 };
 
-export default class ProfileScreen extends Component {
+class ProfileScreen extends Component {
   constructor(props) {
     super(props);
-    this.itemRef = firebaseApp.database();
-    this.itemRef1 = firebaseApp.auth().currentUser;
     this.state = {
-      user: this.itemRef1,
-      //user: null,
+      user: null,
       text: "",
       name: "",
       email: "",
@@ -53,9 +48,7 @@ export default class ProfileScreen extends Component {
         {
           text: "OK",
           onPress: () => {
-            //console.log("log out");
             this.props.navigation.replace("ProfileScreen");
-            //this.props.navigation.navigate("SignIn");
           },
         },
       ]);
@@ -75,8 +68,8 @@ export default class ProfileScreen extends Component {
     this.props.navigation.navigate("SignIn");
     this.props.navigation.setOptions({});
   }
-  onClickGroup(){
-    this.props.navigation.navigate("ManageStack", {screen:"ManageScreen"})
+  onClickGroup() {
+    this.props.navigation.navigate("ManageStack", { screen: "ManageScreen" });
   }
   onClickFriends() {
     this.props.navigation.navigate("FriendMainScreen");
@@ -87,35 +80,24 @@ export default class ProfileScreen extends Component {
   onClickPost() {
     this.props.navigation.navigate("PostAll");
   }
-
-  componentDidMount = async () => {
-    const split = this.state.user.email;
-    console.log("Lấy biến split", split);
-    //Cắt chuỗi để lấy cụm trước @
-    const splitted = await split.substring(0, split.lastIndexOf("@"));
-    console.log("Lấy name sau khi cắt split", splitted);
-    const itemRef = await firebaseApp.database().ref("user").child(splitted);
-    const snapshot = await itemRef.child("name").once("value");
-    const snapshot1 = await itemRef.child("email").once("value");
-    const snapshot2 = await itemRef.child("phone").once("value");
-    const snapshot3 = await itemRef.child("ava").once("value");
-
-    let name = snapshot.val();
-    let email = snapshot1.val();
-    let phone = snapshot2.val();
-    let ava = snapshot3.val();
-
-    if (itemRef !== null) {
-      //console.log("NULL NULL NULL NULL NULL");
-      await this.setState({ logged: true, flexin: true });
-      //await console.log(this.itemRef1, "itemRef1 đây, lấy ra currentUser");
-      //await console.log(this.state.logged, "logged nè nha mày ơi");
-    }
-
-    // await console.log(itemRef, "itemRef đây");
-    await this.setState({ name, email, phone, ava });
-    //await console.log(this.itemRef1, "itemRef1 đây, lấy ra currentUser");
+  UNSAFE_componentWillMount = async () => {
+    await this.props.get_all_profile();
   };
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.profile.type === types.GET_PROFILE) {
+      if (nextProps.profile.data.user !== null) {
+        this.setState({
+          name: nextProps.profile.data.name,
+          email: nextProps.profile.data.email,
+          phone: nextProps.profile.data.phone,
+          ava: nextProps.profile.data.ava,
+          logged: true,
+          flexin: true,
+        });
+      }
+    }
+  }
+  componentDidMount = async () => {};
   render() {
     const Stack = createStackNavigator();
     const { name, email, phone, ava, user, logged } = this.state;
@@ -266,7 +248,7 @@ export default class ProfileScreen extends Component {
                                   <View>
                                     <TouchableOpacity
                                       style={styles.contentBox1}
-                                      onPress={()=> this.onClickGroup()}
+                                      onPress={() => this.onClickGroup()}
                                     >
                                       <View
                                         style={{
@@ -621,7 +603,7 @@ const styles = StyleSheet.create({
   avataArea: {
     height: 100,
     margin: 80,
-    marginTop:150,
+    marginTop: 150,
     marginBottom: -100,
   },
   infArea: {
@@ -667,7 +649,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     marginTop: 30,
-    width: 400
+    width: 400,
   },
   //màu facebook: #177DEE
   contentBtn: {
@@ -676,8 +658,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: 380,
     flexDirection: "row",
-    backgroundColor: "#DB5823",
-    justifyContent:"center"
+    //backgroundColor: "#DB5823",
+    justifyContent: "center",
   },
   contentBox: {
     height: 80,
@@ -686,7 +668,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 10,
     marginLeft: 5,
-    marginRight:5,
+    marginRight: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -715,3 +697,16 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
+const mapStateToProps = ({ profile }) => {
+  return {
+    profile: profile,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    get_all_profile: () => {
+      dispatch(actions.get_all_profile());
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileScreen);
