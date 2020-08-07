@@ -52,6 +52,7 @@ export default class createScheduleScreen extends Component {
       dateEnd: this.state.dateEnd,
       locationStart: locationStart,
       locationEnd: locationEnd,
+      name: this.state.scheName
     });
   }
   onClickSaveSchedule = async () => {

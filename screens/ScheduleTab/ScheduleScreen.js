@@ -76,6 +76,7 @@ export default class ScheduleScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      val: null,
       splitted: null,
       index: 0,
       routes: [
@@ -95,6 +96,18 @@ export default class ScheduleScreen extends Component {
   }
   setIndex = (index) => {
     this.setState({ index });
+  };
+  UNSAFE_componentWillMount = async () => {
+    const userAuth = firebaseApp.auth().currentUser;
+    const split = userAuth.email;
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+    const postCall = firebaseApp
+      .database()
+      .ref("user/" + splitted)
+      .child("schedule");
+    const postTake = await postCall.once("value");
+    let val = postTake.val();
+    this.setState({val})
   };
   componentDidMount = async () => {
     // Lấy tên người dùng đang đăng nhập
@@ -135,7 +148,7 @@ export default class ScheduleScreen extends Component {
       arrayFullInfor.push(takeA);
     }
     //SetState
-    this.setState({ arrayAllSchedule: arrayFullInfor,splitted });
+    this.setState({ arrayAllSchedule: arrayFullInfor, splitted });
   };
 
   FirstRoute = () => (
@@ -353,9 +366,16 @@ export default class ScheduleScreen extends Component {
   renderScene = ({ route }) => {
     switch (route.key) {
       case "first":
-        return <FirstRoute onClickDetail={this.props.navigation} splitted={this.state.splitted}/>;
+        return (
+          <FirstRoute
+            onClickDetail={this.props.navigation}
+            key={this.state.splitted}
+            splitted={this.state.splitted}
+            val={this.state.val}
+          />
+        );
       case "second":
-        return <SecondRoute onClickDetail={this.props.navigation}/>;
+        return <SecondRoute onClickDetail={this.props.navigation} val={this.state.val}/>;
       default:
         return null;
     }

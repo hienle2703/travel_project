@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import {
   ScrollableTabView,
@@ -28,6 +29,7 @@ export default class ConfirmDetailSchedule extends Component {
       dateEnd: null,
       locationStart: null,
       locationEnd: null,
+      name:null,
     };
   }
 
@@ -51,7 +53,8 @@ export default class ConfirmDetailSchedule extends Component {
     const dateEnd = this.props.route.params.dateEnd;
     const locationStart = this.props.route.params.locationStart;
     const locationEnd = this.props.route.params.locationEnd;
-    this.setState({ dateStart, dateEnd, locationStart, locationEnd,days });
+    const name = this.props.route.params.name;
+    this.setState({ dateStart, dateEnd, locationStart, locationEnd,days,name });
   };
   onDragEnd = (data,dayNumber)=>{
     // console.log(dayNumber,"DAY")
@@ -114,11 +117,11 @@ export default class ConfirmDetailSchedule extends Component {
       .ref("schedule")
       .child("schedule_" + splitted + "_" + s);
     await scheduleRef.set({
-      name: newSche,
+      name: this.state.name,
       detail: newDetail,
       dateStart: dateStart,
       dateEnd: dateEnd,
-      //imgHero: imgHero,
+      imgHero: imgHero,
       start: locationStart,
       end: locationEnd,
       days: days,
@@ -146,7 +149,7 @@ export default class ConfirmDetailSchedule extends Component {
               dateEnd: null,
               curTime: null,
             }),
-              this.props.onClickDetail.navigate("FeedScreen");
+              this.props.navigation.replace("ScheduleScreen");
           },
         },
       ],

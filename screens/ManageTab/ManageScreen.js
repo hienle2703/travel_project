@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import TabBarIcon from "../../components/TabBarIcon";
-
 import { AntDesign } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig";
 const groupData = [
@@ -107,42 +106,62 @@ export default class ManageScreen extends Component {
     this.state = {
       member: null,
       memberCount: null,
-      groupNam:null,
-      scheduleName:null,
+      groupNam: null,
+      scheduleName: null,
       user: null,
       arrayGroup: [],
+      flexin: false,
+      allContainer: null,
     };
   }
-  onClickDetailGroup(node,name) {
+  onClickDetailGroup(node, name) {
     let nodeA = node;
     let nameA = name;
-    console.log(nodeA,"ALOOOOOOOOOO")
-    this.props.navigation.navigate("DetailGroup",{nodeA,nameA});
+    this.props.navigation.navigate("DetailGroup", { nodeA, nameA });
   }
-  componentDidMount= async ()=>{
+  UNSAFE_componentWillMount = async () => {
+    const userCur = firebaseApp.auth().currentUser;
+    const split = userCur.email;
+    //Cắt chuỗi để lấy cụm trước @
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+    const itemRefContainer = firebaseApp
+      .database()
+      .ref("group")
+      .child("group_" + splitted);
+    let test2 = await itemRefContainer.once("value");
+    let allContainer = test2.val();
+    this.setState({ allContainer });
+  };
+  componentDidMount = async () => {
     //Lấy thông tin user hiện tại
     const userCur = firebaseApp.auth().currentUser;
     const split = userCur.email;
     //Cắt chuỗi để lấy cụm trước @
-    const splitted =  split.substring(0, split.lastIndexOf("@"));
-  
-    
+    const splitted = split.substring(0, split.lastIndexOf("@"));
+
     //Gọi lấy ra tất cả mã nhóm của người dùng đang đăng nhập
     let arrayAll = [];
-    const itemRef = firebaseApp.database().ref("user").child(splitted).child("group")
-    let test = await itemRef.once("value")
-    let all = test.val()
-    for(var key in all){
-      arrayAll.push(key)
+    const itemRef = firebaseApp
+      .database()
+      .ref("user")
+      .child(splitted)
+      .child("group");
+    let test = await itemRef.once("value");
+    let all = test.val();
+    for (var key in all) {
+      arrayAll.push(key);
     }
-    
+
     //Gọi tới "group" ở ngoài để lấy ra tất cả mã nhóm
     let arrayContainer = [];
-    const itemRefContainer = firebaseApp.database().ref("group").child("group_"+splitted)
-    let test2 = await itemRefContainer.once("value")
-    let allContainer = test2.val()
-    for(var key in allContainer){
-      arrayContainer.push(key)
+    const itemRefContainer = firebaseApp
+      .database()
+      .ref("group")
+      .child("group_" + splitted);
+    let test2 = await itemRefContainer.once("value");
+    let allContainer = test2.val();
+    for (var key in allContainer) {
+      arrayContainer.push(key);
     }
     //Giao giữa 2 mảng, lấy ra những phần chung
     let intersect = arrayContainer.filter((value) => arrayAll.includes(value)); // lấy ra mã nhóm chung
@@ -151,20 +170,22 @@ export default class ManageScreen extends Component {
     //Chỉ lấy ra những phần tử đó từ trong arrayContainer để có đầy đủ thông tin nhóm
     for (var i in intersect) {
       let child = intersect[i];
-      let a = firebaseApp.database().ref("group").child("group_"+ splitted).child(child);
+      let a = firebaseApp
+        .database()
+        .ref("group")
+        .child("group_" + splitted)
+        .child(child);
       let takeA = await a.once("value");
       arrayFullInfor.push(takeA);
     }
-    this.setState({arrayGroup:arrayFullInfor})
-  }
+    this.setState({ arrayGroup: arrayFullInfor, flexin: true });
+  };
   render() {
+    console.log(this.state.allContainer);
     return (
+      <ScrollView>
       <View style={styles.container}>
-        <ScrollView
-          style={{ flexGrow: 1 }}
-          showsVerticalScrollIndicator={false}
-        >
-          
+      
           <View style={styles.header}></View>
           <View style={styles.search}>
             <View style={styles.title}>
@@ -200,53 +221,108 @@ export default class ManageScreen extends Component {
               <Text style={{ color: "#DB5823", fontWeight: "bold" }}>
                 Your Groups
               </Text>
-              {/* <View style={styles.countInvite}>
-                <Text>23</Text>
-              </View> */}
             </View>
-
-            <View style={styles.inviteContainer}>
-               {this.state.arrayGroup.map((item) => {
-                 var obj = JSON.stringify(item);
-                 var objectValue = JSON.parse(obj);
-                 
-                 let countMem = [];
-                 countMem = objectValue
-                return (
-                  <TouchableOpacity onPress={() => this.onClickDetailGroup({node: objectValue.node},{name: objectValue.groupName})}>
-                    <View style={styles.inviteCard}>
-                      <View style={styles.ava}>
-                        <Image
-                          style={{ height: 70, width: 70, borderRadius: 80 }}
-                          source={{ uri: "https://www.kindpng.com/picc/m/382-3825510_flat-people-icon-png-transparent-png.png" }}
-                        />
-                      </View>
-                      <View style={styles.buttonGroup}>
-                        <View style={styles.nameInvite}>
-                          <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                            {objectValue.groupName}
-                          </Text>
-                          {/* <Text style={{ color: "gray", fontSize: 12 }}>
-                            Member: {item.count}
-                          </Text> */}
-                          <Text style={{ color: "gray", fontSize: 12 }}>
-                            Schedule: {objectValue.scheduleName}
-                          </Text>
-                        </View>
-                        
-                      </View>
+            {(() => {
+              switch (this.state.allContainer) {
+                case null:
+                  // setTimeout(
+                  //   function () {
+                  //     this.setState({  });
+                  //   }.bind(this),
+                  //   1000
+                  // );
+                  return (
+                    <View style={styles.emptyView}>
+                      <Text style={{alignSelf:"center"}}>Oops, you don't have any group.</Text>
+                      <Image
+                        style={styles.nullImage}
+                        source={{
+                          uri:
+                            "https://image.flaticon.com/icons/png/512/16/16441.png",
+                        }}
+                      />
                     </View>
-                  </TouchableOpacity>
-                );
-              })} 
-              {/* <View style={styles.loadMore}>
-                <TouchableOpacity>
-                  <Text style={{ color: "gray", fontWeight: "bold" }}>
-                    More
-                  </Text>
-                </TouchableOpacity>
-              </View> */}
-            </View>
+                  );
+
+                default:
+                  return (
+                    <View>
+                      {!this.state.flexin ? (
+                        <View style={styles.indicatorContainer}>
+                          <ActivityIndicator
+                            size="large"
+                            color="#DB5823"
+                            style={styles.indicatorStyle}
+                          />
+                        </View>
+                      ) : (
+                        <View style={styles.inviteContainer}>
+                          {this.state.arrayGroup.map((item) => {
+                            var obj = JSON.stringify(item);
+                            var objectValue = JSON.parse(obj);
+
+                            let countMem = [];
+                            countMem = objectValue;
+                            return (
+                              <TouchableOpacity
+                                onPress={() =>
+                                  this.onClickDetailGroup(
+                                    { node: objectValue.node },
+                                    { name: objectValue.groupName }
+                                  )
+                                }
+                              >
+                                <View style={styles.inviteCard}>
+                                  <View style={styles.ava}>
+                                    <Image
+                                      style={{
+                                        height: 70,
+                                        width: 70,
+                                        borderRadius: 80,
+                                      }}
+                                      source={{
+                                        uri:
+                                          "https://www.kindpng.com/picc/m/382-3825510_flat-people-icon-png-transparent-png.png",
+                                      }}
+                                    />
+                                  </View>
+                                  <View style={styles.buttonGroup}>
+                                    <View style={styles.nameInvite}>
+                                      <Text
+                                        style={{
+                                          fontSize: 15,
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {objectValue.groupName}
+                                      </Text>
+                                      {/* <Text style={{ color: "gray", fontSize: 12 }}>
+                                Member: {item.count}
+                              </Text> */}
+                                      <Text
+                                        style={{ color: "gray", fontSize: 12 }}
+                                      >
+                                        Schedule: {objectValue.scheduleName}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                </View>
+                              </TouchableOpacity>
+                            );
+                          })}
+                          {/* <View style={styles.loadMore}>
+                    <TouchableOpacity>
+                      <Text style={{ color: "gray", fontWeight: "bold" }}>
+                        More
+                      </Text>
+                    </TouchableOpacity>
+                  </View> */}
+                        </View>
+                      )}
+                    </View>
+                  );
+              }
+            })()}
           </View>
 
           <View style={styles.advice}>
@@ -254,10 +330,9 @@ export default class ManageScreen extends Component {
               <Text style={{ color: "#DB5823", fontWeight: "bold" }}>
                 Groups you're in
               </Text>
-              {/* <View style={styles.countInvite}>
-                <Text>23</Text>
-              </View> */}
+             
             </View>
+
             <View style={styles.inviteContainer}>
               {imgData.map((item) => {
                 return (
@@ -281,7 +356,6 @@ export default class ManageScreen extends Component {
                             Schedule: {item.schedule}
                           </Text>
                         </View>
-                       
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -296,8 +370,9 @@ export default class ManageScreen extends Component {
               </View>
             </View>
           </View>
-        </ScrollView>
+        
       </View>
+      </ScrollView>
     );
   }
 }
@@ -329,11 +404,6 @@ const styles = StyleSheet.create({
     height: 170,
     width: "90%",
     alignSelf: "center",
-    //flexDirection:"row"
-    //backgroundColor: "gray",
-    // alignItems:"center",
-    // justifyContent:"center"
-
     borderBottomWidth: 0.3,
     borderBottomColor: "gray",
   },
@@ -364,15 +434,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     borderBottomWidth: 0.3,
     borderBottomColor: "gray",
-   
   },
   inviteContainer: {
-  
     alignSelf: "center",
     width: "90%",
 
     marginTop: 10,
-    marginBottom:10,
+    marginBottom: 10,
   },
   inviteCard: {
     flexDirection: "row",
@@ -387,7 +455,6 @@ const styles = StyleSheet.create({
   nameInvite: {
     left: 10,
     top: 5,
-    // backgroundColor:"yellow",
   },
   buttonGroup: {
     width: "80%",
@@ -416,5 +483,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     top: -8,
+  },
+  indicatorContainer: {
+    height: "20%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  indicatorStyle: {
+    marginTop: 60,
+  },
+  emptyView: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom:30,
+  },
+  nullImage: {
+    width: 130,
+    height: 120,
+    alignSelf:"center"
   },
 });
