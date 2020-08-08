@@ -35,14 +35,13 @@ export default class PickFriend extends Component {
     };
   }
 
-  onClickAddButton(key,item) {
-    
+  onClickAddButton(key, item) {
     let arrayNew = this.state.arrayPicked;
     let arrayItem = this.state.arrayItem;
     arrayItem.push(item);
     arrayNew.push(key);
-    this.setState({ arrayPicked: arrayNew ,arrayItem});
-    console.log(arrayItem)
+    this.setState({ arrayPicked: arrayNew, arrayItem });
+    console.log(arrayItem);
   }
   componentDidMount = async () => {
     const userAuth = firebaseApp.auth().currentUser;
@@ -90,7 +89,12 @@ export default class PickFriend extends Component {
                 }.bind(this),
                 1000
               );
-              return <ActivityIndicator size="large" color="#DB5823" />;
+              return (
+                <View style={{flex:1}}>
+                  <View style={{height:"45%"}}></View>
+                  <ActivityIndicator size="large" color="#DB5823" />
+                </View>
+              );
 
             default:
               return (
@@ -102,7 +106,12 @@ export default class PickFriend extends Component {
                     <View styles={styles.backBtn}>
                       <TouchableOpacity
                         style={{ left: 30, top: 15, flexDirection: "row" }}
-                        onPress={() => this.props.navigation.navigate("createGroup",{arrayFriendChoose: this.state.arrayPicked, arrayItemChoose: this.state.arrayItem})}
+                        onPress={() =>
+                          this.props.navigation.navigate("createGroup", {
+                            arrayFriendChoose: this.state.arrayPicked,
+                            arrayItemChoose: this.state.arrayItem,
+                          })
+                        }
                       >
                         <TabBarIcon
                           style={{ color: "gray", alignItems: "flex-start" }}
@@ -151,30 +160,29 @@ export default class PickFriend extends Component {
                         );
                         return (
                           <View style={styles.friendCard}>
-                            
-                              <View
-                                style={{
-                                  flexDirection: "row",
-                                  marginLeft: 10,
-                                }}
-                              >
-                                <View style={styles.avatarContainer}>
-                                  <Image
-                                    style={styles.avatar}
-                                    source={{ uri: objectValue.ava }}
-                                  />
-                                </View>
-                                <View style={styles.friendName}>
-                                  <Text
-                                    style={{ fontSize: 18, fontWeight: "bold" }}
-                                  >
-                                    {objectValue.name}
-                                  </Text>
-                                  <Text style={{ fontSize: 13, color: "gray" }}>
-                                    4 friends in common
-                                  </Text>
-                                </View>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                marginLeft: 10,
+                              }}
+                            >
+                              <View style={styles.avatarContainer}>
+                                <Image
+                                  style={styles.avatar}
+                                  source={{ uri: objectValue.ava }}
+                                />
                               </View>
+                              <View style={styles.friendName}>
+                                <Text
+                                  style={{ fontSize: 18, fontWeight: "bold" }}
+                                >
+                                  {objectValue.name}
+                                </Text>
+                                <Text style={{ fontSize: 13, color: "gray" }}>
+                                  4 friends in common
+                                </Text>
+                              </View>
+                            </View>
 
                             <View style={styles.buttonContainer}>
                               {result.length > 0 ? (
@@ -186,7 +194,10 @@ export default class PickFriend extends Component {
                               ) : (
                                 <TouchableOpacity
                                   onPress={() =>
-                                    this.onClickAddButton(objectValue.name,objectValue.key)
+                                    this.onClickAddButton(
+                                      objectValue.name,
+                                      objectValue.key
+                                    )
                                   }
                                 >
                                   <Ionicons

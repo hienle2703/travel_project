@@ -26,10 +26,9 @@ export default class FirstRoute extends Component {
       flexin: false,
     };
   }
-  // onClickDetail() {
-  //   this.props.navigation.navigate("ScheduleDetail");
-  //   //console.log(this.props.navigation)
-  // }
+  onClickDetail(objectValue) {
+    this.props.onClickDetail.navigate("ScheduleDetail",{objectValue});
+  }
 
   setIndex = (index) => {
     this.setState({ index });
@@ -73,16 +72,15 @@ export default class FirstRoute extends Component {
       arrayFullInfor.push(takeA);
     }
     //SetState
-   
-    
-    if ( arrayFullInfor.length>0) {
-      this.setState({ arrayAllSchedule: arrayFullInfor, flexin: true });
+
+    if (arrayFullInfor.length > 0) {
+      this.setState({ arrayAllSchedule: arrayFullInfor, flexin: true, splitted });
     }
-    
   };
 
   render() {
     let val = this.props.val;
+    const {arrayAllSchedule} = this.state
     return (
       <View style={styles.scene}>
         {(() => {
@@ -91,7 +89,13 @@ export default class FirstRoute extends Component {
               return (
                 <View style={styles.emptyView}>
                   <Text>Oops, you haven't created any schedule.</Text>
-                  <Image style={styles.nullImage} source={{uri: "https://cdn.dribbble.com/users/13395/screenshots/6455348/screen_shot_2019-05-08_at_3.32.42_pm.png"}}/>
+                  <Image
+                    style={styles.nullImage}
+                    source={{
+                      uri:
+                        "https://cdn.dribbble.com/users/13395/screenshots/6455348/screen_shot_2019-05-08_at_3.32.42_pm.png",
+                    }}
+                  />
                 </View>
               );
 
@@ -101,19 +105,14 @@ export default class FirstRoute extends Component {
                   {!this.state.flexin ? (
                     <ActivityIndicator size="large" color="#DB5823" />
                   ) : (
-                    
                     <ScrollView>
                       <View>
-                        {this.state.arrayAllSchedule.map((item) => {
+                        {arrayAllSchedule.map((item) => {
                           var obj = JSON.stringify(item);
                           var objectValue = JSON.parse(obj);
                           return (
                             <TouchableOpacity
-                              onPress={() =>
-                                this.props.onClickDetail.navigate(
-                                  "ScheduleDetail"
-                                )
-                              }
+                              onPress={() => this.onClickDetail(objectValue)}
                             >
                               <View style={styles.containerScene}>
                                 <View style={styles.cardSchedule}>
@@ -228,15 +227,14 @@ const styles = StyleSheet.create({
   titleCard: {
     marginTop: 5,
   },
-  emptyView:{
-    height:"100%",
-    width:"100%",
-    alignItems:"center",
-    justifyContent:"center"
+  emptyView: {
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  nullImage:{
-    width:"80%",
-    height:"50%",
-    
-  }
+  nullImage: {
+    width: "80%",
+    height: "50%",
+  },
 });

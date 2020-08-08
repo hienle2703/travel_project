@@ -108,12 +108,14 @@ export default class TimeLineDetail extends Component {
   //   //   { cancelable: false }
   //   // );
   // };
+  onClickOpenMap=()=>{
+    console.log("hihihi")
+  }
   UNSAFE_componentWillMount = async () => {
     let arr = [];
     const key = this.props.keys;
     const day = this.props.days;
     const call = this.props.data;
-    console.log("=============", call, "Call truyền vào");
     const allData = this.props.dataAll;
     const data = Object.values(call);
     arr.push(call);
@@ -204,8 +206,8 @@ export default class TimeLineDetail extends Component {
           }
         })()} */}
         <View style={styles.floatButton}>
-          <TouchableOpacity onPress={() => this.onClickSaveSchedule()}>
-            <Text style={{ color: "white" }}>Save Your Trip</Text>
+          <TouchableOpacity onPress={() => this.onClickOpenMap()}>
+            <Text style={{ color: "white" }}>Open Map</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -164,7 +164,7 @@ export default class ConfirmDetailSchedule extends Component {
     let getDay = dateStart.substring(3, 5);
     let getMonth = dateStart.substring(0, 2);
     let dateGet = this.state.data;
-
+    console.log(dateGet,"hihi")
     for (let i = 1; i <= days; i++) {
       let month = getMonth;
       let label = getDay + "/" + month;
@@ -203,6 +203,7 @@ export default class ConfirmDetailSchedule extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
+          
           <View
             style={{
               justifyContent: "center",

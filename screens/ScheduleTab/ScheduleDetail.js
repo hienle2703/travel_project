@@ -8,7 +8,13 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
+import {
+  ScrollableTabView,
+  DefaultTabBar,
+  ScrollableTabBar,
+} from "@valdio/react-native-scrollable-tabview";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
@@ -17,6 +23,9 @@ import { Entypo } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import ScheduleDay from "../ScheduleTab/ScheduleDay";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
+import CustomTabBar from "./CustomTabBar";
+import TimeLineDetail from "./TimeLineDetail";
 
 const initialLayout = { width: Dimensions.get("window").width };
 const imgData = [
@@ -56,33 +65,6 @@ const imgData = [
     time2: "05:30 PM",
     reach: "Car",
   },
-  {
-    id: 5,
-    imgSource: require("../../assets/images/imgList3.jpg"),
-    title: "Nem Nuong Ba Hung",
-    duration: "1 hr",
-    time1: "04:30 PM",
-    time2: "05:30 PM",
-    reach: "Car",
-  },
-  {
-    id: 6,
-    imgSource: require("../../assets/images/imgList3.jpg"),
-    title: "Nem Nuong Ba Hung",
-    duration: "1 hr",
-    time1: "04:30 PM",
-    time2: "05:30 PM",
-    reach: "Car",
-  },
-  {
-    id: 7,
-    imgSource: require("../../assets/images/imgList3.jpg"),
-    title: "Nem Nuong Ba Hung",
-    duration: "1 hr",
-    time1: "04:30 PM",
-    time2: "05:30 PM",
-    reach: "Car",
-  },
 ];
 const exampleData = [...Array(20)].map((d, index) => ({
   key: `item-${index}`, // For example only -- don't use index as your key!
@@ -95,211 +77,128 @@ export default class ScheduleDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 0,
-      routes: [
-        { key: "first", title: "15/08" },
-        { key: "second", title: "16/08" },
-        { key: "third", title: "17/08" },
-      ],
       data: exampleData,
+      name: null,
+      imgHero: null,
+      days: null,
+      dateStart: null,
+      objectValue: null,
+      flexin: false,
+      data: null,
     };
   }
-  onClickOpenMap() {
-    this.props.navigation.navigate("MapSchedule");
+  onClickBtn() {
+    this.props.navigation.goBack();
   }
-  onClickDetail() {
-    this.props.navigation.navigate("ScheduleDetail");
-  }
-  onClickTest() {
-    this.props.navigation.navigate("test_DragAndDrop");
-  }
-  setIndex = (index) => {
-    console.log(index);
-    this.setState({ index });
+  UNSAFE_componentWillMount = async () => {
+    const objectValue = this.props.route.params.objectValue;
+    const name = objectValue.name;
+    const imgHero = objectValue.imgHero;
+    const days = objectValue.days;
+    const dateStart = objectValue.dateStart;
+    const detailCode = objectValue.detail;
+    const detailRef = firebaseApp
+      .database()
+      .ref("detail_schedule/" + "user")
+      .child(detailCode);
+    const detailTake = await detailRef.once("value");
+    let data = detailTake.val();
+
+    this.setState({
+      name,
+      imgHero,
+      days,
+      dateStart,
+      objectValue,
+      flexin: true,
+      data,
+    });
   };
 
-  renderItem = ({ item, index, drag, isActive }) => {
-    return (
-      // <TouchableOpacity
-      //   style={{
-      //     backgroundColor: isActive ? "gray" : item.backgroundColor,
-      //     alignItems: "center",
-      //     justifyContent: "center",
-      //   }}
-      //   onLongPress={drag}
-      // >
-      //   <View style={styles.cardContainer}>
-      //     <View style={styles.card}>
-      //       <View style={styles.contentInside}>
-      //         <View style={styles.imgContainer}>
-      //           <Image style={styles.img} source={item.imgSource} />
-      //         </View>
-      //         <View style={styles.infor}>
-      //           <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-      //             {item.title}
-      //           </Text>
-      //           <Text>Time: {item.duration}</Text>
-      //           <Text>Reached by: {item.reach}</Text>
-      //           <TouchableOpacity>
-      //             <Text style={{ color: "gray" }}>Ghi chú</Text>
-      //           </TouchableOpacity>
-      //         </View>
-      //         <View style={styles.timeContainer}>
-      //           <Text style={{ color: "gray" }}>{item.time1}</Text>
-      //           <Text style={{ color: "gray" }}>{item.time2}</Text>
-      //         </View>
-      //       </View>
-      //     </View>
-      //   </View>
-      // </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          height: 100,
-          backgroundColor: isActive ? "blue" : item.backgroundColor,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        onLongPress={drag}
-        onPress={()=> this.onPressNumber()}
-      >
-        <Text
-          style={{
-            fontWeight: "bold",
-            color: "white",
-            fontSize: 32,
-          }}
-        >
-          {item.label}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-  FirstRoute = () => (
-    <View style={[styles.scene]}>
-      <ScrollView>
-        <View style={styles.bao}>
-          {imgData.map((item) => {
-            return (
-              <View style={styles.cardContainer}>
-                <View style={styles.card}>
-                  <View style={styles.contentInside}>
-                    <View style={styles.imgContainer}>
-                      <Image style={styles.img} source={item.imgSource} />
-                    </View>
-                    <View style={styles.infor}>
-                      <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                        {item.title}
-                      </Text>
-                      <Text>Time: {item.duration}</Text>
-                      <Text>Reached by: {item.reach}</Text>
-                      <TouchableOpacity>
-                        <Text style={{ color: "gray" }}>Ghi chú</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.timeContainer}>
-                      <Text style={{ color: "gray" }}>{item.time1}</Text>
-                      <Text style={{ color: "gray" }}>{item.time2}</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      </ScrollView>
-      <View style={styles.floatButton}>
-        <TouchableOpacity onPress={() => this.onClickOpenMap()}>
-          <Text style={{ color: "white" }}>Open Map</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  // onDragEnd = (data, dayNumber) => {
+  //   // console.log(dayNumber,"DAY")
+  //   // console.log(this.state.data,data)
+  //   let dataAll = this.state.data;
+  //   let dataFirst = {};
 
-  SecondRoute = () => (
-    <View style={[styles.scene]}>
-      <ScrollView>
-        <View style={styles.bao}>
-          {imgData.map((item) => {
-            return (
-              <View style={styles.cardContainer}>
-                <View style={styles.card}>
-                  <View style={styles.contentInside}>
-                    <View style={styles.imgContainer}>
-                      <Image style={styles.img} source={item.imgSource} />
-                    </View>
-                    <View style={styles.infor}>
-                      <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                        {item.title}
-                      </Text>
-                      <Text>Time: {item.duration}</Text>
-                      <Text>Reached by: {item.reach}</Text>
-                      <TouchableOpacity>
-                        <Text style={{ color: "gray" }}>Ghi chú</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.timeContainer}>
-                      <Text style={{ color: "gray" }}>{item.time1}</Text>
-                      <Text style={{ color: "gray" }}>{item.time2}</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      </ScrollView>
-      <View style={styles.floatButton}>
-        <TouchableOpacity onPress={() => this.onClickOpenMap()}>
-          <Text style={{ color: "white" }}>Open Map</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  //   let i = 0;
+  //   data.map((item) => {
+  //     dataFirst[i] = item;
+  //     i++;
+  //   });
+  //   dataAll[dayNumber] = dataFirst;
 
-  ThirdRoute = () => (
-    <View style={styles.bao}>
-      <DraggableFlatList
-        data={this.state.data}
-        renderItem={this.renderItem}
-        keyExtractor={(item, index) => `draggable-item-${item.key}`}
-        //onDragEnd={({ data }) => this.setState({ data })}
-      />
-    </View>
-  );
-  setIndex = (index) => {
-    this.setState({ index });
-  };
-  renderTabBar = (props) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: "#DB5823" }}
-      style={{ backgroundColor: "white", color: "#DB5823" }}
-      renderLabel={({ route }) => (
-        <Text style={{ color: "#DB5823", fontSize: 15 }}>{route.title}</Text>
-      )}
-    />
-  );
-  renderScene = ({ route }) => {
-    switch (route.key) {
-      case "first":
-        return <ScheduleDay/>;
-      case "second":
-        return this.SecondRoute;
-        case "third":
-          return this.ThirdRoute;
+  //   this.setState({ data: dataAll });
+  //   //this.setState({ data })
+  //   //console.log(this.state.data, "thay đổi")
+  // };
+  _renderItem = () => {
+    let array = [];
+    const { days, dateStart } = this.state;
+    let getDay = dateStart.substring(3, 5);
+    let getMonth = dateStart.substring(0, 2);
+    let dateGet = this.state.data;
+    console.log(days, "=============");
+    for (let i = 1; i <= days; i++) {
+      let month = getMonth;
+      let label = getDay + "/" + month;
+
+      let id = "day" + i;
+      getDay++;
+
+      let datas = dateGet[id];
+
+      array.push(
+        <TimeLineDetail
+          keys={i}
+          dayNumber={id}
+          days={days}
+          tabLabel={label}
+          data={datas}
+          dataAll={dateGet}
+          dateStart={this.state.dateStart}
+          dateEnd={this.state.dateEnd}
+          locationStart={this.state.locationStart}
+          locationEnd={this.state.locationEnd}
+          onClickDetail={this.props.navigation}
+          imgHero={this.state.imgHero}
+        />
+      );
     }
+    return array;
   };
-  // renderScene = SceneMap({
-  //   first: this.FirstRoute,
-  //   second: this.SecondRoute,
-  //   third: this.ThirdRoute,
-  // });
 
   render() {
-    const { index, routes } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
+          <View styles={styles.backBtn}>
+            <TouchableOpacity
+              style={{
+                left: 30,
+                top: 12,
+                flexDirection: "row",
+                position: "absolute",
+                zIndex: 100,
+              }}
+              onPress={() => this.onClickBtn()}
+            >
+              <TabBarIcon
+                style={{ color: "white", alignItems: "flex-start" }}
+                name="ios-arrow-back"
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "white",
+                  left: 10,
+                }}
+              >
+                Back
+              </Text>
+            </TouchableOpacity>
+          </View>
           <View
             style={{
               justifyContent: "center",
@@ -311,59 +210,43 @@ export default class ScheduleDetail extends Component {
               style={{
                 // height: "100%",
                 // width: "100%",
+                height: "100%",
                 width: "100%",
                 zIndex: 1,
                 position: "absolute",
                 alignSelf: "center",
               }}
               blurRadius={2}
-              source={require("../../assets/images/imgHero.jpg")}
+              source={{
+                uri:
+                  "https://images.pexels.com/photos/2007401/pexels-photo-2007401.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+              }}
             />
-            <Text
-              style={{
-                top: 13,
-                fontSize: 20,
-                fontWeight: "bold",
-                alignSelf: "center",
-                zIndex: 100,
-                color: "white",
-              }}
-            >
-              A SHORT TRIP TO DALAT THIS AUTUMM
-            </Text>
-            <TouchableOpacity
-              style={{
-                top: 13,
-                alignSelf: "center",
-                zIndex: 100,
-              }}
-              onPress={() => this.onClickTest()}
-            >
-              <Text
-                style={{ color: "yellow", fontSize: 15, fontWeight: "bold" }}
-              >
-                Drag and Drop
-              </Text>
-            </TouchableOpacity>
+
+            <View style={styles.saveBtnContainer}>
+              <TouchableOpacity onPress={this.onClickSaveSchedule}>
+                <Text style={{ color: "white" }}>Save your trip</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={this.renderScene}
-          renderTabBar={this.renderTabBar}
-          onIndexChange={(index) => this.setIndex(index)}
-          initialLayout={initialLayout}
-          style={{ backgroundColor: "white", color: "#DB5823" }}
-        />
+        {!this.state.flexin ? (
+          <ActivityIndicator size="large" color="#DB5823" />
+        ) : (
+          <ScrollableTabView
+            renderTabBar={() => <DefaultTabBar />}
+            ref={(tabView) => {
+              this.tabView = tabView;
+            }}
+          >
+            {this._renderItem()}
+          </ScrollableTabView>
+        )}
       </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
-  scene: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },
@@ -372,7 +255,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "yellow",
   },
   addBtn: {
     justifyContent: "flex-end",
@@ -399,7 +281,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     height: 120,
 
-    marginTop: 8,
+    marginTop: 10,
     width: "90%",
     alignSelf: "center",
     flexDirection: "row",
@@ -465,5 +347,21 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
 
     elevation: 5,
+  },
+  saveBtnContainer: {
+    backgroundColor: "#DB5823",
+    zIndex: 100,
+    width: 100,
+    height: 40,
+    top: 25,
+    right: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-end",
+  },
+  backBtn: {
+    position: "absolute",
+    zIndex: 100,
   },
 });

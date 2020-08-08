@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  ActivityIndicator
 } from "react-native";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
 import TabBarIcon from "../../components/TabBarIcon";
@@ -23,6 +24,7 @@ export default class PickSchedule extends Component {
     this.state = {
       arrayAllSchedule: [],
       arrayScheduleKey: [],
+      flexin: false,
     };
   }
   onClickChoose(txt, key) {
@@ -32,7 +34,7 @@ export default class PickSchedule extends Component {
     for (var i in array) {
       let string = JSON.stringify(array[i].name);
       let stringTake = JSON.parse(string);
-      
+
       if (stringTake === keyA) {
         scheduleKey = array[i].key;
       }
@@ -109,105 +111,130 @@ export default class PickSchedule extends Component {
   render() {
     return (
       <View style={[styles.scene]}>
-        <ScrollView>
-          <View style={styles.header}>
-            <View styles={styles.backBtn}>
-              <TouchableOpacity
-                style={{ left: 30, top: 15, flexDirection: "row" }}
-                onPress={() =>
-                  this.props.navigation.navigate("createGroup", {
-                    arrayFriendChoose: this.state.arrayPicked,
-                  })
-                }
-              >
-                <TabBarIcon
-                  style={{ color: "gray", alignItems: "flex-start" }}
-                  name="ios-arrow-back"
-                />
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    color: "gray",
-                    left: 10,
-                  }}
-                >
-                  Back
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            {this.state.arrayAllSchedule.map((item) => {
-              var obj = JSON.stringify(item);
-              var objectValue = JSON.parse(obj);
-              var name = objectValue.name;
+        {(() => {
+          switch (this.state.flexin) {
+            case false:
+              setTimeout(
+                function () {
+                  this.setState({ flexin: true });
+                }.bind(this),
+                1000
+              );
               return (
-                <TouchableOpacity
-                  onPress={() => this.onClickChoose(objectValue.name, name)}
-                >
-                  <View style={styles.containerScene}>
-                    <View style={styles.cardSchedule}>
-                      <Image
-                        style={{
-                          height: "50%",
-                          width: "90%",
-                          alignSelf: "center",
-                          borderRadius: 20,
-                        }}
-                        source={{ uri: objectValue.imgHero }}
-                      />
-                      <View style={styles.txt}>
-                        <View style={styles.location}>
-                          <View>
-                            <Entypo
-                              name="location-pin"
-                              size={15}
-                              color="#DB5823"
-                            />
-                          </View>
-                          <Text style={{ color: "gray" }}>
-                            {objectValue.start} to {objectValue.end}
-                          </Text>
-                        </View>
-                        <View style={styles.titleCard}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              fontWeight: "bold",
-                              color: "#DB5823",
-                            }}
-                          >
-                            {objectValue.name}
-                          </Text>
-                        </View>
-                        <View style={styles.detailCard}>
-                          <View>
-                            <Text style={{ color: "gray" }}>
-                              Date: From {objectValue.dateStart} to{" "}
-                              {objectValue.dateEnd}
-                            </Text>
-                            <Text style={{ color: "gray" }}>Places: 4</Text>
-                          </View>
-                          {/* <View style={{ flexDirection: "row" }}>
+                <View style={{ flex: 1 }}>
+                  <View style={{ height: "45%" }}></View>
+                  <ActivityIndicator size="large" color="#DB5823" />
+                </View>
+              );
+
+            default:
+              return (
+                <ScrollView>
+                  <View style={styles.header}>
+                    <View styles={styles.backBtn}>
+                      <TouchableOpacity
+                        style={{ left: 30, top: 15, flexDirection: "row" }}
+                        onPress={() =>
+                          this.props.navigation.navigate("createGroup", {
+                            arrayFriendChoose: this.state.arrayPicked,
+                          })
+                        }
+                      >
+                        <TabBarIcon
+                          style={{ color: "gray", alignItems: "flex-start" }}
+                          name="ios-arrow-back"
+                        />
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            color: "gray",
+                            left: 10,
+                          }}
+                        >
+                          Back
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View>
+                    {this.state.arrayAllSchedule.map((item) => {
+                      var obj = JSON.stringify(item);
+                      var objectValue = JSON.parse(obj);
+                      var name = objectValue.name;
+                      return (
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.onClickChoose(objectValue.name, name)
+                          }
+                        >
+                          <View style={styles.containerScene}>
+                            <View style={styles.cardSchedule}>
+                              <Image
+                                style={{
+                                  height: "50%",
+                                  width: "90%",
+                                  alignSelf: "center",
+                                  borderRadius: 20,
+                                }}
+                                source={{ uri: objectValue.imgHero }}
+                              />
+                              <View style={styles.txt}>
+                                <View style={styles.location}>
+                                  <View>
+                                    <Entypo
+                                      name="location-pin"
+                                      size={15}
+                                      color="#DB5823"
+                                    />
+                                  </View>
+                                  <Text style={{ color: "gray" }}>
+                                    {objectValue.start} to {objectValue.end}
+                                  </Text>
+                                </View>
+                                <View style={styles.titleCard}>
+                                  <Text
+                                    style={{
+                                      fontSize: 15,
+                                      fontWeight: "bold",
+                                      color: "#DB5823",
+                                    }}
+                                  >
+                                    {objectValue.name}
+                                  </Text>
+                                </View>
+                                <View style={styles.detailCard}>
+                                  <View>
+                                    <Text style={{ color: "gray" }}>
+                                      Date: From {objectValue.dateStart} to{" "}
+                                      {objectValue.dateEnd}
+                                    </Text>
+                                    <Text style={{ color: "gray" }}>
+                                      Places: 4
+                                    </Text>
+                                  </View>
+                                  {/* <View style={{ flexDirection: "row" }}>
                             <Text style={{ color: "gray", bottom: 2 }}>
                               {item.view}{" "}
                             </Text>
                             <Ionicons name="md-eye" size={15} color="gray" />
                           </View> */}
-                        </View>
-                        <View style={styles.descriptionCard}>
-                          {/* <Text>Status: {item.status}</Text> */}
-                          {/* <Text>Member: {item.member}</Text> */}
-                        </View>
-                      </View>
-                    </View>
+                                </View>
+                                <View style={styles.descriptionCard}>
+                                  {/* <Text>Status: {item.status}</Text> */}
+                                  {/* <Text>Member: {item.member}</Text> */}
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
                   </View>
-                </TouchableOpacity>
+                </ScrollView>
               );
-            })}
-          </View>
-        </ScrollView>
+          }
+        })()}
       </View>
     );
   }

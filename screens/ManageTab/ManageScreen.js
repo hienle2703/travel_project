@@ -16,6 +16,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import TabBarIcon from "../../components/TabBarIcon";
 import { AntDesign } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig";
+import Dialog, { DialogContent } from "react-native-popup-dialog";
 const groupData = [
   {
     id: 1,
@@ -112,8 +113,18 @@ export default class ManageScreen extends Component {
       arrayGroup: [],
       flexin: false,
       allContainer: null,
+      visible: false,
+      userCur: null,
     };
   }
+  onClickCreateGroup = () => {
+    console.log(this.state.userCur,"=============")
+    if (this.state.userCur !== null) {
+      this.props.navigation.navigate("createGroup");
+    } else {
+      this.setState({ visible: true });
+    }
+  };
   onClickDetailGroup(node, name) {
     let nodeA = node;
     let nameA = name;
@@ -178,14 +189,57 @@ export default class ManageScreen extends Component {
       let takeA = await a.once("value");
       arrayFullInfor.push(takeA);
     }
-    this.setState({ arrayGroup: arrayFullInfor, flexin: true });
+    this.setState({ arrayGroup: arrayFullInfor, flexin: true, userCur });
   };
   render() {
-    console.log(this.state.allContainer);
     return (
       <ScrollView>
-      <View style={styles.container}>
-      
+        <Dialog
+          visible={this.state.visible}
+          onTouchOutside={() => {
+            this.setState({ visible: false });
+          }}
+        >
+          <DialogContent>
+            <View style={styles.dialogContainer}>
+              <View style={styles.warnImage}>
+                <Image
+                  style={styles.warnImageSource}
+                  source={{
+                    uri:
+                      "https://images.vexels.com/media/users/3/128332/isolated/preview/13bcbc98044bbd2bd1d614b83db76de7-oops-bubble-svg-by-vexels.png",
+                  }}
+                />
+              </View>
+
+              <View style={styles.warnTextContainer}>
+                <Text style={styles.wanText}>
+                  You must sign in to use this feature
+                </Text>
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <View>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.onCancelWarn()}
+                  >
+                    <Text style={{ fontSize: 15 }}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.onSignInWarn()}
+                  >
+                    <Text style={{ fontSize: 15 }}>Sign In</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </DialogContent>
+        </Dialog>
+        <View style={styles.container}>
           <View style={styles.header}></View>
           <View style={styles.search}>
             <View style={styles.title}>
@@ -208,9 +262,7 @@ export default class ManageScreen extends Component {
             </View>
 
             <View style={styles.btnFriendList}>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("createGroup")}
-              >
+              <TouchableOpacity onPress={() => this.onClickCreateGroup()}>
                 <Text>Create Group</Text>
               </TouchableOpacity>
             </View>
@@ -233,7 +285,9 @@ export default class ManageScreen extends Component {
                   // );
                   return (
                     <View style={styles.emptyView}>
-                      <Text style={{alignSelf:"center"}}>Oops, you don't have any group.</Text>
+                      <Text style={{ alignSelf: "center" }}>
+                        Oops, you don't have any group.
+                      </Text>
                       <Image
                         style={styles.nullImage}
                         source={{
@@ -330,7 +384,6 @@ export default class ManageScreen extends Component {
               <Text style={{ color: "#DB5823", fontWeight: "bold" }}>
                 Groups you're in
               </Text>
-             
             </View>
 
             <View style={styles.inviteContainer}>
@@ -370,8 +423,7 @@ export default class ManageScreen extends Component {
               </View>
             </View>
           </View>
-        
-      </View>
+        </View>
       </ScrollView>
     );
   }
@@ -496,11 +548,54 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom:30,
+    marginBottom: 30,
   },
   nullImage: {
     width: 130,
     height: 120,
-    alignSelf:"center"
+    alignSelf: "center",
+  },
+  dialogContainer: {
+    height: 230,
+    width: 200,
+  },
+
+  warnImage: {
+    height: 150,
+    alignSelf: "center",
+    width: "90%",
+    //backgroundColor:"red"
+  },
+  warnTextContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    //backgroundColor:"red"
+  },
+  wanText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#DB5823",
+    textAlign: "center",
+  },
+  warnImageSource: {
+    height: "100%",
+    width: "100%",
+    right: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    height: 30,
+    width: 150,
+    //backgroundColor:"red",
+    top: 20,
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  button: {},
+  locationContainer: {
+    width: "90%",
+    left: 20,
+    top: 70,
   },
 });
