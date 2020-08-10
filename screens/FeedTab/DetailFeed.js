@@ -64,15 +64,33 @@ export default class DetailFeed extends Component {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.containerHeader}>
+          <View styles={styles.backBtn}>
             <TouchableOpacity
-              style={styles.backBtn}
+              style={{
+                left: 30,
+                top: 50,
+                flexDirection: "row",
+                position: "absolute",
+                zIndex: 100,
+              }}
               onPress={() => this.onClickBtn()}
             >
               <TabBarIcon
-                style={{ color: "red", alignItems: "flex-start" }}
+                style={{ color: "gray", alignItems: "flex-start" }}
                 name="ios-arrow-back"
               />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "gray",
+                  left: 10,
+                }}
+              >
+                Back
+              </Text>
             </TouchableOpacity>
+          </View>
             <Image
               style={styles.imgHero}
               source={require("../../assets/images/imgHero.jpg")}
@@ -380,7 +398,6 @@ const styles = StyleSheet.create({
     zIndex: 100,
     position: "absolute",
     marginLeft: 25,
-    marginTop: 50,
   },
   containerHeader: {
     height: 300,

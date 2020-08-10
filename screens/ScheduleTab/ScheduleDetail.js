@@ -115,23 +115,23 @@ export default class ScheduleDetail extends Component {
     });
   };
 
-  // onDragEnd = (data, dayNumber) => {
-  //   // console.log(dayNumber,"DAY")
-  //   // console.log(this.state.data,data)
-  //   let dataAll = this.state.data;
-  //   let dataFirst = {};
+  onDragEnd = (data, dayNumber) => {
+    // console.log(dayNumber,"DAY")
+    // console.log(this.state.data,data)
+    let dataAll = this.state.data;
+    let dataFirst = {};
 
-  //   let i = 0;
-  //   data.map((item) => {
-  //     dataFirst[i] = item;
-  //     i++;
-  //   });
-  //   dataAll[dayNumber] = dataFirst;
+    let i = 0;
+    data.map((item) => {
+      dataFirst[i] = item;
+      i++;
+    });
+    dataAll[dayNumber] = dataFirst;
 
-  //   this.setState({ data: dataAll });
-  //   //this.setState({ data })
-  //   //console.log(this.state.data, "thay đổi")
-  // };
+    this.setState({ data: dataAll });
+    //this.setState({ data })
+    //console.log(this.state.data, "thay đổi")
+  };
   _renderItem = () => {
     let array = [];
     const { days, dateStart } = this.state;
@@ -162,6 +162,7 @@ export default class ScheduleDetail extends Component {
           locationEnd={this.state.locationEnd}
           onClickDetail={this.props.navigation}
           imgHero={this.state.imgHero}
+          onDragEnd = {this.onDragEnd}
         />
       );
     }

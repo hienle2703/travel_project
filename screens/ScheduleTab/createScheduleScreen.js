@@ -18,6 +18,7 @@ import TabBarIcon from "../../components/TabBarIcon";
 import DatePicker from "react-native-datepicker";
 import { auth } from "firebase";
 import { firebaseApp } from "../../components/FirebaseConfig";
+import { AntDesign } from "@expo/vector-icons";
 
 export default class createScheduleScreen extends Component {
   constructor(props) {
@@ -52,7 +53,7 @@ export default class createScheduleScreen extends Component {
       dateEnd: this.state.dateEnd,
       locationStart: locationStart,
       locationEnd: locationEnd,
-      name: this.state.scheName
+      name: this.state.scheName,
     });
   }
   onClickSaveSchedule = async () => {
@@ -143,16 +144,16 @@ export default class createScheduleScreen extends Component {
     const userAuth = firebaseApp.auth().currentUser;
     const split = userAuth.email;
     const splitted = split.substring(0, split.lastIndexOf("@")); // Tên người dùng đang đăng nhập
-
     const a = this.props.route.params?.locationStart;
-    if (a !== null) {
+    if (a !== "") {
       this.setState({ locationStart: a });
     }
 
     const b = this.props.route.params?.locationEnd;
-    if (b !== null) {
+    if (b !== undefined) {
       this.setState({ locationEnd: b });
     }
+
     const c = this.props.route.params?.locationKey;
     const d = this.props.route.params?.locationImage;
 
@@ -161,7 +162,7 @@ export default class createScheduleScreen extends Component {
   render() {
     const a = this.props.route.params?.locationStart;
     const b = this.props.route.params?.locationEnd;
-
+    console.log(this.state.locationStart, "==============");
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -189,138 +190,165 @@ export default class createScheduleScreen extends Component {
         </View>
 
         <View style={styles.formContainer}>
-          <View style={styles.choiceTravel}>
-            <View style={styles.line}>
-              <View style={{ width: "90%" }}>
-                <Text style={styles.txtTitle}>Schedule Name: </Text>
-                <TextInput
-                  value={this.state.scheName}
-                  onChangeText={(scheName) => this.setState({ scheName })}
-                  style={styles.txtInput}
-                ></TextInput>
-              </View>
+          <View style={styles.lineSchedule}>
+            <View style={{ width: "90%" }}>
+              <Text style={styles.txtTitleScheduleName}>Schedule Name: </Text>
+              <TextInput
+                value={this.state.scheName}
+                onChangeText={(scheName) => this.setState({ scheName })}
+                style={styles.txtInput}
+              ></TextInput>
             </View>
+          </View>
 
-            <View style={styles.line}>
-              <View style={{ width: "90%" }}>
-                <Text style={styles.txtTitle}>Starting location: </Text>
-                <TouchableOpacity
-                  style={styles.btnContainer}
-                  onPress={() => {
-                    this.props.navigation.navigate("searchLocationScreen");
-                  }}
-                >
-                  <View style={styles.inputBox}>
-                    {(() => {
-                      switch (this.state.locationStart) {
-                        case "":
-                          return (
+          <View style={styles.lineStarting}>
+            <View style={{}}>
+              <Text style={styles.txtTitleScheduleName}>
+                Starting location:{" "}
+              </Text>
+              <TouchableOpacity
+                style={styles.btnContainer}
+                onPress={() => {
+                  this.props.navigation.navigate("searchLocationScreen");
+                }}
+              >
+                <View style={styles.inputBoxStarting}>
+                  {(() => {
+                    switch (a) {
+                      case undefined:
+                        return (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                            }}
+                          >
                             <Text style={styles.txtTap}>
                               Tap to pick a location
                             </Text>
-                          );
-                        default:
-                          return <Text style={styles.txtTap}>{a}</Text>;
-                      }
-                    })()}
-                  </View>
-                </TouchableOpacity>
-              </View>
+                            <View style={{ top: 10, right: 10 }}>
+                              <AntDesign
+                                name="caretdown"
+                                size={15}
+                                color="gray"
+                              />
+                            </View>
+                          </View>
+                        );
+                      default:
+                        return <Text style={styles.txtTap}>{a}</Text>;
+                    }
+                  })()}
+                </View>
+              </TouchableOpacity>
             </View>
+          </View>
 
-            <View style={styles.line}>
-              <View style={{ width: "90%" }}>
-                <Text style={styles.txtTitle}>Destination: </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.navigation.navigate("searchDestinationScreen");
-                  }}
-                  style={styles.btnContainer}
-                >
-                  <View style={styles.inputBox}>
-                    {(() => {
-                      switch (this.state.locationEnd) {
-                        case "":
-                          return (
+          <View style={styles.lineStarting}>
+            <View style={{}}>
+              <Text style={styles.txtTitleScheduleName}>Destination: </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.navigation.navigate("searchDestinationScreen");
+                }}
+                style={styles.btnContainer}
+              >
+                <View style={styles.inputBoxStarting}>
+                  {(() => {
+                    switch (b) {
+                      case undefined:
+                        return (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                            }}
+                          >
                             <Text style={styles.txtTap}>
                               Tap to pick your destination
                             </Text>
-                          );
-                        default:
-                          return <Text style={styles.txtTap}>{b}</Text>;
-                      }
-                    })()}
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.line}>
-              <View>
-                <View style={styles.dateView}>
-                  <View style={{}}>
-                    <Text style={styles.txtTitle}>Start Date</Text>
-                  </View>
-                  <View style={{marginRight:20,}}>
-                    <DatePicker
-                      style={styles.datePicker}
-                      date={this.state.dateStart}
-                      mode="date"
-                      placeholder="Select date"
-                      format="MM/DD/YYYY"
-                      confirmBtnText="Confirm"
-                      cancelBtnText="Cancel"
-                      showIcon={false}
-                      customStyles={{
-                        dateIcon: {
-                          position: "relative",
-                        },
-                        dateInput: {
-                          borderColor: "white",
-                        },
-                        // ... You can check the source to find the other keys.
-                      }}
-                      onDateChange={(date) => {
-                        this.setState({ dateStart: date });
-                      }}
-                    />
-                  </View>
+                            <View style={{ top: 10, right: 10 }}>
+                              <AntDesign
+                                name="caretdown"
+                                size={15}
+                                color="gray"
+                              />
+                            </View>
+                          </View>
+                        );
+                      default:
+                        return <Text style={styles.txtTap}>{b}</Text>;
+                    }
+                  })()}
                 </View>
-                <View style={styles.dateView}>
-                  <Text style={styles.txtTitle}> Date End </Text>
-                  <View style={{marginRight:20,}}>
-                    <DatePicker
-                      style={styles.datePicker}
-                      date={this.state.dateEnd}
-                      mode="date"
-                      placeholder="Select date"
-                      format="MM/DD/YYYY"
-                      confirmBtnText="Confirm"
-                      cancelBtnText="Cancel"
-                      showIcon={false}
-                      customStyles={{
-                        dateIcon: {
-                          position: "relative",
-                        },
-                        dateInput: {
-                          borderColor: "white",
-                        },
-                        // ... You can check the source to find the other keys.
-                      }}
-                      onDateChange={(date) => {
-                        this.setState({ dateEnd: date });
-                        console.log(this.state.dateEnd);
-                        const one_day = 1000 * 60 * 60 * 24;
-                        const Difference_In_Time =
-                          new Date(this.state.dateEnd).getTime() -
-                          new Date(this.state.dateStart).getTime();
-                        const days =
-                          Math.floor(Difference_In_Time / (1000 * 3600 * 24)) +
-                          1;
-                        this.setState({ days });
-                      }}
-                    />
-                  </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.line}>
+            <View>
+              <View style={styles.dateView}>
+                <View style={{}}>
+                  <Text style={styles.txtTitle}>    Start Date:</Text>
+                </View>
+                <View style={{ marginRight: 20 }}>
+                  <DatePicker
+                    style={styles.datePicker}
+                    date={this.state.dateStart}
+                    mode="date"
+                    placeholder="Select date"
+                    format="MM/DD/YYYY"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    showIcon={false}
+                    customStyles={{
+                      dateIcon: {
+                        position: "relative",
+                      },
+                      dateInput: {
+                        borderColor: "white",
+                      },
+                      // ... You can check the source to find the other keys.
+                    }}
+                    onDateChange={(date) => {
+                      this.setState({ dateStart: date });
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.dateView}>
+                <Text style={styles.txtTitle}>    Date End:</Text>
+                <View style={{ marginRight: 20 }}>
+                  <DatePicker
+                    style={styles.datePicker}
+                    date={this.state.dateEnd}
+                    mode="date"
+                    placeholder="Select date"
+                    format="MM/DD/YYYY"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    showIcon={false}
+                    customStyles={{
+                      dateIcon: {
+                        position: "relative",
+                      },
+                      dateInput: {
+                        borderColor: "white",
+                      },
+                      // ... You can check the source to find the other keys.
+                    }}
+                    onDateChange={(date) => {
+                      this.setState({ dateEnd: date });
+                      console.log(this.state.dateEnd);
+                      const one_day = 1000 * 60 * 60 * 24;
+                      const Difference_In_Time =
+                        new Date(this.state.dateEnd).getTime() -
+                        new Date(this.state.dateStart).getTime();
+                      const days =
+                        Math.floor(Difference_In_Time / (1000 * 3600 * 24)) + 1;
+                      this.setState({ days });
+                    }}
+                  />
                 </View>
               </View>
             </View>
@@ -350,6 +378,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     //justifyContent: "center",
+    backgroundColor:"white"
   },
   header: {
     height: 100,
@@ -377,17 +406,26 @@ const styles = StyleSheet.create({
   },
   line: {
     //margin: 15,
+    marginTop: 20,
+    alignSelf:"center",
+    width:"87%"
+  },
+  lineStarting: {
+    //margin: 15,
+    marginTop: 30,
+    alignSelf: "center",
+    width: "87%",
+  },
+  lineSchedule: {
+    //margin: 15,
     marginTop: 10,
-    marginLeft: 15,
+    alignSelf: "center",
+    borderBottomWidth: 0.3,
+    borderBottomColor: "gray",
+    width: "87%",
   },
   datePicker: {
     width: 240,
-    borderWidth: 0.5,
-    borderColor: "gray",
-    marginLeft: -18,
-    borderWidth: 2,
-    margin: 10,
-    borderRadius: 10,
   },
   dateView: {
     flexDirection: "row",
@@ -396,21 +434,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     top: 10,
+    marginTop:10,
   },
   txtTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    margin: 10,
+    color: "#DB5823",
+  },
+  txtTitleScheduleName: {
+    fontSize: 15,
+    fontWeight: "bold",
+
     color: "#DB5823",
   },
   inputBox: {
     margin: 5,
     width: "100%",
-    borderColor: "gray",
     height: 40,
     borderWidth: 1,
     borderRadius: 10,
     color: "#DB5823",
+  },
+  inputBoxStarting: {
+    borderBottomColor: "gray",
+    borderBottomWidth: 0.3,
   },
   txtTap: {
     margin: 10,
@@ -434,15 +481,15 @@ const styles = StyleSheet.create({
     width: "90%",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 30,
   },
   saveBtnText: {
     color: "white",
   },
   txtInput: {
-    height: 30,
+    height: 40,
     width: "100%",
-    backgroundColor: "#D4D4D4",
+    //backgroundColor: "#D4D4D4",
     alignSelf: "center",
     borderRadius: 10,
     color: "black",

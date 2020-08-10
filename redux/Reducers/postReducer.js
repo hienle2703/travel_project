@@ -1,4 +1,5 @@
 import { scheduleData, postData } from "../Reducers/data/fakeData_PostSche";
+import { firebaseApp } from "../../components/FirebaseConfig.js";
 
 export const types = {
   GET_ALL: "GET_ALL",

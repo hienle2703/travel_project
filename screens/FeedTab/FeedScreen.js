@@ -49,6 +49,8 @@ class FeedScreen extends Component {
       itemRef: null,
       postData: null,
       scheduleData: null,
+      arrayFullPost:null,
+      isLoadingPost:true
     };
   }
 
@@ -91,6 +93,19 @@ class FeedScreen extends Component {
   }
   UNSAFE_componentWillMount = async () => {
     await this.props.get_all();
+    const postCall = firebaseApp.database().ref("post")
+    const dataPost = await postCall.once("value")
+    const post =  dataPost.val()
+    let arrayNamePost = []
+    for (var key in post){
+      arrayNamePost.push(key)
+    }
+    let arrayFullPost = []
+    for(var i in arrayNamePost){
+      const takeData = firebaseApp.database().ref("post").child(arrayNamePost[i]).once("value")
+      arrayFullPost.push((await takeData).val())
+    }
+    this.setState({arrayFullPost, isLoadingPost:false})
   };
   componentDidMount = async () => {
     const itemRef = await firebaseApp
@@ -116,7 +131,8 @@ class FeedScreen extends Component {
     }
   }
   render() {
-    const { isLoading, postData, isScheduleLoading, scheduleData } = this.state;
+    const { isLoading,isLoadingPost, postData, isScheduleLoading, scheduleData,arrayFullPost } = this.state;
+
     return (
       <ScrollView>
         <Dialog
@@ -307,10 +323,10 @@ class FeedScreen extends Component {
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                     Feed of interesting posts
                   </Text>
-                  {isLoading ? (
+                  {isLoadingPost ? (
                     <ActivityIndicator size="large" />
                   ) : (
-                    postData.map((item) => {
+                    arrayFullPost.map((item) => {
                       return (
                         <TouchableOpacity
                           onPress={() => this.onClickDetail()}
@@ -324,7 +340,7 @@ class FeedScreen extends Component {
                                   width: 160,
                                   borderRadius: 20,
                                 }}
-                                source={{ uri: item.imgSource }}
+                                source={{ uri: item.imgHero }}
                               />
                             </View>
                             <View style={styles.feedTxt}>

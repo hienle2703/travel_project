@@ -101,68 +101,78 @@ export default class SignIn extends Component {
       <View style={styles.container}>
         <View style={styles.header}>
           {/* BACK BUTTON */}
-          {/* <TouchableOpacity
-              style={styles.backBtn}
+          <View styles={styles.backBtn}>
+            <TouchableOpacity
+              style={{
+                left: 30,
+                top: 12,
+                flexDirection: "row",
+                position: "absolute",
+                zIndex: 100,
+              }}
               onPress={() => this.onClickBtn()}
             >
               <TabBarIcon
-                style={{ color: "#DB5823", alignItems: "flex-start" }}
+                style={{ color: "white", alignItems: "flex-start" }}
                 name="ios-arrow-back"
               />
-            </TouchableOpacity> */}
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "gray",
+                  left: 10,
+                }}
+              >
+                Back
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {/* <View style={styles.signInTxt}>
             <Text style={{ fontSize: 20 }}>Sign In</Text>
           </View> */}
-
+        <View style={styles.space}></View>
         <View style={styles.signInCard}>
           {/* <View style={styles.txtWrap}>
               <Text style={{fontSize:12, color:"gray", marginBottom:-30, marginLeft:-70, backgroundColor:"white"}}>User Name</Text>
               </View> */}
 
           <View style={styles.card}>
-            {/* <TabBarIcon
+            <View style={styles.textContainer}>
+              <Text
                 style={{
                   color: "#DB5823",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignSelf: "flex-start",
+                  fontWeight: "bold",
                 }}
-                name="ios-person"
-              /> */}
-            <Text
-              style={{
-                color: "#DB5823",
-                alignSelf: "flex-start",
-              }}
-            >
-              Email
-            </Text>
+              >
+                Email
+              </Text>
+            </View>
+
             <TextInput
               style={styles.inputBox}
               onChangeText={(email) => this.setState({ email })}
               value={this.state.email}
+              placeholder="Your email"
             />
           </View>
-          {/* <Text>Password</Text> */}
-          <View style={(styles.card, { top: 30 })}>
-            {/* <TabBarIcon
+          <View style={styles.card}>
+          <View style={styles.textContainer}>
+              <Text
                 style={{
                   color: "#DB5823",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignSelf: "flex-start",
+                  fontWeight: "bold",
                 }}
-                name="ios-lock"
-              /> */}
-            <Text
-              style={{
-                color: "#DB5823",
-                alignSelf: "flex-start",
-              }}
-            >
-              Password
-            </Text>
+              >
+                Password
+              </Text>
+            </View>
             <TextInput
               style={styles.inputBox}
+              placeholder="Your password"
               onChangeText={(password) => this.setState({ password })}
               value={this.state.password}
               secureTextEntry={true}
@@ -202,18 +212,17 @@ export default class SignIn extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   imageBackground: {
     flex: 1,
     width: "100%",
   },
   header: {
-    flex: 0.15,
+    flex: 0.2,
     justifyContent: "center",
-    alignItems: "flex-start",
-    marginLeft: 20,
+  },
+  space: {
+    flex: 0.3,
   },
   signInCard: {
     height: 300,
@@ -240,22 +249,24 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     // marginLeft: 15,
-    width: 250,
-    borderColor: "gray",
     height: 40,
-    borderWidth: 1,
-    borderRadius: 10,
+    borderBottomColor: "gray",
+    borderBottomWidth: 0.3,
+    width: "85%",
     color: "#DB5823",
+    alignSelf: "center",
   },
   card: {
-    flex: 0.25,
     //flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: -20,
+    width: "100%",
+    top:10,
+    marginTop:18,
+  },
+  textContainer:{
+    width:"85%",
+    alignSelf:"center"
   },
   card1: {
-    flex: 0.3,
     flexDirection: "row",
     paddingVertical: 10,
     paddingHorizontal: 10,
