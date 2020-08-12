@@ -80,6 +80,9 @@ class ProfileScreen extends Component {
   onClickPost() {
     this.props.navigation.navigate("PostAll");
   }
+  onClickFetchApi(){
+    this.props.navigation.navigate("FeelingLucky")
+  }
   UNSAFE_componentWillMount = async () => {
     await this.props.get_all_profile();
   };
@@ -425,7 +428,7 @@ class ProfileScreen extends Component {
                                         </Text>
                                       </View>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.contentBox}>
+                                    <TouchableOpacity style={styles.contentBox} onPress={()=> this.onClickFetchApi()}>
                                       <View
                                         style={{
                                           height: 30,

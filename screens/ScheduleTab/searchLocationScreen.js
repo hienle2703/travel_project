@@ -47,11 +47,16 @@ export default class searchLocationScreen extends Component {
         .child(key)
         .child("name")
         .once("value");
-        arrayLocation.push({name: locationName})
+        const locationId  = await firebaseApp
+        .database()
+        .ref("location")
+        .child(key)
+        .child("id")
+        .once("value");
+        arrayLocation.push({name: locationName,id: locationId})
     }
 
     this.setState({arrayLocation}) // Lấy được mảng Object tên của các địa điểm
-    console.log(this.state.arrayLocation)
 
 
     const userAuth = firebaseApp.auth().currentUser;
@@ -171,7 +176,7 @@ export default class searchLocationScreen extends Component {
                               //onPress={() => this.onClickFriendProfile()}
                               onPress={() => {
                                 // Pass params back to home screen
-                                this.props.navigation.navigate('createScheduleScreen', { locationStart: objectValue.name });
+                                this.props.navigation.navigate('createScheduleScreen', { locationStart: objectValue.name, locationStartId: objectValue.id });
                               }}
                             >
                               <View
@@ -183,7 +188,7 @@ export default class searchLocationScreen extends Component {
                                 <View style={styles.avatarContainer}>
                                   <Image
                                     style={styles.avatar}
-                                    source={{ uri: "https://freeiconshop.com/wp-content/uploads/edd/location-pin-flat.png" }}
+                                    source={{ uri: "https://img.freepik.com/free-vector/flat-color-location-icon-paper-map_52465-148.jpg?size=626&ext=jpg" }}
                                   />
                                 </View>
                                 <View style={styles.friendName}>

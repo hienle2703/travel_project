@@ -20,6 +20,7 @@ import SignUp from "../screens/ProfileTab/SignUp";
 import SignIn from "../screens/ProfileTab/SignIn";
 
 import ProfileScreen from "../screens/ProfileTab/ProfileScreen";
+import FeelingLucky from "../screens/ProfileTab/FeelingLucky";
 
 import ScheduleScreen from "../screens/ScheduleTab/ScheduleScreen";
 import createScheduleScreen from "../screens/ScheduleTab/createScheduleScreen";
@@ -85,6 +86,7 @@ function ProfileStack() {
       />
       <Stack.Screen name="Account" title="Tài khoản" component={Account} />
       <Stack.Screen name="ManageStack" component={ManageStack}/>
+      <Stack.Screen name="FeelingLucky" component={FeelingLucky}/>
       <Stack.Screen
         name="EditAccount"
         component={EditAccount}
@@ -100,6 +102,7 @@ function ProfileStack() {
               color="green"
               {...props}
             />
+            
           ),
         }}
       />

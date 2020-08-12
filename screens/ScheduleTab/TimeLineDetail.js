@@ -26,98 +26,78 @@ export default class TimeLineDetail extends Component {
       call: null,
     };
   }
-  // onClickSaveSchedule = async () => {
-  //   //Lấy thời gian hiện tại
-  //   let date = new Date();
-  //   let n = date.getDate();
-  //   let h = date.getMinutes();
-  //   let g = date.getSeconds();
-  //   let s = n + h * n + g;
 
-  //   //Gọi tới người dùng
-  //   const userAuth = firebaseApp.auth().currentUser;
-  //   const split = userAuth.email;
-  //   const splitted = split.substring(0, split.lastIndexOf("@")); // Tên người dùng đang đăng nhập
+  onClickOpenMap = () => {
+    console.log("hihihi");
+  };
+  onClickAddPlace = () => {
+    console.log("add");
+  };
+  onClickDelete = (item) => {
+    Alert.alert(
+      "",
+      "Do you want to remove this place?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            this.setState({}),
+              //this.props.navigation.replace("ConfirmDetailSchedule");
+              this.onClickConfirmDelete(item);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  onClickConfirmDelete = (item) => {
+    let itemDelete = item;
+    let array = this.state.data;
+    const result = array.filter((item) => item !== itemDelete);
+    this.setState({ data: result });
+  };
+  componentDidMount = async () => {
+    let arrayFull = [];
+    const locationEndId = this.props.id;
+    // const info = firebaseApp.database().ref("location").child(locationEndId).child("places")
+    // const infoSet = await info.once("value")
+    const call = this.props.data;
+    const data = Object.values(call);
+    data.map((item) => {
+      let info = firebaseApp
+        .database()
+        .ref("location")
+        .child(locationEndId)
+        .child("places")
+        .child(item.id)
+        .once("value");
 
-  //   // Tạo ra cái mã lịch trình lưu nó vô schedule của user
-  //   const userRef = firebaseApp
-  //     .database()
-  //     .ref("user")
-  //     .child(splitted)
-  //     .child("schedule")
-  //     .child("schedule_" + splitted + "_" + s);
-  //   const newSche = "schedule_" + splitted + "_" + s;
-  //   await userRef.set({
-  //     name: newSche,
-  //   });
-  //   //Tạo ra cái mã chi tiết hành trình để nhét vô schedule nha, tự chế đê
-  //   const newDetail = "detail_schedule_" + splitted + "_" + s;
-
-  //   // Lấy ngày đi, ngày kết thúc
-  //   const dateStart = this.props.dateStart;
-  //   const dateEnd = this.props.dateEnd;
-  //   // Lấy hình
-  //   const imgHero = this.props.imgHero;
-  //   // Lấy điểm đi điểm đến
-  //   const locationStart = this.props.locationStart;
-  //   const locationEnd = this.props.locationEnd;
-  //   // Lấy tổng ngày đi
-  //   const days = this.props.days;
-  //   // Tạo ra cái lịch trình chi tiết lưu vô schedule tổng
-  //   const scheduleRef = firebaseApp
-  //     .database()
-  //     .ref("schedule")
-  //     .child("schedule_" + splitted + "_" + s);
-  //   await scheduleRef.set({
-  //     name: newSche,
-  //     detail: newDetail,
-  //     dateStart: dateStart,
-  //     dateEnd: dateEnd,
-  //     //imgHero: imgHero,
-  //     start: locationStart,
-  //     end: locationEnd,
-  //     days: days,
-  //   });
-  //   // Tạo ra cái hành trình chi tiết nhét vào detail_schedule, lấy tên đã tạo ở trên luôn
-  //   const detailRef = firebaseApp
-  //     .database()
-  //     .ref("detail_schedule")
-  //     .child("user")
-  //     .child("detail_schedule_" + splitted + "_" + s);
-  //   await detailRef.set(this.state.arr);
-  //   // Thông báo và trở lại trang chủ
-  //   // Alert.alert(
-  //   //   "",
-  //   //   "You schedule has been saved",
-  //   //   [
-  //   //     {
-  //   //       text: "OK",
-  //   //       onPress: () => {
-  //   //         this.setState({
-  //   //           start: "",
-  //   //           end: "",
-  //   //           scheName: "",
-  //   //           dateStart: null,
-  //   //           dateEnd: null,
-  //   //           curTime: null,
-  //   //         }),
-  //   //           this.props.onClickDetail.navigate("FeedScreen");
-  //   //       },
-  //   //     },
-  //   //   ],
-  //   //   { cancelable: false }
-  //   // );
-  // };
-  onClickOpenMap=()=>{
-    console.log("hihihi")
-  }
+      arrayFull.push(info.val());
+      //console.log(infoValue)
+    });
+    console.log(arrayFull);
+  };
   UNSAFE_componentWillMount = async () => {
     let arr = [];
+
     const key = this.props.keys;
     const day = this.props.days;
     const call = this.props.data;
     const allData = this.props.dataAll;
     const data = Object.values(call);
+
+    // data.map(item=>{
+    //   let info = firebaseApp.database().ref("location").child(locationEndId).child("places").child(item.id).once("value")
+
+    //   arrayFull.push(info)
+    //   //console.log(infoValue)
+    // })
+    // console.log(arrayFull)
     arr.push(call);
 
     //console.log("=============", data, "Data truyền vào");
@@ -159,7 +139,7 @@ export default class TimeLineDetail extends Component {
           </View>
         </View>
         <View style={styles.deleteBtn}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.onClickDelete(item)}>
             <Feather name="x" size={15} color="black" />
           </TouchableOpacity>
         </View>
@@ -172,14 +152,13 @@ export default class TimeLineDetail extends Component {
     return (
       <View style={{ flex: 1 }}>
         <DraggableFlatList
-          //data={Object.values(this.state.call)}
           data={this.state.data}
           renderItem={this.renderItem}
           keyExtractor={(item, index) => `draggable-item-${item.id}`}
           //onDragEnd={({ data }) => this.props.onDragEnd(data)}
           onDragEnd={({ data }) => {
-            this.props.onDragEnd(data,this.props.dayNumber), this.setState({ data });
-            //console.log(data, "========");
+            this.props.onDragEnd(data, this.props.dayNumber),
+              this.setState({ data });
           }}
         />
 
@@ -205,10 +184,17 @@ export default class TimeLineDetail extends Component {
               );
           }
         })()} */}
-        <View style={styles.floatButton}>
-          <TouchableOpacity onPress={() => this.onClickOpenMap()}>
-            <Text style={{ color: "white" }}>Open Map</Text>
-          </TouchableOpacity>
+        <View style={styles.bottomContainer}>
+          <View style={styles.floatButton}>
+            <TouchableOpacity onPress={() => this.onClickOpenMap()}>
+              <Text style={{ color: "white" }}>Open Map</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.addButton}>
+            <TouchableOpacity onPress={() => this.onClickAddPlace()}>
+              <Text style={{ color: "white" }}>Add</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -300,12 +286,11 @@ const styles = StyleSheet.create({
   },
   floatButton: {
     height: 50,
-    width: "90%",
+    width: "60%",
     borderRadius: 10,
     backgroundColor: "#DB5823",
     alignItems: "center",
     justifyContent: "center",
-    alignSelf: "center",
     bottom: 20,
     shadowColor: "#000",
     shadowOffset: {
@@ -316,5 +301,19 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
 
     elevation: 5,
+  },
+  bottomContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  addButton: {
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+    backgroundColor: "gray",
+    bottom: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    right: 20,
   },
 });

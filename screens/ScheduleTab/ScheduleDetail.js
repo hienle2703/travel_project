@@ -85,6 +85,7 @@ export default class ScheduleDetail extends Component {
       objectValue: null,
       flexin: false,
       data: null,
+      idGo:null,
     };
   }
   onClickBtn() {
@@ -93,6 +94,7 @@ export default class ScheduleDetail extends Component {
   UNSAFE_componentWillMount = async () => {
     const objectValue = this.props.route.params.objectValue;
     const name = objectValue.name;
+    const id = objectValue.id;
     const imgHero = objectValue.imgHero;
     const days = objectValue.days;
     const dateStart = objectValue.dateStart;
@@ -106,6 +108,7 @@ export default class ScheduleDetail extends Component {
 
     this.setState({
       name,
+      idGo: id,
       imgHero,
       days,
       dateStart,
@@ -116,9 +119,6 @@ export default class ScheduleDetail extends Component {
   };
 
   onDragEnd = (data, dayNumber) => {
-    // console.log(dayNumber,"DAY")
-    // console.log(this.state.data,data)
-    let dataAll = this.state.data;
     let dataFirst = {};
 
     let i = 0;
@@ -129,16 +129,13 @@ export default class ScheduleDetail extends Component {
     dataAll[dayNumber] = dataFirst;
 
     this.setState({ data: dataAll });
-    //this.setState({ data })
-    //console.log(this.state.data, "thay đổi")
   };
   _renderItem = () => {
     let array = [];
-    const { days, dateStart } = this.state;
+    const { days, dateStart, idGo } = this.state;
     let getDay = dateStart.substring(3, 5);
     let getMonth = dateStart.substring(0, 2);
     let dateGet = this.state.data;
-    console.log(days, "=============");
     for (let i = 1; i <= days; i++) {
       let month = getMonth;
       let label = getDay + "/" + month;
@@ -152,6 +149,7 @@ export default class ScheduleDetail extends Component {
         <TimeLineDetail
           keys={i}
           dayNumber={id}
+          id={idGo}
           days={days}
           tabLabel={label}
           data={datas}

@@ -57,8 +57,6 @@ export default class ConfirmDetailSchedule extends Component {
     this.setState({ dateStart, dateEnd, locationStart, locationEnd,days,name });
   };
   onDragEnd = (data,dayNumber)=>{
-    // console.log(dayNumber,"DAY")
-    // console.log(this.state.data,data)
     let dataAll = this.state.data
     let dataFirst = {};
    
@@ -71,8 +69,6 @@ export default class ConfirmDetailSchedule extends Component {
     dataAll[dayNumber]= dataFirst
     
     this.setState({data: dataAll})
-    //this.setState({ data })
-    //console.log(this.state.data, "thay đổi")
   }
   onClickSaveSchedule = async () => {
     //Lấy thời gian hiện tại
@@ -161,17 +157,17 @@ export default class ConfirmDetailSchedule extends Component {
     let countday = 0;
     const days = this.props.route.params.days;
     const dateStart = this.props.route.params.dateStart;
+    
     let getDay = dateStart.substring(3, 5);
     let getMonth = dateStart.substring(0, 2);
     let dateGet = this.state.data;
-    console.log(dateGet,"hihi")
     for (let i = 1; i <= days; i++) {
       let month = getMonth;
       let label = getDay + "/" + month;
       let day = this.state.days;
       let id = "day" + i;
       getDay++;
-
+      let locationEndId = this.props.route.params.locationEndId
       let datas = dateGet[id];
 
       array.push(
@@ -186,6 +182,7 @@ export default class ConfirmDetailSchedule extends Component {
           dateEnd={this.state.dateEnd}
           locationStart={this.state.locationStart}
           locationEnd={this.state.locationEnd}
+          locationEndId= {locationEndId}
           onClickDetail={this.props.navigation}
           imgHero={this.state.imgHero}
           onClickSaveSchedule={this.onClickSaveSchedule}
@@ -197,7 +194,6 @@ export default class ConfirmDetailSchedule extends Component {
   };
   
   render() {
-    console.log(this.state.data)
     const days = this.props.route.params.days;
     const { imgHero } = this.props.route.params.imgHero;
     return (

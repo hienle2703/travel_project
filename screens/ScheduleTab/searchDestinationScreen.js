@@ -14,7 +14,6 @@ import TabBarIcon from "../../components/TabBarIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { firebaseApp } from "../../components/FirebaseConfig.js";
 
-
 export default class searchDestinationScreen extends Component {
   constructor(props) {
     super(props);
@@ -29,42 +28,45 @@ export default class searchDestinationScreen extends Component {
       arrayUsed: [],
       countFriend: null,
 
-
       locationName: "",
-      arrayLocation:[],
+      arrayLocation: [],
     };
   }
   componentDidMount = async () => {
-    const locationCall = firebaseApp.database().ref("location")
-    const locationTake = await locationCall.once("value")
-    let location = locationTake.val()
-    console.log(location,"LOCATION")
+    const locationCall = firebaseApp.database().ref("location");
+    const locationTake = await locationCall.once("value");
+    let location = locationTake.val();
     let arrayLocation = [];
-    for(var key in location){
+    for (var key in location) {
       const locationImage = await firebaseApp
-      .database()
-      .ref("location")
-      .child(key)
-      .child("imgHero")
-      .once("value");
+        .database()
+        .ref("location")
+        .child(key)
+        .child("imgHero")
+        .once("value");
 
-      const locationName  = await firebaseApp
+      const locationName = await firebaseApp
         .database()
         .ref("location")
         .child(key)
         .child("name")
         .once("value");
-        
-        arrayLocation.push({name: locationName, key: key, imgHero: locationImage})
+      const locationId = await firebaseApp
+        .database()
+        .ref("location")
+        .child(key)
+        .child("id")
+        .once("value");
+      arrayLocation.push({
+        name: locationName,
+        key: key,
+        imgHero: locationImage,
+        id: locationId,
+      });
     }
 
-    this.setState({arrayLocation}) // Lấy được mảng Object tên của các địa điểm
-   console.log(this.state.arrayLocation)
-
-
+    this.setState({ arrayLocation }); // Lấy được mảng Object tên của các địa điểm
     const userAuth = firebaseApp.auth().currentUser;
-
-
     const split = userAuth.email;
     const splitted = split.substring(0, split.lastIndexOf("@"));
 
@@ -111,7 +113,6 @@ export default class searchDestinationScreen extends Component {
     this.props.navigation.navigate("FriendProfile");
   }
   render() {
-
     return (
       <View style={styles.container}>
         {(() => {
@@ -172,7 +173,7 @@ export default class searchDestinationScreen extends Component {
                     <View style={styles.listFriends}>
                       {this.state.arrayLocation.map((item) => {
                         var obj = JSON.stringify(item);
-                        console.log(obj)
+
                         var objectValue = JSON.parse(obj);
                         return (
                           <View style={styles.friendCard}>
@@ -180,7 +181,15 @@ export default class searchDestinationScreen extends Component {
                               //onPress={() => this.onClickFriendProfile()}
                               onPress={() => {
                                 // Pass params back to home screen
-                                this.props.navigation.navigate('createScheduleScreen', { locationEnd: objectValue.name, locationKey: objectValue.key, locationImage: objectValue.imgHero });
+                                this.props.navigation.navigate(
+                                  "createScheduleScreen",
+                                  {
+                                    locationEnd: objectValue.name,
+                                    locationEndId: objectValue.id,
+                                    locationKey: objectValue.key,
+                                    locationImage: objectValue.imgHero,
+                                  }
+                                );
                               }}
                             >
                               <View
@@ -192,7 +201,9 @@ export default class searchDestinationScreen extends Component {
                                 <View style={styles.avatarContainer}>
                                   <Image
                                     style={styles.avatar}
-                                    source={{ uri: "https://freeiconshop.com/wp-content/uploads/edd/location-pin-flat.png" }}
+                                    source={{
+                                      uri: objectValue.imgHero,
+                                    }}
                                   />
                                 </View>
                                 <View style={styles.friendName}>
@@ -201,7 +212,6 @@ export default class searchDestinationScreen extends Component {
                                   >
                                     {objectValue.name}
                                   </Text>
-                                  
                                 </View>
                               </View>
                             </TouchableOpacity>

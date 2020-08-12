@@ -46,6 +46,8 @@ export default class createScheduleScreen extends Component {
     const img = this.props.route.params?.locationImage;
     const locationStart = this.props.route.params?.locationStart;
     const locationEnd = this.props.route.params?.locationEnd;
+    const locationStartId = this.props.route.params?.locationStartId
+    const locationEndId = this.props.route.params?.locationEndId
     this.props.navigation.navigate("ConfirmDetailSchedule", {
       days: this.state.days,
       imgHero: img,
@@ -54,6 +56,8 @@ export default class createScheduleScreen extends Component {
       locationStart: locationStart,
       locationEnd: locationEnd,
       name: this.state.scheName,
+      locationStartId: locationStartId,
+      locationEndId: locationEndId,
     });
   }
   onClickSaveSchedule = async () => {
@@ -162,7 +166,7 @@ export default class createScheduleScreen extends Component {
   render() {
     const a = this.props.route.params?.locationStart;
     const b = this.props.route.params?.locationEnd;
-    console.log(this.state.locationStart, "==============");
+    
     return (
       <View style={styles.container}>
         <View style={styles.header}>
