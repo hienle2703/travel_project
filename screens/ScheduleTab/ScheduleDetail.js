@@ -85,7 +85,8 @@ export default class ScheduleDetail extends Component {
       objectValue: null,
       flexin: false,
       data: null,
-      idGo:null,
+      idGo: null,
+      locationEndId: null,
     };
   }
   onClickBtn() {
@@ -99,13 +100,14 @@ export default class ScheduleDetail extends Component {
     const days = objectValue.days;
     const dateStart = objectValue.dateStart;
     const detailCode = objectValue.detail;
+    const locationEndId = objectValue.locationEndId;
     const detailRef = firebaseApp
+
       .database()
       .ref("detail_schedule/" + "user")
       .child(detailCode);
     const detailTake = await detailRef.once("value");
     let data = detailTake.val();
-
     this.setState({
       name,
       idGo: id,
@@ -115,6 +117,7 @@ export default class ScheduleDetail extends Component {
       objectValue,
       flexin: true,
       data,
+      locationEndId,
     });
   };
 
@@ -131,6 +134,7 @@ export default class ScheduleDetail extends Component {
     this.setState({ data: dataAll });
   };
   _renderItem = () => {
+    console.log(this.state.idGo);
     let array = [];
     const { days, dateStart, idGo } = this.state;
     let getDay = dateStart.substring(3, 5);
@@ -158,9 +162,10 @@ export default class ScheduleDetail extends Component {
           dateEnd={this.state.dateEnd}
           locationStart={this.state.locationStart}
           locationEnd={this.state.locationEnd}
+          locationEndId={this.state.locationEndId}
           onClickDetail={this.props.navigation}
           imgHero={this.state.imgHero}
-          onDragEnd = {this.onDragEnd}
+          onDragEnd={this.onDragEnd}
         />
       );
     }

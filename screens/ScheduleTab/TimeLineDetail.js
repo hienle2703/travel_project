@@ -11,6 +11,7 @@ import {
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { firebaseApp } from "../../components/FirebaseConfig";
 import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 export default class TimeLineDetail extends Component {
   constructor(props) {
@@ -24,14 +25,15 @@ export default class TimeLineDetail extends Component {
       arr: [],
       dataTake: null,
       call: null,
+      locationEndId:null,
     };
   }
 
   onClickOpenMap = () => {
-    console.log("hihihi");
+    this.props.onClickDetail.navigate("MapTimeLine",{data: this.state.data});
   };
   onClickAddPlace = () => {
-    console.log("add");
+    this.props.onClickDetail.navigate("AddPlace",{locationEndId: this.state.locationEndId});
   };
   onClickDelete = (item) => {
     Alert.alert(
@@ -63,7 +65,9 @@ export default class TimeLineDetail extends Component {
   };
   componentDidMount = async () => {
     let arrayFull = [];
-    const locationEndId = this.props.id;
+    const locationEndId = this.props.locationEndId;
+    const locationEnd = this.props.locationEnd
+    console.log(locationEnd,"LOLOLOLOLOLO")
     // const info = firebaseApp.database().ref("location").child(locationEndId).child("places")
     // const infoSet = await info.once("value")
     const call = this.props.data;
@@ -77,14 +81,13 @@ export default class TimeLineDetail extends Component {
         .child(item.id)
         .once("value");
 
-      arrayFull.push(info.val());
+      // arrayFull.push(info.val());
       //console.log(infoValue)
     });
-    console.log(arrayFull);
   };
   UNSAFE_componentWillMount = async () => {
     let arr = [];
-
+    const id = this.props.locationEndId
     const key = this.props.keys;
     const day = this.props.days;
     const call = this.props.data;
@@ -101,7 +104,7 @@ export default class TimeLineDetail extends Component {
     arr.push(call);
 
     //console.log("=============", data, "Data truyền vào");
-    this.setState({ data, flexin: true, allData, arr, call });
+    this.setState({ data, flexin: true, allData, arr, call,locationEndId: id });
   };
   renderItem = ({ item, index, drag, isActive }) => {
     //const item = Object.values(this.state.call)
@@ -149,6 +152,7 @@ export default class TimeLineDetail extends Component {
   render() {
     const a = this.props.tabLabel;
     const b = this.props;
+    console.log(this.state.locationEndId)
     return (
       <View style={{ flex: 1 }}>
         <DraggableFlatList
@@ -190,11 +194,13 @@ export default class TimeLineDetail extends Component {
               <Text style={{ color: "white" }}>Open Map</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.addButton}>
-            <TouchableOpacity onPress={() => this.onClickAddPlace()}>
-              <Text style={{ color: "white" }}>Add</Text>
-            </TouchableOpacity>
-          </View>
+
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => this.onClickAddPlace()}
+          >
+            <Ionicons name="ios-add" size={24} color="black" />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -286,12 +292,13 @@ const styles = StyleSheet.create({
   },
   floatButton: {
     height: 50,
-    width: "60%",
+    width: "70%",
     borderRadius: 10,
     backgroundColor: "#DB5823",
     alignItems: "center",
     justifyContent: "center",
     bottom: 20,
+    marginLeft: 10,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -310,7 +317,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 50,
-    backgroundColor: "gray",
+    backgroundColor: "#D0D0D0",
     bottom: 20,
     alignItems: "center",
     justifyContent: "center",

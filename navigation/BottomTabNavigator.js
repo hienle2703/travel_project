@@ -30,12 +30,14 @@ import TimeLineDetail from "../screens/ScheduleTab/TimeLineDetail"
 import ManageScreen from "../screens/ManageTab/ManageScreen";
 import DetailGroup from "../screens/ManageTab/DetailGroup";
 import NotiScreen from "../screens/NotiTab/NotiScreen";
+import MapTimeLine from "../screens/ScheduleTab/MapTimeLine";
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Feed";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import ScheduleDetail from "../screens/ScheduleTab/ScheduleDetail";
+import AddPlace from "../screens/ScheduleTab/AddPlace";
 
 import ChoiceTravelScreen from "../screens/ManageTab/ChoiceTravelScreen";
 import PickScheduleDone from "../screens/FeedTab/PickScheduleDone"
@@ -195,6 +197,8 @@ function ScheduleStack() {
           ),
         }}
       />
+      <Stack.Screen name="MapTimeLine" component={MapTimeLine} />
+      <Stack.Screen name="AddPlace" component={AddPlace} />
     </Stack.Navigator>
   );
 }

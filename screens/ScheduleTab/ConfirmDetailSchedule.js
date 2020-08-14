@@ -107,6 +107,8 @@ export default class ConfirmDetailSchedule extends Component {
     const locationEnd = this.state.locationEnd;
     // Lấy tổng ngày đi
     const days = this.state.days;
+
+    let locationEndId = this.props.route.params.locationEndId
     // Tạo ra cái lịch trình chi tiết lưu vô schedule tổng
     const scheduleRef = firebaseApp
       .database()
@@ -121,6 +123,7 @@ export default class ConfirmDetailSchedule extends Component {
       start: locationStart,
       end: locationEnd,
       days: days,
+      locationEndId: locationEndId,
     });
     // Tạo ra cái hành trình chi tiết nhét vào detail_schedule, lấy tên đã tạo ở trên luôn
     const detailRef = firebaseApp

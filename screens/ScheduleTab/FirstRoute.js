@@ -110,6 +110,7 @@ export default class FirstRoute extends Component {
                         {arrayAllSchedule.map((item) => {
                           var obj = JSON.stringify(item);
                           var objectValue = JSON.parse(obj);
+                          console.log(objectValue)
                           return (
                             <TouchableOpacity
                               onPress={() => this.onClickDetail(objectValue)}
